@@ -1,10 +1,10 @@
 # Project-Asteroids
-It's a reimagination of _Asteroids_ (1979) made with Pygame.
+Uma reimaginação do jogo _Asteroids_ (1979) feito com Pygame.
 
-All sugestions are welcome :)
+Todas as dicas e sugestões são bem-vindas :)
 
-It was made with Pycharm and venv, that's why there are so many folders.
+Está sendo desenvolvido com Pycharm e ambiente virtual, por isso tem tantas pastas.
 
-You can test by donwloading the exe (there's no malwares I swear) at _[dist](https://github.com/HugoPFe/Project-Asteroids/tree/main/Project_Asteroids/dist)_ folder.
+Você pode testar baixando o exe na pasta _[dist](https://github.com/HugoPFe/Project-Asteroids/tree/main/Project_Asteroids/dist)_.
 
-All images files aren't being used, there's a file containg the base64 code for each image.
+Todos os arquivos de sprites e qualquer imagem não está sendo utilizado pelo código diretamente. Há um arquivo contendo o código em base64 de todas as imagens.
