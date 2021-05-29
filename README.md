@@ -1,2 +1,4 @@
 # Project-Asteroids
- A game made in Python 3 as hobby :)
+It's a reimagination of _Asteroids_ (1979) made with Pygame.
+
+All sugestions are welcome :)
