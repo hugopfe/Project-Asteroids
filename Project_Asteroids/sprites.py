@@ -37,10 +37,6 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=screen.get_rect().center)
         self.pos = vec(self.rect.center)
 
-        self.red_surf = self.image.copy()
-        self.red_surf.fill((255, 0, 0, 255), special_flags=BLEND_RGBA_MULT)
-        self.red_rect = self.red_surf.get_rect(center=self.rect.center)
-
         self.angle = 0
         self.vel = vec(0, 0)
         self.acc = 1
@@ -69,21 +65,17 @@ class Player(pygame.sprite.Sprite):
         self.cool_down_rate = 10
         self.cool_down_timer = 0
 
-        self.meter = pygame.Surface((5, 50))
-        self.meter.fill((255, 255, 255))
-        self.meter_hide = True
+        self.red_surf = pygame.Surface(self.rect.size, SRCALPHA)
+        self.red_surf.fill((255, 0, 0, 0))
+        self.alpha = 0
 
     def update(self):
         self.pos = vec(self.rect.center)
         self.keys_pressed = pygame.key.get_pressed()
 
-        # if not self.meter_hide:
-        #     self.show_meter()
-
         self.orbiting_circle()
         self.handle_keydown()
         self.screen_collision()
-        self.screen.blit(self.red_surf, self.red_rect)
 
     def handle_keydown(self):
         """ Verify the pressed keys """
@@ -108,8 +100,6 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.x += int(self.vel.x)
         self.rect.y += int(self.vel.y)
-
-        self.red_rect.center = self.rect.center
 
         if self.keys_pressed[K_q]:
             self.angle += PLAYER_SPEED
@@ -173,9 +163,6 @@ class Player(pygame.sprite.Sprite):
         self.image, self.rect = util.rotate_img(self.copy_img, self.rect, self.angle)
         self.mask = pygame.mask.from_surface(self.image)
 
-        self.red_surf, self.red_rect = util.rotate_img(self.copy_img, self.red_rect, self.angle)
-        # TODO: CONTINUAR DESENVOLVIMENTO DO RED SURFACE
-
     def orbiting_circle(self):
         # TODO: Implementar escudo
 
@@ -203,16 +190,15 @@ class Player(pygame.sprite.Sprite):
 
     def heat_cannon(self, heat_value):
         self.current_heat = min(self.current_heat + heat_value, self.resistance)
-        # self.meter_hide = False
+
+        self.red_surf.fill((0, 5, 5, 0))
+        self.image.blit(self.red_surf, (0, 0), special_flags=BLEND_RGBA_SUB)
 
     def cool_down(self):
         self.current_heat = max(self.current_heat - self.cool_down_rate, 0)
 
-        # if self.current_heat == 0:
-            # self.meter_hide = True
-
-    # def show_meter(self):
-    #     self.screen.blit(self.meter, (self.rect.right, self.rect.y))
+        self.red_surf.fill((0, 5, 5, 0)) #TODO: Tentar achar um jeito de zerar o alpha só do red_surf
+        self.image.blit(self.red_surf, (0, 0), special_flags=BLEND_RGBA_ADD)
 
     @property
     def current_heat(self):

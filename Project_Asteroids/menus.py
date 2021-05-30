@@ -413,7 +413,7 @@ class Game(Main):
             if event.key == K_p:
                 self.change_screen(PauseScreen, self)
             if event.key == K_TAB:
-                print('Asteroids count: ', len(self.asteroid_group.sprites()))
+                print('Alpha', self.player.red_surf.get_alpha())
 
     def game_over(self):
         pygame.time.wait(1000)
