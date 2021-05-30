@@ -385,12 +385,12 @@ class Game(Main):
         self.update_infos()
 
         # projectiles
-        self.projectile_group.update()
         self.projectile_group.draw(self.screen)
+        self.projectile_group.update()
 
         # player
-        self.player_group.update()
         self.player_group.draw(self.screen)
+        self.player_group.update()
 
         # collisions
         self.check_collisions()
