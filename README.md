@@ -8,6 +8,8 @@ Estou realizando este projeto como estudo e como um dos meus passatempos favorit
 
 Todas as dicas e sugestões são bem-vindas :)
 
+Em breve irei comentar melhor o código para melhor compreensão!
+
 ## Executáveis
 
 Você pode baixar o executável de cada versão na pasta _[dist](https://github.com/HugoPFe/Project-Asteroids/tree/main/Project_Asteroids/dist)_.
