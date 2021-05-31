@@ -10,6 +10,7 @@ Todas as dicas e sugestões são bem-vindas :)
 
 Você pode baixar o executável de cada versão na pasta _[dist](https://github.com/HugoPFe/Project-Asteroids/tree/main/Project_Asteroids/dist)_.
 
+
 ## Milestones
 
 ---
@@ -28,9 +29,8 @@ Você pode baixar o executável de cada versão na pasta _[dist](https://github.
 
 ### Versão 0.3
 
-- [ ] Skill extra
+- [ ] Ataque especial
 - [ ] Vida e Dano
-- [ ] Animações
 - [ ] Powerups
 - [ ] Disparos alternados entre os canhões
 - [ ] Menu Configurações
