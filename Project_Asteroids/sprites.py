@@ -66,8 +66,8 @@ class Player(pygame.sprite.Sprite):
         self.cool_down_timer = 0
 
         self.red_surf = pygame.Surface(self.rect.size, SRCALPHA)
-        self.red_surf.fill((255, 0, 0, 0))
-        self.alpha = 0
+        self.alpha = 255
+        self.red_surf.fill((255, 0, 0, self.alpha))
 
     def update(self):
         self.pos = vec(self.rect.center)
@@ -197,8 +197,9 @@ class Player(pygame.sprite.Sprite):
     def cool_down(self):
         self.current_heat = max(self.current_heat - self.cool_down_rate, 0)
 
-        self.red_surf.fill((0, 5, 5, 0)) #TODO: Tentar achar um jeito de zerar o alpha só do red_surf
-        self.image.blit(self.red_surf, (0, 0), special_flags=BLEND_RGBA_ADD)
+        self.alpha = max(self.alpha-5, 0)
+        self.red_surf.fill((0, 0, 0, self.alpha))
+        self.image.blit(self.red_surf, (0, 0))
 
     @property
     def current_heat(self):
