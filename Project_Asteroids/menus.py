@@ -14,6 +14,10 @@ class Main:
     FPS = 30
 
     def __init__(self):
+        """
+        It's the abstract class for all screens (with your own main loop)
+        """
+
         # Constants
         self.BACKGROUND = pygame.image.load(util.decode_b64_img(bg))
         self.SCREEN_WIDTH = 600
@@ -88,12 +92,16 @@ class Main:
         print(f'[{self.__class__.__name__}]', f'running: {arg}')
 
     def back_mainmenu(self, screen):
+        """ Returns directly to MainMenu """
+
         self.back_screen()
         screen.back_screen()
 
 
 class MainMenu(Main):
     def __init__(self):
+        """ Class for Main menu """
+
         Main.__init__(self)
 
         self.logo = pygame.image.load(util.decode_b64_img(logo)).convert_alpha()
@@ -145,6 +153,8 @@ class MainMenu(Main):
 
 class ControlsMenu(Main):
     def __init__(self):
+        """ Class for Controls menu or Keymap """
+
         Main.__init__(self)
 
         self.screen_x = self.screen.get_width()
@@ -235,6 +245,8 @@ class ControlsMenu(Main):
 
 class PauseScreen(Main):
     def __init__(self, game):
+        """ Class for Pause screen """
+
         Main.__init__(self)
 
         self.pausado_font = util.Font('Pausado', (self.screen_rect.centerx, 100), 'center')
@@ -273,6 +285,8 @@ class PauseScreen(Main):
 
 
 class EndScreen(Main):
+    """ Abstract class for End screens """
+
     def __init__(self, game):
         Main.__init__(self)
 
@@ -298,6 +312,8 @@ class EndScreen(Main):
         self.score_text.configure(size=30)
 
     def try_again(self, game):
+        """ Break the game's loop and start a new game """
+
         self.back_screen()
         game.back_screen()
         game.create_new_game = True
@@ -305,6 +321,8 @@ class EndScreen(Main):
 
 class GOScreen(EndScreen):
     def __init__(self, game):
+        """ Class for Game Over screen """
+
         EndScreen.__init__(self, game)
 
         self.set_main_text('Game Over!')
@@ -319,6 +337,8 @@ class GOScreen(EndScreen):
 
 class WinScreen(EndScreen):
     def __init__(self, game):
+        """ Class for Win screen """
+
         EndScreen.__init__(self, game)
 
         self.set_main_text('Você Venceu!!')
@@ -336,6 +356,8 @@ class Game(Main):
     FRICTION = 0.95
 
     def __init__(self):
+        """ Class for main game loop """
+
         Main.__init__(self)
 
         import sprites
@@ -376,7 +398,7 @@ class Game(Main):
         self.main_loop()
 
     def loop(self):
-        if len(self.asteroid_group.sprites()) > 0:
+        if len(self.asteroid_group.sprites()) > 0:  # TODO: Verificar se isso é necessário
             for asteroid in self.asteroid_group.sprites():
                 asteroid.get_orbit_rect()
 
@@ -405,8 +427,6 @@ class Game(Main):
         pygame.display.update()
 
     def check_events(self, event):
-        # TODO: Pesquisar sobre criação de Eventos customizados
-
         self.player.event_checker(event)
 
         if event.type == KEYDOWN:
@@ -449,6 +469,8 @@ class Game(Main):
             self.target_score_text.configure(text=f'Objetivo: {self.level_objectives["score"]}')
 
     def update_infos(self):
+        """ Get the updated informations from level """
+
         infos = self.current_level.request_news_infos()
 
         for str_attr, attr in self.__dict__.items():
@@ -464,14 +486,11 @@ class Game(Main):
         self.player.score += score
         self.score_text.configure(text=f'Score: {self.player.score}')
 
-        print('=' * 20)
-        print('Player Score: ', self.player.score)
-        print('Target Score: ', self.level_objectives['score'])
-        print('=' * 20)
-
 
 class Level:
     def __init__(self, game):
+        """ Abstract class for levels """
+
         self.screen = game.screen
         self.screen_rect = game.screen_rect
         self.current_time = 0
@@ -510,7 +529,7 @@ class Level:
     def spawn_asteroids(self):
         import sprites
 
-        def keep_asteroids_on_screen():
+        def keep_asteroids_on_screen():  # TODO: Verificar se isso é necessário
             if len(self.asteroid_group.sprites()) > 0:
                 for asteroid in self.asteroid_group.sprites():
                     try:
@@ -550,6 +569,8 @@ class Level:
         keep_asteroids_on_screen()
 
     def request_news_infos(self):
+        """ Returns the informations that was changed """
+
         pass
 
     def check_level_objective(self):

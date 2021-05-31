@@ -15,7 +15,7 @@ from random import randrange, choice, uniform, randint
 class Button:
     def __init__(self, **kwargs):
         """
-        Creates a new Button istance.
+        Creates a new Button istance for UI.
 
         Accepted Parameters: screen, x, y, width, height, text, padding, command.
         """
@@ -152,6 +152,8 @@ class FontsGroup:
 
 class Font:
     def __init__(self, text: str, pos: Tuple, align='left'):
+        """Instances a Font object """
+
         self.screen = None
         self.font_name = None
         self.size = None
@@ -230,7 +232,7 @@ def get_random_speed(min_speed: Union[int, float], max_speed: Union[int, float])
 
 
 def rotate_img(image: pygame.Surface, rect: pygame.Rect, angle: int) -> Tuple[pygame.Surface, pygame.Rect]:
-    """ Rotate a bg maintaining the center """
+    """ Rotate a image maintaining the center """
 
     copy_img = pygame.transform.rotate(image, angle)
     copy_rect = copy_img.get_rect(center=rect.center)
@@ -255,6 +257,8 @@ def get_sprites_collided(*groups,
 
 
 def decode_b64_img(img_code: str) -> io.BytesIO:
+    """ Returns a decoded image from base64 """
+
     img = img_code
     img_output = io.BytesIO(base64.b64decode(img))
 
@@ -262,6 +266,8 @@ def decode_b64_img(img_code: str) -> io.BytesIO:
 
 
 def draw_line_center_of(screen, center_pos: Tuple[int, int]):
+    """ Draw a line intercepting a point, just in case """
+
     screen_rect = screen.get_rect()
 
     pygame.draw.line(screen, (255, 255, 255), (0, center_pos[1]),
@@ -270,6 +276,8 @@ def draw_line_center_of(screen, center_pos: Tuple[int, int]):
                      (center_pos[0], screen_rect.height))
 
 
-def move_in_orbit_motion(angle, center_pos, radius):
-    return (center_pos.x + cos(angle) * radius,
-            center_pos.y + sin(angle) * radius)
+def move_in_orbit_motion(angle: float, center_pos: pygame.Rect, radius: int) -> Tuple[float, float]:
+    """ Returns a tuple containg a orbit motion """
+
+    return (center_pos.centerx + cos(angle) * radius,
+            center_pos.centery + sin(angle) * radius)

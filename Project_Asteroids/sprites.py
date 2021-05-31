@@ -167,8 +167,9 @@ class Player(pygame.sprite.Sprite):
         # TODO: Implementar escudo
 
         self.circle_angle += 0.09
-        self.circle_pos.x = self.rect.centerx + cos(self.circle_angle) * 100
-        self.circle_pos.y = self.rect.centery + sin(self.circle_angle) * 100
+        # self.circle_pos.x = self.rect.centerx + cos(self.circle_angle) * 100
+        # self.circle_pos.y = self.rect.centery + sin(self.circle_angle) * 100
+        self.circle_pos.x, self.circle_pos.y = util.move_in_orbit_motion(self.circle_angle, self.rect, 100)
         self.circle = pygame.draw.circle(self.screen, (0, 255, 0),
                                          self.circle_pos, 10)
 
@@ -183,6 +184,8 @@ class Player(pygame.sprite.Sprite):
                 self.single_shots = {0}
 
     def set_rules(self, level_rules):
+        """ Set the rules from level """
+
         self.player_rules = level_rules['player']
         self.life = self.player_rules['life']
         self.resistance = self.player_rules['resistance']

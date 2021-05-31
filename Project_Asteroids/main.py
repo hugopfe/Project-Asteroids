@@ -3,6 +3,8 @@ import pygame
 import util
 from images import asteroid
 
+# This module will call the Main Menu and continues on menus module
+
 if __name__ == '__main__':
     pygame.init()
     pygame.display.set_caption('Asteroids')

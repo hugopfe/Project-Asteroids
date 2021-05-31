@@ -8,7 +8,6 @@ Estou realizando este projeto como estudo e como um dos meus passatempos favorit
 
 Todas as dicas e sugestões são bem-vindas :)
 
-Em breve irei comentar melhor o código para melhor compreensão!
 
 ## Executáveis
 
