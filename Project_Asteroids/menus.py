@@ -451,10 +451,9 @@ class Game(Main):
 
         for spr_dct in sprites_coll:
             for k, ast in spr_dct.items():
-                if k == self.player:  # player collided with a asteroid
+                if k == self.player:  # player has collided with a asteroid
                     self.game_over()
-                else:  # a projectile collided with a asteroid
-                    k.kill()
+                else:  # a projectile has collided with a asteroid
                     for spr in ast:
                         spr.break_up()
 
