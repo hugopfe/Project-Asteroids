@@ -202,11 +202,7 @@ class Player(pygame.sprite.Sprite):
     def cool_down(self):
         self.current_heat = max(self.current_heat - self.cool_down_rate, 0)
 
-        # self.alpha = max(self.alpha-5, 0)
-        self.red_surf.fill((0, 0, 0, 0))
-        self.red_surf_flag = BLENDMODE_MOD
 
-        # self.image.blit(self.red_surf, (0, 0))
 
     @property
     def current_heat(self):
