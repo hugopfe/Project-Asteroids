@@ -12,7 +12,7 @@ if __name__ == '__main__':
     icon = pygame.image.load(util.decode_b64_img(asteroid))
     pygame.display.set_icon(icon)
 
-    # menus.MainMenu()
-    menus.Game()
+    menus.MainMenu()
+    # menus.Game()
 
     pygame.quit()

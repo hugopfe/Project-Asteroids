@@ -433,7 +433,7 @@ class Game(Main):
             if event.key == K_p:
                 self.change_screen(PauseScreen, self)
             if event.key == K_TAB:
-                print('Alpha', self.player.red_surf.get_alpha())
+                print('Asteroids: ', len(self.asteroid_group.sprites()))
 
     def game_over(self):
         pygame.time.wait(1000)
@@ -454,6 +454,7 @@ class Game(Main):
                 if k == self.player:  # player has collided with a asteroid
                     self.game_over()
                 else:  # a projectile has collided with a asteroid
+                    k.kill()
                     for spr in ast:
                         spr.break_up()
 
@@ -626,7 +627,7 @@ class Level1(Level):
         self.current_time += 1
 
         # asteroids
-        # self.spawn_asteroids()
+        self.spawn_asteroids()
 
         self.asteroid_group.update()
         self.asteroid_group.draw(self.screen)
