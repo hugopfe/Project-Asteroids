@@ -61,15 +61,6 @@ class Player(pygame.sprite.Sprite):
         self.resistance = 100
         self.projectile_rules = None
 
-        self.current_heat = 0
-        self.cool_down_rate = 10
-        self.cool_down_timer = 0
-
-        self.red_surf = pygame.Surface(self.rect.size, SRCALPHA)
-        self.alpha = 0
-        self.red_surf.fill((255, 0, 0, 0))
-        self.red_surf_flag = BLENDMODE_NONE
-
     def update(self):
         self.pos = vec(self.rect.center)
         self.keys_pressed = pygame.key.get_pressed()
@@ -77,7 +68,6 @@ class Player(pygame.sprite.Sprite):
         self.orbiting_circle()
         self.handle_keydown()
         self.screen_collision()
-        self.image.blit(self.red_surf, (0, 0), special_flags=self.red_surf_flag)
 
     def handle_keydown(self):
         """ Verify the pressed keys """
@@ -114,37 +104,11 @@ class Player(pygame.sprite.Sprite):
             self.shoot_single()
             self.single_shots.add(1)
 
-        if self.space_pressed:
-            self.time_pressed += 1
-
-            if self.time_pressed > 20:
-                self.shots_count += self.fire_rate//FPS
-
-                self.shoot_mult()
-
-        elif not self.space_pressed and self.current_heat > 0:
-            self.cool_down_timer += 1
-            if self.cool_down_timer == FPS/2:
-                self.cool_down()
-                self.cool_down_timer = 0
-
     def shoot_single(self):
         """ Shoots a projectile """
 
         self.projectile_group.add(Projectile(self.rect.centerx, self.rect.centery,
                                              self.angle, self.screen, self.projectile_rules))
-
-    def shoot_mult(self):
-        """ Shoots multiples projectiles """
-
-        if self.shots_count < FPS:
-            return
-        self.projectile_group.add(Projectile(self.rect.centerx, self.rect.centery,
-                                             self.angle, self.screen,
-                                             self.projectile_rules,
-                                             self.heat_cannon))
-
-        self.shots_count = 0
 
     def screen_collision(self):
         self.rect.clamp_ip(self.screen.get_rect())
@@ -193,47 +157,14 @@ class Player(pygame.sprite.Sprite):
         self.resistance = self.player_rules['resistance']
         self.projectile_rules = level_rules['projectile']
 
-    def heat_cannon(self, heat_value):
-        self.current_heat = min(self.current_heat + heat_value, self.resistance)
-
-        self.red_surf.fill((0, 5, 5, 0))
-        self.red_surf_flag = BLEND_RGBA_SUB
-
-    def cool_down(self):
-        self.current_heat = max(self.current_heat - self.cool_down_rate, 0)
-
-        # self.alpha = max(self.alpha-5, 0)
-        self.red_surf.fill((0, 0, 0, 0))
-        self.red_surf_flag = BLENDMODE_MOD
-
-        # self.image.blit(self.red_surf, (0, 0))
-
-    @property
-    def current_heat(self):
-        return self._current_heat
-
-    @current_heat.setter
-    def current_heat(self, value):
-        self._current_heat = value
-        if self.current_heat < self.resistance:
-            print(f'Ship Temperature: {self.current_heat}')
-        else:
-            print(f'Overheat!!!')
-
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, angle, screen, level_rules, heat_cannon=None):
+    def __init__(self, x_pos, y_pos, angle, screen, level_rules):
         pygame.sprite.Sprite.__init__(self)
 
         self.rules = level_rules
         self.speed = self.rules['speed']
         self.damage = self.rules['damage_single']
-
-        if heat_cannon is not None:
-            self.damage = self.rules['damage_mult']
-            self.heat_rate = 2
-            self.heating = self.damage*self.heat_rate/100
-            heat_cannon(self.heating)
 
         self.screen = screen
 
