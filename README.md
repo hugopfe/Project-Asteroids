@@ -35,7 +35,12 @@ Você pode baixar o executável de cada versão na pasta _[dist](https://github.
 - [ ] Ataque especial
 - [ ] Vida e Dano
 - [ ] Powerups
+  - [ ]  Escudo
+  - [ ]  Buraco Negro Manipulado (projétil)
+  - [ ]  Alta energia (buff do ataque especial)
+  - [ ]  Onda Gravitacional
+  - [ ]  Blindagem
 - [ ] Disparos alternados entre os canhões
 - [ ] Menu Configurações
 - [ ] Menu Informação: informações sobre autor e versão
-- [ ] Navegação entre botões pelo teclado
+
