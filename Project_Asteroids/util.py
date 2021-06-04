@@ -198,6 +198,15 @@ class Font:
 
 
 def get_random_pos(x: Union[int, Tuple[int, int]], y: Union[int, Tuple[int, int]]) -> Vector2:
+    """
+    Returns a random pos.
+
+    If a tuple with two values is passed, it will calculate a position with a minimum value specified.\n
+    (10, 100) → 10 is the minimum value and 100 is the maximum value.\n
+
+    But if a unic value is passed, it will returns zero as minimum value.
+    """
+
     if type(x) == tuple:
         min_x = x[0]
         max_x = x[1]

@@ -369,6 +369,10 @@ class Game(Main):
         self.player = sprites.Player(self.screen)
         self.player_group = pygame.sprite.GroupSingle(self.player)
 
+        # Power_Up
+        self.power_up_pos = util.get_random_pos(self.screen_rect.w, self.screen_rect.h)
+        self.power_up = sprites.Shield(self.screen, self.power_up_pos, self.player)
+
         # Groups
         self.projectile_group = pygame.sprite.Group()
         self.asteroid_group = pygame.sprite.Group()
@@ -414,6 +418,9 @@ class Game(Main):
         self.player_group.draw(self.screen)
         self.player_group.update()
 
+        # power_up
+        self.power_up.update()
+
         # collisions
         self.check_collisions()
 
@@ -433,7 +440,7 @@ class Game(Main):
             if event.key == K_p:
                 self.change_screen(PauseScreen, self)
             if event.key == K_TAB:
-                print('Asteroids: ', len(self.asteroid_group.sprites()))
+                self.power_up.pos = util.get_random_pos(self.screen_rect.w, self.screen_rect.h)
 
     def game_over(self):
         pygame.time.wait(1000)
@@ -627,7 +634,7 @@ class Level1(Level):
         self.current_time += 1
 
         # asteroids
-        self.spawn_asteroids()
+        # self.spawn_asteroids()
 
         self.asteroid_group.update()
         self.asteroid_group.draw(self.screen)

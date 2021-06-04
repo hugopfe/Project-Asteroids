@@ -41,9 +41,6 @@ class Player(pygame.sprite.Sprite):
         self.vel = vec(0, 0)
         self.acc = 1
 
-        self.circle_pos = vec(self.screen_rect.centerx, 200)
-        self.circle_angle = radians(10)
-
         self.score = 0
         self.time_pressed = 0
 
@@ -65,7 +62,6 @@ class Player(pygame.sprite.Sprite):
         self.pos = vec(self.rect.center)
         self.keys_pressed = pygame.key.get_pressed()
 
-        self.orbiting_circle()
         self.handle_keydown()
         self.screen_collision()
 
@@ -128,16 +124,6 @@ class Player(pygame.sprite.Sprite):
     def rotate(self):
         self.image, self.rect = util.rotate_img(self.copy_img, self.rect, self.angle)
         self.mask = pygame.mask.from_surface(self.image)
-
-    def orbiting_circle(self):
-        # TODO: Implementar escudo
-
-        self.circle_angle += 0.09
-        # self.circle_pos.x = self.rect.centerx + cos(self.circle_angle) * 100
-        # self.circle_pos.y = self.rect.centery + sin(self.circle_angle) * 100
-        self.circle_pos.x, self.circle_pos.y = util.move_in_orbit_motion(self.circle_angle, self.rect, 100)
-        self.circle = pygame.draw.circle(self.screen, (0, 255, 0),
-                                         self.circle_pos, 10)
 
     def event_checker(self, event):
         if event.type == KEYDOWN:
@@ -315,3 +301,42 @@ class AsteroidFrag(Asteroid):
                 self.speed.x = randint(-1, 2)
             if frag.speed.y == self.speed.y:
                 self.speed.y = randint(-1, 2)
+
+
+class PowerUp(pygame.sprite.Sprite):
+    def __init__(self, screen: pygame.Surface, pos: Vector2, player: pygame.sprite.Sprite):
+        super().__init__()
+
+        self.pos = pos
+
+        self.screen = screen
+        self.screen_rect = self.screen.get_rect()
+
+        self.player = player
+
+    def update(self):
+        self.rect = self.image.get_rect(center=self.pos.xy)
+
+        self.rect.clamp_ip(self.screen_rect)
+        self.screen.blit(self.image, self.rect)
+
+    def check_player_collide(self):
+        if self.rect.colliderect(self.player.rect):
+            self. # TODO: Arrumar um nome pra isso
+
+
+class Shield(PowerUp):
+    def __init__(self, screen, pos: Vector2, player):
+        super().__init__(screen, pos, player)
+
+        self.image = pygame.Surface((15, 15))
+        self.image.fill('gold1')
+        self.rect = self.image.get_rect(center=pos.xy)
+
+        self.circle_pos = vec(self.screen_rect.centerx, 200)
+        self.angle = radians(10)
+        self.center_point = self.player.rect.center
+
+    def move(self):
+        self.angle += 0.09
+        self.pos.x, self.pos.y = util.move_in_orbit_motion(self.angle, self.rect, 100)
