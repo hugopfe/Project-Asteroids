@@ -461,7 +461,7 @@ class Game(Main):
         if self.create_new_game:
             self.change_screen(Game)
 
-    def check_collisions(self):
+    def check_collisions(self):  # TODO: classe CollideChecker?
         sprites_coll = util.get_sprites_collided(self.projectile_group, self.player_group, self.powerup_group,
                                                  group2=self.asteroid_group)
 
