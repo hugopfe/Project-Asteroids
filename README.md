@@ -21,7 +21,7 @@ Você pode baixar o executável de cada versão na pasta _[dist](https://github.
 ### Versão 0.2
 
 - [x] Criar o icone
-- [x] Terminar o MainMenu → Criar a logo princípal
+- [x] Terminar o MainMenu → Criar a logo principal
 - [x] Terminar o PauseMenu → Inserir os botões
 - [x] Adicionar informações à tela (UI 0.1) → Nível atual, pontos atuais, e a quantidade de pontos do objetivo
 - [x] Tela de Game Over
