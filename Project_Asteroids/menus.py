@@ -374,7 +374,7 @@ class Game(Main):
         self.power_up = sprites.Shield(self.screen, self.power_up_pos, self.player)
 
         # Groups
-        # TODO: criar um grupo universal
+        self.all_sprites = pygame.sprite.Group()
         self.projectile_group = pygame.sprite.Group()
         self.asteroid_group = pygame.sprite.Group()
         self.powerup_group = pygame.sprite.Group(self.power_up)
@@ -446,6 +446,12 @@ class Game(Main):
             if event.key == K_LSHIFT:
                 self.power_up.change_form('dropped')
 
+        if event.type == MOUSEBUTTONDOWN:
+            import sprites
+            self.asteroid_group.add(sprites.Asteroid(pygame.math.Vector2(pygame.mouse.get_pos()), self.screen,
+                                                     self.player.pos, self.level_rules['asteroids'],
+                                                     self.set_score))
+
     def game_over(self):
         pygame.time.wait(1000)
         self.player.kill()
@@ -469,7 +475,8 @@ class Game(Main):
                     for spr in ast:
                         spr.break_up()
 
-        if pygame.sprite.groupcollide(self.player_group, self.powerup_group, False, False, pygame.sprite.collide_mask):
+        if pygame.sprite.groupcollide(self.player_group, self.powerup_group, False, False,
+                                      pygame.sprite.collide_mask):
             self.power_up.change_form('item')
 
     def level_up(self):
