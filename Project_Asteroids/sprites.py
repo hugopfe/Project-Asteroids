@@ -309,12 +309,27 @@ class PowerUp(pygame.sprite.Sprite):
 
         self.pos = pos
 
+        # these two attributes will be setted on get_dropped_form
+        self.image = None
+        self.rect = None
+
         self.screen = screen
         self.screen_rect = self.screen.get_rect()
 
         self.player = player
 
+        self.forms = {'dropped': self.get_dropped_form, 'item': self.get_item_form}
+        self.current_form = ''
+        self.change_form('dropped')
+
     def update(self):
+        """ This method must call the _super_update method """
+
+        pass
+
+    def _super_update(self):
+        """ Superclass's update """
+
         self.rect = self.image.get_rect(center=self.pos.xy)
 
         self.rect.clamp_ip(self.screen_rect)
@@ -322,21 +337,42 @@ class PowerUp(pygame.sprite.Sprite):
 
     def check_player_collide(self):
         if self.rect.colliderect(self.player.rect):
-            self. # TODO: Arrumar um nome pra isso
+            self.change_form('item')
+
+    def change_form(self, form: str):
+        self.current_form = form
+        self.forms[form]()
+
+    def get_dropped_form(self):
+        self.image = pygame.Surface((15, 15))
+        self.image.fill('gold1')
+        self.rect = self.image.get_rect(center=self.pos.xy)
+
+    def get_item_form(self):
+        """ This method is responsability of all subclasses """
+
+        pass
 
 
 class Shield(PowerUp):
     def __init__(self, screen, pos: Vector2, player):
         super().__init__(screen, pos, player)
 
-        self.image = pygame.Surface((15, 15))
-        self.image.fill('gold1')
-        self.rect = self.image.get_rect(center=pos.xy)
-
         self.circle_pos = vec(self.screen_rect.centerx, 200)
         self.angle = radians(10)
         self.center_point = self.player.rect.center
 
+    def update(self):
+        if self.current_form == 'item':
+            self.move()
+
+        self._super_update()
+
     def move(self):
         self.angle += 0.09
         self.pos.x, self.pos.y = util.move_in_orbit_motion(self.angle, self.rect, 100)
+
+    def get_item_form(self):
+        self.image = pygame.Surface((15, 15))
+        self.image.fill('green')
+        self.rect = self.image.get_rect(center=self.pos.xy)

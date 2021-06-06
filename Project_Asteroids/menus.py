@@ -465,6 +465,8 @@ class Game(Main):
                     for spr in ast:
                         spr.break_up()
 
+        self.power_up.check_player_collide()
+
     def level_up(self):
         self.level_index += 1
         try:
