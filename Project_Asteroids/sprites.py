@@ -319,9 +319,9 @@ class PowerUp(pygame.sprite.Sprite):
 
         self.player = player
 
-        self.forms = {'dropped': self.get_dropped_form, 'item': self.get_item_form}
-        self.current_form = ''
-        self.change_form('dropped')
+        self.states = {'dropped': self.get_dropped_state, 'item': self.get_item_state}
+        self.current_state = ''
+        self.change_state('dropped')
 
     def update(self):
         """ This method must call the _super_update method """
@@ -338,19 +338,19 @@ class PowerUp(pygame.sprite.Sprite):
 
     def check_player_collide(self):
         if self.rect.colliderect(self.player.rect):
-            self.change_form('item')
+            self.change_state('item')
 
-    def change_form(self, form: str):
-        self.current_form = form
-        self.forms[form]()
+    def change_state(self, form: str):
+        self.current_state = form
+        self.states[form]()
 
-    def get_dropped_form(self):
+    def get_dropped_state(self):
         self.image = pygame.Surface((15, 15))
         self.image.fill('gold1')
         self.rect = self.image.get_rect(center=self.pos.xy)
         self.mask = pygame.mask.from_surface(self.image)
 
-    def get_item_form(self):
+    def get_item_state(self):
         """ This method is responsability of all subclasses """
 
         pass
@@ -365,7 +365,7 @@ class Shield(PowerUp):
         self.center_point = self.player.rect.center
 
     def update(self):
-        if self.current_form == 'item':
+        if self.current_state == 'item':
             self.move()
 
         self._super_update()
@@ -374,7 +374,7 @@ class Shield(PowerUp):
         self.angle += 0.09
         self.pos.x, self.pos.y = util.move_in_orbit_motion(self.angle, self.player.rect, 100)
 
-    def get_item_form(self):
+    def get_item_state(self):
         self.image = pygame.image.load('images/sprites/shield_prototype.png').convert_alpha()
         self.rect = self.image.get_rect(center=self.pos.xy)
         self.mask = pygame.mask.from_surface(self.image)

@@ -249,8 +249,7 @@ def rotate_img(image: pygame.Surface, rect: pygame.Rect, angle: int) -> Tuple[py
     return copy_img, copy_rect
 
 
-def get_sprites_collided(*groups,
-                         group2: Group) -> List[Union[Dict, Dict]]:
+def get_sprites_collided(*groups, group2: Group) -> List[Union[Dict, Dict]]:
     """
     Search for any sprite collided in a group
 

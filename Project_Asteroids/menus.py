@@ -443,7 +443,7 @@ class Game(Main):
             if event.key == K_TAB:
                 self.power_up.pos = util.get_random_pos(self.screen_rect.w, self.screen_rect.h)
             if event.key == K_LSHIFT:
-                self.power_up.change_form('dropped')
+                self.power_up.change_state('dropped')
 
         if event.type == MOUSEBUTTONDOWN:
             import sprites
@@ -462,21 +462,26 @@ class Game(Main):
             self.change_screen(Game)
 
     def check_collisions(self):
-        sprites_coll = util.get_sprites_collided(self.projectile_group, self.player_group,
+        sprites_coll = util.get_sprites_collided(self.projectile_group, self.player_group, self.powerup_group,
                                                  group2=self.asteroid_group)
 
         for spr_dct in sprites_coll:
             for k, ast in spr_dct.items():
                 if k == self.player:  # player has collided with a asteroid
                     self.game_over()
-                else:  # a projectile has collided with a asteroid
+                elif k.__class__.__name__ == 'Projectile':  # a projectile has collided with a asteroid
                     k.kill()
+                    for spr in ast:
+                        spr.break_up()
+                elif k.__class__.__name__ == 'Shield' and \
+                        k.current_state == 'item':  # Shield has collided with a
+                    # asteroid
                     for spr in ast:
                         spr.break_up()
 
         if pygame.sprite.groupcollide(self.player_group, self.powerup_group, False, False,
                                       pygame.sprite.collide_mask):
-            self.power_up.change_form('item')
+            self.power_up.change_state('item')
 
     def level_up(self):
         self.level_index += 1
@@ -642,7 +647,7 @@ class Level1(Level):
         self.current_time += 1
 
         # asteroids
-        # self.spawn_asteroids()
+        self.spawn_asteroids()
 
         self.asteroid_group.update()
         self.asteroid_group.draw(self.screen)
