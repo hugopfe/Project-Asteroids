@@ -312,6 +312,7 @@ class PowerUp(pygame.sprite.Sprite):
         # these two attributes will be setted on get_dropped_form
         self.image = None
         self.rect = None
+        self.mask = None
 
         self.screen = screen
         self.screen_rect = self.screen.get_rect()
@@ -347,6 +348,7 @@ class PowerUp(pygame.sprite.Sprite):
         self.image = pygame.Surface((15, 15))
         self.image.fill('gold1')
         self.rect = self.image.get_rect(center=self.pos.xy)
+        self.mask = pygame.mask.from_surface(self.image)
 
     def get_item_form(self):
         """ This method is responsability of all subclasses """
@@ -370,9 +372,9 @@ class Shield(PowerUp):
 
     def move(self):
         self.angle += 0.09
-        self.pos.x, self.pos.y = util.move_in_orbit_motion(self.angle, self.rect, 100)
+        self.pos.x, self.pos.y = util.move_in_orbit_motion(self.angle, self.player.rect, 100)
 
     def get_item_form(self):
-        self.image = pygame.Surface((15, 15))
-        self.image.fill('green')
+        self.image = pygame.image.load('images/sprites/shield_prototype.png').convert_alpha()
         self.rect = self.image.get_rect(center=self.pos.xy)
+        self.mask = pygame.mask.from_surface(self.image)

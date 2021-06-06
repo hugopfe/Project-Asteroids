@@ -441,6 +441,8 @@ class Game(Main):
                 self.change_screen(PauseScreen, self)
             if event.key == K_TAB:
                 self.power_up.pos = util.get_random_pos(self.screen_rect.w, self.screen_rect.h)
+            if event.key == K_LSHIFT:
+                self.power_up.change_form('dropped')
 
     def game_over(self):
         pygame.time.wait(1000)
