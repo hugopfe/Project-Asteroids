@@ -367,14 +367,13 @@ class Game(Main):
 
         # Player
         self.player = sprites.Player(self.screen)
-        self.player_group = pygame.sprite.GroupSingle(self.player)
 
         # Power_Up
         self.power_up_pos = util.get_random_pos(self.screen_rect.w, self.screen_rect.h)
         self.power_up = sprites.Shield(self.screen, self.power_up_pos, self.player)
 
         # Groups
-        self.all_sprites = pygame.sprite.Group()
+        self.player_group = pygame.sprite.GroupSingle(self.player)
         self.projectile_group = pygame.sprite.Group()
         self.asteroid_group = pygame.sprite.Group()
         self.powerup_group = pygame.sprite.Group(self.power_up)
@@ -500,7 +499,7 @@ class Game(Main):
                     self.__setattr__(str_attr, info)
 
     def verify_objective_status(self):
-        if self.current_level.objective_status():
+        if self.current_level.objective_reached: #objective_status() # TODO: Verificar se vai dar bosta
             self.level_up()
 
     def set_score(self, score: int):
@@ -535,10 +534,6 @@ class Level:
 
         # player
         self.player = game.player
-        self.player_group = game.player_group
-
-        # projectile
-        self.projectile_group = game.projectile_group
 
         # asteroid
         self.asteroid_group = pygame.sprite.Group()
@@ -583,9 +578,8 @@ class Level:
                 else:
                     continue
 
-            self.asteroid_group.add(sprites.Asteroid(position, self.screen,
-                                                     self.player.pos, self.level_rules['asteroids'],
-                                                     self.set_score))
+            self.asteroid_group.add(sprites.Asteroid(position, self.screen, self.player.pos,
+                                                     self.level_rules['asteroids'], self.set_score))
 
         keep_asteroids_on_screen()
 

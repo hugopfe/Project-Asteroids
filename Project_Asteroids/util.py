@@ -249,19 +249,20 @@ def rotate_img(image: pygame.Surface, rect: pygame.Rect, angle: int) -> Tuple[py
     return copy_img, copy_rect
 
 
-def get_sprites_collided(group) -> List[Union[Dict, Dict]]:
+def get_sprites_collided(*groups,
+                         group2: Group) -> List[Union[Dict, Dict]]:
     """
-    Searches any sprite collided in a group
+    Search for any sprite collided in a group
 
     :returns: List of two dictionary. Dictionarys has sprites collided.
     """
 
-    spr_coll: List = list()
+    sprites_coll: List = list()
 
     for group in groups:
-        spr_coll.append(pygame.sprite.groupcollide(group, group2, False, False, pygame.sprite.collide_mask))
+        sprites_coll.append(pygame.sprite.groupcollide(group, group2, False, False, pygame.sprite.collide_mask))
 
-    return spr_coll
+    return sprites_coll
 
 
 def decode_b64_img(img_code: str) -> io.BytesIO:
