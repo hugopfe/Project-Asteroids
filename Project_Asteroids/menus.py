@@ -374,8 +374,10 @@ class Game(Main):
         self.power_up = sprites.Shield(self.screen, self.power_up_pos, self.player)
 
         # Groups
+        # TODO: criar um grupo universal
         self.projectile_group = pygame.sprite.Group()
         self.asteroid_group = pygame.sprite.Group()
+        self.powerup_group = pygame.sprite.Group(self.power_up)
 
         self.player.projectile_group = self.projectile_group
 
@@ -467,7 +469,8 @@ class Game(Main):
                     for spr in ast:
                         spr.break_up()
 
-        self.power_up.check_player_collide()
+        if pygame.sprite.groupcollide(self.player_group, self.powerup_group, False, False, pygame.sprite.collide_mask):
+            self.power_up.change_form('item')
 
     def level_up(self):
         self.level_index += 1
