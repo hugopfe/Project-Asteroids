@@ -356,7 +356,7 @@ class PowerUp(pygame.sprite.Sprite):
         pass
 
 
-class Shield(PowerUp):
+class Shield(PowerUp):  # TODO: Fazer os ajustes necessários
     def __init__(self, screen, pos: Vector2, player):
         super().__init__(screen, pos, player)
 
