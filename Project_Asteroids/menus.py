@@ -462,22 +462,32 @@ class Game(Main):
             self.change_screen(Game)
 
     def check_collisions(self):  # TODO: classe CollideChecker?
+        def break_up_all_asteroids(*asteroids_spr):
+            for asteroid in asteroids_spr:
+                asteroid.break_up()
+
         sprites_coll = util.get_sprites_collided(self.projectile_group, self.player_group, self.powerup_group,
                                                  group2=self.asteroid_group)
 
         for spr_dct in sprites_coll:
             for k, ast in spr_dct.items():
-                if k == self.player:  # player has collided with a asteroid
-                    self.game_over()
-                elif k.__class__.__name__ == 'Projectile':  # a projectile has collided with a asteroid
+                if k == self.player:
+                    # player has collided with a asteroid
+                    # self.game_over()
+                    pass
+                elif k.__class__.__name__ == 'Projectile':
+                    # a projectile has collided with a asteroid
+
                     k.kill()
-                    for spr in ast:
-                        spr.break_up()
-                elif k.__class__.__name__ == 'Shield' and \
-                        k.current_state == 'item':  # Shield has collided with a
-                    # asteroid
-                    for spr in ast:
-                        spr.break_up()
+                    break_up_all_asteroids(*ast)
+
+                elif k.__class__.__name__ == 'Shield' and k.current_state == 'item':
+                    # Shield has collided with an asteroid
+
+                    shield_cooldown = k.cooldown()
+                    print(k.cooldown_count)
+                    if shield_cooldown:
+                        break_up_all_asteroids(*ast)
 
         if pygame.sprite.groupcollide(self.player_group, self.powerup_group, False, False,
                                       pygame.sprite.collide_mask):
@@ -673,8 +683,6 @@ class Level2(Level):
 
         self.current_reach = {'score': self.player.score}
         self.level_objectives = {'score': 10 * 14}
-
-        self.spawn_probability = 0.03
 
     def level_loop(self):
         self.current_time += 1

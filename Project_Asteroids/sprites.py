@@ -333,7 +333,8 @@ class PowerUp(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center=self.pos.xy)
 
-        self._sub_update()
+        if self.current_state == 'item':
+            self._sub_update()
 
         self.rect.clamp_ip(self.screen_rect)
         self.screen.blit(self.image, self.rect)
@@ -366,9 +367,14 @@ class Shield(PowerUp):  # TODO: Fazer os ajustes necessários
         self.angle = radians(10)
         self.center_point = self.player.rect.center
 
+        self.COOLDOWN_TIME = int(0.2 * FPS)
+        self.cooldown_count = 0
+        self.start_cooldown_count = False
+
     def _sub_update(self):
-        if self.current_state == 'item':
-            self.move()
+        self.move()
+        if self.start_cooldown_count:
+            self.cooldown_count = max(self.cooldown_count-1, 0)
 
     def move(self):
         self.angle += 0.09
@@ -378,3 +384,15 @@ class Shield(PowerUp):  # TODO: Fazer os ajustes necessários
         self.image = pygame.image.load('images/sprites/shield_prototype.png').convert_alpha()
         self.rect = self.image.get_rect(center=self.pos.xy)
         self.mask = pygame.mask.from_surface(self.image)
+
+    def cooldown(self):
+        """ Returns True if was passed some time from the last collision """
+
+        self.start_cooldown_count = True
+
+        if self.cooldown_count == 0:
+            self.cooldown_count = self.COOLDOWN_TIME
+            self.start_cooldown_count = False
+            return True
+        else:
+            return False
