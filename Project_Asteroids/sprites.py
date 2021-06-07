@@ -323,15 +323,17 @@ class PowerUp(pygame.sprite.Sprite):
         self.current_state = ''
         self.change_state('dropped')
 
-    def update(self):
-        """ This method must call the _super_update method """
+    def _sub_update(self):
+        """ Method to all Subclasses """
 
         pass
 
-    def _super_update(self):
+    def update(self):
         """ Superclass's update """
 
         self.rect = self.image.get_rect(center=self.pos.xy)
+
+        self._sub_update()
 
         self.rect.clamp_ip(self.screen_rect)
         self.screen.blit(self.image, self.rect)
@@ -364,11 +366,9 @@ class Shield(PowerUp):  # TODO: Fazer os ajustes necessários
         self.angle = radians(10)
         self.center_point = self.player.rect.center
 
-    def update(self):
+    def _sub_update(self):
         if self.current_state == 'item':
             self.move()
-
-        self._super_update()
 
     def move(self):
         self.angle += 0.09
