@@ -504,7 +504,7 @@ class Game(Main):
                     self.__setattr__(str_attr, info)
 
     def verify_objective_status(self):
-        if self.current_level.objective_reached: #objective_status() # TODO: Verificar se vai dar bosta
+        if self.current_level.objective_reached:
             self.level_up()
 
     def set_score(self, score: int):
@@ -596,12 +596,6 @@ class Level:
     def check_level_objective(self):
         pass
 
-    def objective_status(self):
-        if self.objective_reached:
-            return True
-        else:
-            return False
-
     def _get_level_text(self):
         self.level_text = 'Nível ' + self.__class__.__name__[-1]
 
@@ -647,7 +641,7 @@ class Level1(Level):
         self.current_time += 1
 
         # asteroids
-        self.spawn_asteroids()
+        # self.spawn_asteroids()
 
         self.asteroid_group.update()
         self.asteroid_group.draw(self.screen)
