@@ -3,24 +3,15 @@ from images import *
 from math import cos, sin, radians
 from random import randint
 
-import util
-import menus
+from util import *
+from constants import *
 
 import pygame
 from pygame.locals import *
 from pygame.math import Vector2
 
 
-vec = Vector2
-
-PLAYER_SPEED = menus.Game.GAME_SPEED
-FRICTION = menus.Game.FRICTION
-FPS = menus.Main.FPS
-
 frags = [ast_frag1, ast_frag2, ast_frag3]
-
-# TODO: procurar por qualquer possível criação de observer
-# TODO: procurar por qualquer possível uso de decoradores
 
 
 class Player(pygame.sprite.Sprite):
@@ -30,15 +21,15 @@ class Player(pygame.sprite.Sprite):
         self.screen: pygame.surface.Surface = screen
         self.screen_rect = self.screen.get_rect()
 
-        self.image = pygame.image.load(util.decode_b64_img(ship)).convert_alpha()
+        self.image = pygame.image.load(decode_b64_img(ship)).convert_alpha()
         self.image = pygame.transform.scale(self.image, (50, 40))
         self.mask = pygame.mask.from_surface(self.image)
         self.copy_img = self.image.copy()
         self.rect = self.image.get_rect(center=screen.get_rect().center)
-        self.pos = vec(self.rect.center)
+        self.pos = Vector2(self.rect.center)
 
         self.angle = 0
-        self.vel = vec(0, 0)
+        self.vel = Vector2(0, 0)
         self.acc = 1
 
         self.score = 0
@@ -59,7 +50,7 @@ class Player(pygame.sprite.Sprite):
         self.projectile_rules = None
 
     def update(self):
-        self.pos = vec(self.rect.center)
+        self.pos = Vector2(self.rect.center)
         self.keys_pressed = pygame.key.get_pressed()
 
         self.handle_keydown()
@@ -122,7 +113,7 @@ class Player(pygame.sprite.Sprite):
             self.vel.y = 0
 
     def rotate(self):
-        self.image, self.rect = util.rotate_img(self.copy_img, self.rect, self.angle)
+        self.image, self.rect = rotate_img(self.copy_img, self.rect, self.angle)
         self.mask = pygame.mask.from_surface(self.image)
 
     def event_checker(self, event):
@@ -199,20 +190,20 @@ class Asteroid(pygame.sprite.Sprite):
         self.rotation = randint(-10, 10)
         self.angle = 0
 
-        self.image = pygame.image.load(util.decode_b64_img(asteroid)).convert_alpha()
+        self.image = pygame.image.load(decode_b64_img(asteroid)).convert_alpha()
         self.image = pygame.transform.scale(self.image, (70, 60))
         self.copy_img = self.image.copy()
         self.mask = pygame.mask.from_surface(self.image)
 
         self.rect = self.image.get_rect(center=(pos.x, pos.y))
-        self.pos = vec(self.rect.center)
+        self.pos = Vector2(self.rect.center)
 
-        self.center_point = vec(pos.x, pos.y)
+        self.center_point = Vector2(pos.x, pos.y)
         self.target_pos = target_pos
         self.target_dist = self.center_point.distance_to(self.target_pos)
         self.orbit_rect = None
 
-        self.speed = util.get_random_speed(self.rules['min_speed'], self.rules['max_speed'])
+        self.speed = get_random_speed(self.rules['min_speed'], self.rules['max_speed'])
 
         self.screen_passed = {0}
         self.time = 0
@@ -249,7 +240,7 @@ class Asteroid(pygame.sprite.Sprite):
 
     def rotate(self):
         self.current_rotation += self.rotation
-        self.image, self.rect = util.rotate_img(self.copy_img, self.rect, self.current_rotation)
+        self.image, self.rect = rotate_img(self.copy_img, self.rect, self.current_rotation)
         self.mask = pygame.mask.from_surface(self.image)
 
     def get_orbit_rect(self):
@@ -260,7 +251,7 @@ class Asteroid(pygame.sprite.Sprite):
         self.angle += radians(sum(self.speed.xy))
         self.rect.centerx = self.center_point.x + cos(self.angle) * self.target_dist
         self.rect.centery = self.center_point.y + sin(self.angle) * self.target_dist
-        self.pos = vec(self.rect.center)
+        self.pos = Vector2(self.rect.center)
 
 
 class AsteroidFrag(Asteroid):
@@ -272,13 +263,13 @@ class AsteroidFrag(Asteroid):
 
         self.all_frags.append(self)
 
-        self.image = pygame.image.load(util.decode_b64_img(frags[img_index])).convert_alpha()
+        self.image = pygame.image.load(decode_b64_img(frags[img_index])).convert_alpha()
         self.copy_img = self.image.copy()
         self.mask = pygame.mask.from_surface(self.image)
 
         self.rect = self.image.get_rect(center=(pos.x, pos.y))
         self.rotation = randint(-5, 5)
-        self.speed = util.get_random_speed(1, 2)
+        self.speed = get_random_speed(1, 2)
 
         self.score_value = 3
 
@@ -301,98 +292,3 @@ class AsteroidFrag(Asteroid):
                 self.speed.x = randint(-1, 2)
             if frag.speed.y == self.speed.y:
                 self.speed.y = randint(-1, 2)
-
-
-class PowerUp(pygame.sprite.Sprite):
-    def __init__(self, screen: pygame.Surface, pos: Vector2, player: pygame.sprite.Sprite):
-        super().__init__()
-
-        self.pos = pos
-
-        # these two attributes will be setted on get_dropped_form
-        self.image = None
-        self.rect = None
-        self.mask = None
-
-        self.screen = screen
-        self.screen_rect = self.screen.get_rect()
-
-        self.player = player
-
-        self.states = {'dropped': self.get_dropped_state, 'item': self.get_item_state}
-        self.current_state = ''
-        self.change_state('dropped')
-
-    def _sub_update(self):
-        """ Method to all Subclasses """
-
-        pass
-
-    def update(self):
-        """ Superclass's update """
-
-        self.rect = self.image.get_rect(center=self.pos.xy)
-
-        if self.current_state == 'item':
-            self._sub_update()
-
-        self.rect.clamp_ip(self.screen_rect)
-        self.screen.blit(self.image, self.rect)
-
-    def check_player_collide(self):
-        if self.rect.colliderect(self.player.rect):
-            self.change_state('item')
-
-    def change_state(self, form: str):
-        self.current_state = form
-        self.states[form]()
-
-    def get_dropped_state(self):
-        self.image = pygame.Surface((15, 15))
-        self.image.fill('gold1')
-        self.rect = self.image.get_rect(center=self.pos.xy)
-        self.mask = pygame.mask.from_surface(self.image)
-
-    def get_item_state(self):
-        """ This method is responsability of all subclasses """
-
-        pass
-
-
-class Shield(PowerUp):  # TODO: Fazer os ajustes necessários
-    def __init__(self, screen, pos: Vector2, player):
-        super().__init__(screen, pos, player)
-
-        self.circle_pos = vec(self.screen_rect.centerx, 200)
-        self.angle = radians(10)
-        self.center_point = self.player.rect.center
-
-        self.COOLDOWN_TIME = int(0.2 * FPS)
-        self.cooldown_count = 0
-        self.start_cooldown_count = False
-
-    def _sub_update(self):
-        self.move()
-        if self.start_cooldown_count:
-            self.cooldown_count = max(self.cooldown_count-1, 0)
-
-    def move(self):
-        self.angle += 0.09
-        self.pos.x, self.pos.y = util.move_in_orbit_motion(self.angle, self.player.rect, 100)
-
-    def get_item_state(self):
-        self.image = pygame.image.load('images/sprites/shield_prototype.png').convert_alpha()
-        self.rect = self.image.get_rect(center=self.pos.xy)
-        self.mask = pygame.mask.from_surface(self.image)
-
-    def cooldown(self):
-        """ Returns True if was passed some time from the last collision """
-
-        self.start_cooldown_count = True
-
-        if self.cooldown_count == 0:
-            self.cooldown_count = self.COOLDOWN_TIME
-            self.start_cooldown_count = False
-            return True
-        else:
-            return False
