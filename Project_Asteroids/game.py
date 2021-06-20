@@ -91,7 +91,7 @@ class Game(Main):
         pygame.display.update()
 
     def check_events(self, event):
-        self.player.event_checker(event)
+        self.player.evet_handler(event)
 
         if event.type == KEYDOWN:
             if event.key == K_p:
