@@ -32,6 +32,7 @@ class PowerUp(pygame.sprite.Sprite):
     def update(self):
         """ Superclass's update """
 
+        self.states[self.current_state]()
         self.rect = self.image.get_rect(center=self.pos.xy)
 
         if self.current_state == 'item':
@@ -46,7 +47,6 @@ class PowerUp(pygame.sprite.Sprite):
 
     def change_state(self, form: str):
         self.current_state = form
-        self.states[form]()
 
     def get_dropped_state(self):
         self.image = pygame.Surface((15, 15))
@@ -68,15 +68,8 @@ class Shield(PowerUp):
         self.angle = radians(10)
         self.center_point = self.player.rect.center
 
-        self.COOLDOWN_TIME = int(0.2 * FPS)
-        self.cooldown_count = 0
-        self.start_cooldown_count = False
-
     def _sub_update(self):
         self.move()
-
-        if self.start_cooldown_count:
-            self.cooldown_count = max(self.cooldown_count-1, 0)
 
     def move(self):
         self.angle += 0.09
@@ -87,17 +80,15 @@ class Shield(PowerUp):
         self.rect = self.image.get_rect(center=self.pos.xy)
         self.mask = pygame.mask.from_surface(self.image)
 
-    def cooldown(self):
-        """ Returns True if was passed some time from the last collision """
+    @staticmethod
+    def asteroids_collision_handler(*asteroids):
+        """ Returns the asteroid that will be destroyed
+        If this method is called with no one asteroid, it will return None """
 
-        self.start_cooldown_count = True
-
-        if self.cooldown_count == 0:
-            self.cooldown_count = self.COOLDOWN_TIME
-            self.start_cooldown_count = False
-            return True
-        else:
-            return False
+        try:
+            return asteroids[0]  # TODO: Destruir apenas um framento por vez
+        except IndexError:
+            return None
 
 
 __all__ = ['Shield']

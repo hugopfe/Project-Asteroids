@@ -69,7 +69,7 @@ def get_sprites_collided(*groups, group2: Group) -> List[Union[Dict, Dict]]:
     """
     Search for any sprite collided in a group
 
-    :returns: List of two dictionary. Dictionarys has sprites collided.
+    :returns: List of dictionaries. Dictionarys has sprites collided.
     """
 
     sprites_coll: List = list()

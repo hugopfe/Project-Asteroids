@@ -97,10 +97,14 @@ class Game(Main):
             if event.key == K_p:
                 self.change_screen(PauseScreen, self)
             if event.key == K_TAB:
-                self.power_up.pos = get_random_pos(self.screen_rect.w, self.screen_rect.h)
+                self.power_up.change_state('item')
             if event.key == K_LSHIFT:
                 self.power_up.change_state('dropped')
-
+            if event.key == K_a:
+                import sprites
+                self.asteroid_group.add(sprites.Asteroid(pygame.math.Vector2((200, 200)), self.screen,
+                                                         self.player.pos, self.level_rules['asteroids'],
+                                                         self.set_score))
         if event.type == MOUSEBUTTONDOWN:
             import sprites
             self.asteroid_group.add(sprites.Asteroid(pygame.math.Vector2(pygame.mouse.get_pos()), self.screen,
@@ -125,25 +129,27 @@ class Game(Main):
         sprites_coll = get_sprites_collided(self.projectile_group, self.player_group, self.powerup_group,
                                             group2=self.asteroid_group)
 
-        for spr_dct in sprites_coll:
-            for k, ast in spr_dct.items():
-                if k == self.player:
-                    """ player has collided with a Asteroid """
+        for spr_dct in sprites_coll:  # TODO: ao invés de verificar o nome das classes, chamar um método de morte
+            for spr, ast in spr_dct.items():
+                if spr == self.player:
+                    """ Player has collided with a Asteroid """
                     # self.game_over()
                     pass
-                elif get_class_name(k) == 'Projectile':
+                elif get_class_name(spr) == 'Projectile':
                     """ a projectile has collided with a Asteroid """
 
-                    k.kill()
+                    spr.kill()
                     break_up_all_asteroids(*ast)
 
-                elif get_class_name(k) == 'Shield' and k.current_state == 'item':
+                elif get_class_name(spr) == 'Shield' and spr.current_state == 'item':
                     """ Shield has collided with an Asteroid """
 
-                    shield_cooldown = k.cooldown()
-                    print(k.cooldown_count)
-                    if shield_cooldown:
-                        break_up_all_asteroids(*ast)
+                    try:
+                        print()
+                        print(ast)
+                        break_up_all_asteroids(ast[0])
+                    except IndexError:
+                        pass
 
         if pygame.sprite.groupcollide(self.player_group, self.powerup_group, False, False,
                                       pygame.sprite.collide_mask):
