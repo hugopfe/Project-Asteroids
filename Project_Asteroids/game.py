@@ -123,22 +123,22 @@ class Game(Main):
                 asteroid.break_up()
 
         sprites_coll = get_sprites_collided(self.projectile_group, self.player_group, self.powerup_group,
-                                                 group2=self.asteroid_group)
+                                            group2=self.asteroid_group)
 
         for spr_dct in sprites_coll:
             for k, ast in spr_dct.items():
                 if k == self.player:
-                    # player has collided with a asteroid
+                    """ player has collided with a Asteroid """
                     # self.game_over()
                     pass
-                elif k.__class__.__name__ == 'Projectile':
-                    # a projectile has collided with a asteroid
+                elif get_class_name(k) == 'Projectile':
+                    """ a projectile has collided with a Asteroid """
 
                     k.kill()
                     break_up_all_asteroids(*ast)
 
-                elif k.__class__.__name__ == 'Shield' and k.current_state == 'item':
-                    # Shield has collided with an asteroid
+                elif get_class_name(k) == 'Shield' and k.current_state == 'item':
+                    """ Shield has collided with an Asteroid """
 
                     shield_cooldown = k.cooldown()
                     print(k.cooldown_count)

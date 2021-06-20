@@ -107,6 +107,10 @@ def move_in_orbit_motion(angle: float, center_pos: pygame.Rect, radius: int) -> 
             center_pos.centery + sin(angle) * radius)
 
 
+def get_class_name(cls):
+    return cls.__class__.__name__
+
+
 __all__ = [
     'get_random_pos',
     'get_random_speed',
@@ -114,5 +118,6 @@ __all__ = [
     'get_sprites_collided',
     'decode_b64_img',
     'draw_line_center_of',
-    'move_in_orbit_motion'
+    'move_in_orbit_motion',
+    'get_class_name'
 ]

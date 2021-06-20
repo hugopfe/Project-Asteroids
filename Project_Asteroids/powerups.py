@@ -60,7 +60,7 @@ class PowerUp(pygame.sprite.Sprite):
         pass
 
 
-class Shield(PowerUp):  # TODO: ajustar o cooldown
+class Shield(PowerUp):
     def __init__(self, screen, pos: pygame.math.Vector2, player):
         super().__init__(screen, pos, player)
 
@@ -74,6 +74,7 @@ class Shield(PowerUp):  # TODO: ajustar o cooldown
 
     def _sub_update(self):
         self.move()
+
         if self.start_cooldown_count:
             self.cooldown_count = max(self.cooldown_count-1, 0)
 
