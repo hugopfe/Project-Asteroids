@@ -145,8 +145,8 @@ class Game(Main):
                     """ Shield has collided with an Asteroid """
 
                     try:
-                        print()
-                        print(ast)
+                        # print()
+                        # print(ast)
                         break_up_all_asteroids(ast[0])
                     except IndexError:
                         pass

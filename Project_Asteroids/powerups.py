@@ -1,6 +1,5 @@
 import pygame
 from util import *
-from constants import FPS
 from math import radians
 
 
@@ -68,8 +67,16 @@ class Shield(PowerUp):
         self.angle = radians(10)
         self.center_point = self.player.rect.center
 
+        self.cooldown_timer = Timer(0, 1, 10)
+
     def _sub_update(self):
         self.move()
+
+        # Cooldown
+        self.cooldown_timer.count()
+        print(self.cooldown_timer)
+        # if self.cooldown_timer.time_is_over:
+
 
     def move(self):
         self.angle += 0.09
@@ -80,15 +87,7 @@ class Shield(PowerUp):
         self.rect = self.image.get_rect(center=self.pos.xy)
         self.mask = pygame.mask.from_surface(self.image)
 
-    @staticmethod
-    def asteroids_collision_handler(*asteroids):
-        """ Returns the asteroid that will be destroyed
-        If this method is called with no one asteroid, it will return None """
-
-        try:
-            return asteroids[0]  # TODO: Destruir apenas um framento por vez
-        except IndexError:
-            return None
+    # def collide_cooldown(self):
 
 
 __all__ = ['Shield']

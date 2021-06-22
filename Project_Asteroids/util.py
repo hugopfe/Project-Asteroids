@@ -10,7 +10,24 @@ from typing import Tuple, Dict, List, Union
 from random import randrange, choice, uniform, randint
 
 
-# Functions
+class Timer:
+    def __init__(self, initial_time, interval, end_time):
+        """ Class for timing """
+
+        self.initial_time = initial_time
+        self.interval = interval
+        self.end_time = end_time
+        self.current_time = self.initial_time
+        self.time_is_over = False
+
+    def count(self):
+        self.current_time += self.interval
+
+        if self.current_time >= self.end_time:
+            self.time_is_over = True
+
+    def __str__(self):
+        return self.current_time
 
 
 def get_random_pos(x: Union[int, Tuple[int, int]], y: Union[int, Tuple[int, int]]) -> Vector2:
@@ -112,6 +129,7 @@ def get_class_name(cls):
 
 
 __all__ = [
+    'Timer',
     'get_random_pos',
     'get_random_speed',
     'rotate_img',
