@@ -90,7 +90,9 @@ class Shield(PowerUp):
     def collide_cooldown(self):
         """ Returns True if cooldown timer is over """
 
-        self.cooldown_timer.initial_time = 0  # TODO: ajustar o cooldown
+        self.cooldown_timer.initial_time = 0
+        # TODO: criar função para verificar se o primeiro asteroid que colidiu com o shiled está colidido com outros
+        #  asteroids
         self.cooldown_timer.start()
 
         if self.cooldown_timer.time_is_over:
