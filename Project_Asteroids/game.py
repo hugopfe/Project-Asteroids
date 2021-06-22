@@ -121,7 +121,7 @@ class Game(Main):
         if self.create_new_game:
             self.change_screen(Game)
 
-    def check_collisions(self):  # TODO: classe CollideChecker?
+    def check_collisions(self):  # TODO: classe CollideHandler?
         def break_up_all_asteroids(*asteroids_spr):
             for asteroid in asteroids_spr:
                 asteroid.break_up()
@@ -138,16 +138,21 @@ class Game(Main):
                 elif get_class_name(spr) == 'Projectile':
                     """ a projectile has collided with a Asteroid """
 
+                    from sprites import Projectile
+
+                    spr: Projectile
+
                     spr.kill()
                     break_up_all_asteroids(*ast)
 
                 elif get_class_name(spr) == 'Shield' and spr.current_state == 'item':
                     """ Shield has collided with an Asteroid """
 
+                    spr: Shield
+
                     try:
-                        # print()
-                        # print(ast)
-                        break_up_all_asteroids(ast[0])
+                        if spr.collide_cooldown():
+                            break_up_all_asteroids(ast[0])
                     except IndexError:
                         pass
 

@@ -11,23 +11,35 @@ from random import randrange, choice, uniform, randint
 
 
 class Timer:
-    def __init__(self, initial_time, interval, end_time):
+    def __init__(self, initial_time, end_time, interval):
         """ Class for timing """
 
         self.initial_time = initial_time
-        self.interval = interval
         self.end_time = end_time
+        self.interval = interval
         self.current_time = self.initial_time
         self.time_is_over = False
+        self.start_count = False
 
     def count(self):
-        self.current_time += self.interval
+        if self.start_count:
+            self.current_time += self.interval
 
-        if self.current_time >= self.end_time:
-            self.time_is_over = True
+            if self.current_time >= self.end_time:
+                self.time_is_over = True
+                self.stop()
+        else:
+            pass
+
+    def start(self):
+        self.start_count = True
+
+    def stop(self):
+        self.start_count = False
+        self.current_time = self.initial_time
 
     def __str__(self):
-        return self.current_time
+        return f'Current time: {self.current_time}'
 
 
 def get_random_pos(x: Union[int, Tuple[int, int]], y: Union[int, Tuple[int, int]]) -> Vector2:

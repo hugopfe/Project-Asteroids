@@ -67,27 +67,37 @@ class Shield(PowerUp):
         self.angle = radians(10)
         self.center_point = self.player.rect.center
 
-        self.cooldown_timer = Timer(0, 1, 10)
+        self.cooldown_initial = 10
+        self.cooldown_end = 10
+        self.cooldown_pass = 1
+
+        self.cooldown_timer = Timer(self.cooldown_initial, self.cooldown_end, self.cooldown_pass)
 
     def _sub_update(self):
         self.move()
-
-        # Cooldown
         self.cooldown_timer.count()
         print(self.cooldown_timer)
-        # if self.cooldown_timer.time_is_over:
-
 
     def move(self):
         self.angle += 0.09
         self.pos.x, self.pos.y = move_in_orbit_motion(self.angle, self.player.rect, 100)
 
-    def get_item_state(self):
+    def get_item_state(self):  # TODO: codificar em base64
         self.image = pygame.image.load('images/sprites/shield_prototype.png').convert_alpha()
         self.rect = self.image.get_rect(center=self.pos.xy)
         self.mask = pygame.mask.from_surface(self.image)
 
-    # def collide_cooldown(self):
+    def collide_cooldown(self):
+        """ Returns True if cooldown timer is over """
+
+        self.cooldown_timer.initial_time = 0  # TODO: ajustar o cooldown
+        self.cooldown_timer.start()
+
+        if self.cooldown_timer.time_is_over:
+            self.cooldown_timer.initial_time = self.cooldown_initial
+            return True
+        else:
+            return False
 
 
 __all__ = ['Shield']
