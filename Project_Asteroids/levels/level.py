@@ -135,7 +135,7 @@ class Level1(Level):
         self.current_time += 1
 
         # asteroids
-        # self.spawn_asteroids()
+        self.spawn_asteroids()
 
         self.asteroid_group.update()
         self.asteroid_group.draw(self.screen)

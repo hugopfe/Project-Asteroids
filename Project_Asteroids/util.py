@@ -140,6 +140,15 @@ def get_class_name(cls):
     return cls.__class__.__name__
 
 
+def verify_asteroids_interceptions(asteroid):
+    """ Get an Asteroid and verify if there is an intersection with another one """
+
+    asteroids_frags = list(asteroid.all_frags[i].rect for i in range(1, len(asteroid.all_frags)))
+    asteroids_collided = asteroid.rect.collidelistall(asteroids_frags)
+
+    return asteroids_collided
+
+
 __all__ = [
     'Timer',
     'get_random_pos',
@@ -149,5 +158,6 @@ __all__ = [
     'decode_b64_img',
     'draw_line_center_of',
     'move_in_orbit_motion',
-    'get_class_name'
+    'get_class_name',
+    'verify_asteroids_interceptions'
 ]

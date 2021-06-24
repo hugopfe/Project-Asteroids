@@ -120,12 +120,13 @@ class AsteroidFrag(Asteroid):
 
     def break_up(self):
         self.observers[0](self.score_value)
+        self.all_frags.remove(self)
         self.kill()
 
     def get_orbit_rect(self):
         pass
 
-    def spread_frags(self):
+    def spread_frags(self):  # TODO: verificar se isso é necessário
         for frag in self.all_frags:
             if frag.speed.x == self.speed.x:
                 self.speed.x = randint(-1, 2)

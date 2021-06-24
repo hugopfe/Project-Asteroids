@@ -82,7 +82,7 @@ class Game(Main):
         self.check_collisions()
 
         self.current_level.level_loop()
-        self.verify_objective_status()
+        # self.verify_objective_status()
 
         # fonts
         self.fonts_group.render_fonts()
@@ -122,8 +122,8 @@ class Game(Main):
             self.change_screen(Game)
 
     def check_collisions(self):  # TODO: classe CollideHandler?
-        def break_up_all_asteroids(*asteroids_spr):
-            for asteroid in asteroids_spr:
+        def break_up_all_asteroids(asteroids_list):
+            for asteroid in asteroids_list:
                 asteroid.break_up()
 
         sprites_coll = get_sprites_collided(self.projectile_group, self.player_group, self.powerup_group,
@@ -143,7 +143,7 @@ class Game(Main):
                     spr: Projectile
 
                     spr.kill()
-                    break_up_all_asteroids(*ast)
+                    break_up_all_asteroids(ast)
 
                 elif get_class_name(spr) == 'Shield' and spr.current_state == 'item':
                     """ Shield has collided with an Asteroid """
@@ -151,8 +151,14 @@ class Game(Main):
                     spr: Shield
 
                     try:
+                        from sprites import AsteroidFrag
+
+                        if isinstance(ast[0], AsteroidFrag):
+                            # TODO: verificar os fragmanetos dos Asteroids separadamente
+                            print(verify_asteroids_interceptions(ast[0]))
+
                         if spr.collide_cooldown():
-                            break_up_all_asteroids(ast[0])
+                            break_up_all_asteroids(ast)
                     except IndexError:
                         pass
 

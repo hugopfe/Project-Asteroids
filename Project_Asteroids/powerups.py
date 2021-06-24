@@ -76,7 +76,7 @@ class Shield(PowerUp):
     def _sub_update(self):
         self.move()
         self.cooldown_timer.count()
-        print(self.cooldown_timer)
+        # print(self.cooldown_timer)
 
     def move(self):
         self.angle += 0.09
@@ -91,8 +91,6 @@ class Shield(PowerUp):
         """ Returns True if cooldown timer is over """
 
         self.cooldown_timer.initial_time = 0
-        # TODO: criar função para verificar se o primeiro asteroid que colidiu com o shiled está colidido com outros
-        #  asteroids
         self.cooldown_timer.start()
 
         if self.cooldown_timer.time_is_over:
