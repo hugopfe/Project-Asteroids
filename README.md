@@ -1,6 +1,6 @@
 # Project-Asteroids
 
-<img src="Project_Asteroids/images/logo/logo.png" align="right">
+<img src="source/images/logo/logo.png" align="right">
 
 Esse é meu primeiro projeto após terminar alguns cursos de Python 3. Uma reimaginação do jogo _Asteroids_ (1979) feito com Pygame. 
 
@@ -11,4 +11,4 @@ Todas as dicas e sugestões são bem-vindas :)
 
 ## Executáveis
 
-Você pode baixar o executável de cada versão na pasta _[dist](https://github.com/HugoPFe/Project-Asteroids/tree/main/Project_Asteroids/dist)_.
+Você pode baixar o executável de cada versão na pasta _[dist](https://github.com/HugoPFe/Project-Asteroids/tree/main/source/dist)_.
