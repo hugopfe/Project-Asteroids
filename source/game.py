@@ -50,7 +50,7 @@ class Game(Main):
                                       color=(255, 255, 255),
                                       bg_color=(0, 0, 0),
                                       antialias=True)
-        self.score_text = Font(f'Score: {self.player.score}', (self.SCREEN_WIDTH - 10, 10), 'right')
+        self.score_text = Font(f'Pontuação: {self.player.score}', (self.SCREEN_WIDTH - 10, 10), 'right')
         self.target_score_text = Font(f'Objetivo: {self.current_level.level_objectives["score"]}',
                                       (self.SCREEN_WIDTH - 10, 40), 'right')
 
