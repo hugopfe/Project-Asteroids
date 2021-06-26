@@ -4,7 +4,7 @@ from math import cos, sin
 
 import pygame
 from pygame.math import Vector2
-from pygame.sprite import Group
+from pygame.sprite import Group, Sprite
 
 from typing import Tuple, Dict, List, Union
 from random import randrange, choice, uniform, randint
@@ -40,6 +40,10 @@ class Timer:
 
     def __str__(self):
         return f'Current time: {self.current_time}'
+
+
+class CollideHandler:
+    def __init__(self, sprites: Tuple[Sprite, Sprite], groups: Tu):
 
 
 def get_random_pos(x: Union[int, Tuple[int, int]], y: Union[int, Tuple[int, int]]) -> Vector2:
