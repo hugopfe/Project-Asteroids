@@ -63,7 +63,7 @@ class Level:
             positionx = choice([negative_position.x, positive_position.x])
             positiony = choice([negative_position.y, positive_position.y])
             pos = pygame.math.Vector2(positionx, positiony)
-            print(f'Asteroid position: {pos}')
+            # print(f'Asteroid position: {pos}')
 
             return pos
 
@@ -135,7 +135,7 @@ class Level1(Level):
         self.current_time += 1
 
         # asteroids
-        self.spawn_asteroids()
+        # self.spawn_asteroids()
 
         self.asteroid_group.update()
         self.asteroid_group.draw(self.screen)

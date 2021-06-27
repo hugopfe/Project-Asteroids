@@ -42,10 +42,6 @@ class Timer:
         return f'Current time: {self.current_time}'
 
 
-class CollideHandler:
-    def __init__(self, sprites: Tuple[Sprite, Sprite], groups: Tu):
-
-
 def get_random_pos(x: Union[int, Tuple[int, int]], y: Union[int, Tuple[int, int]]) -> Vector2:
     """
     Returns a random pos.
