@@ -44,15 +44,6 @@ class Level:
     def spawn_asteroids(self):
         import sprites
 
-        def keep_asteroids_on_screen():  # TODO: Verificar se isso é necessário
-            if len(self.asteroid_group.sprites()) > 0:
-                for asteroid in self.asteroid_group.sprites():
-                    try:
-                        if not self.screen_rect.contains(asteroid.orbit_rect):
-                            asteroid.center_point.update(asteroid.orbit_rect.clamp(self.screen_rect).center)
-                    except TypeError:
-                        pass
-
         def get_asteroid_random_pos():
             negative_position = get_random_pos(300, 300)
             negative_position.x *= -1
@@ -79,8 +70,6 @@ class Level:
             self.asteroid_group.add(sprites.Asteroid(position, self.screen, self.player.pos,
                                                      self.level_rules['asteroids'], self.set_score))
             print('Asteroid spawned')
-
-        keep_asteroids_on_screen()
 
     def request_news_infos(self):
         """ Returns the informations that was changed """

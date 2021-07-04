@@ -66,10 +66,6 @@ class Game(Main):
         self.main_loop()
 
     def loop(self):
-        if len(self.asteroid_group.sprites()) > 0:  # TODO: Verificar se isso é necessário
-            for asteroid in self.asteroid_group.sprites():
-                asteroid.get_orbit_rect()
-
         self.screen.blit(self.BACKGROUND, (0, 0))
         self.current_time += 1
         self.update_infos()
@@ -145,12 +141,12 @@ class Game(Main):
         for group in [self.player_group, self.projectile_group]:
             sprites_coll.append(pygame.sprite.groupcollide(group, self.asteroid_group, False, False, collide_mask))
 
-        for spr_dct in sprites_coll:  # TODO: ao invés de verificar o nome das classes, chamar um método de morte
+        for spr_dct in sprites_coll:
             for sprite, asteroids_list in spr_dct.items():
                 if sprite == self.player:
                     """ Player has collided with a Asteroid """
 
-                    self.game_over()
+                    # self.game_over()
 
                 elif get_class_name(sprite) == 'Projectile':
                     """ A projectile has collided with a Asteroid """
