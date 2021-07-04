@@ -58,12 +58,11 @@ class Level:
             negative_position.x *= -1
             negative_position.y *= -1
             positive_position = get_random_pos((self.screen_rect.width, self.screen_rect.width + 300),
-                                                    (self.screen_rect.height, self.screen_rect.height + 300))
+                                               (self.screen_rect.height, self.screen_rect.height + 300))
 
             positionx = choice([negative_position.x, positive_position.x])
             positiony = choice([negative_position.y, positive_position.y])
             pos = pygame.math.Vector2(positionx, positiony)
-            # print(f'Asteroid position: {pos}')
 
             return pos
 
@@ -79,6 +78,7 @@ class Level:
 
             self.asteroid_group.add(sprites.Asteroid(position, self.screen, self.player.pos,
                                                      self.level_rules['asteroids'], self.set_score))
+            print('Asteroid spawned')
 
         keep_asteroids_on_screen()
 
@@ -135,7 +135,7 @@ class Level1(Level):
         self.current_time += 1
 
         # asteroids
-        # self.spawn_asteroids()
+        self.spawn_asteroids()
 
         self.asteroid_group.update()
         self.asteroid_group.draw(self.screen)

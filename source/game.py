@@ -6,6 +6,7 @@ from powerups import *
 from menus import *
 from levels.level import *
 from ui import *
+from sprites import *
 
 levels = [Level1, Level2, Level3]
 
@@ -16,13 +17,11 @@ class Game(Main):
 
         Main.__init__(self)
 
-        import sprites
-
         self.create_new_game = False
         self.current_time = 0
 
         # Player
-        self.player = sprites.Player(self.screen)
+        self.player = Player(self.screen)
 
         # Power_Up
         self.power_up_pos = get_random_pos(self.screen_rect.w, self.screen_rect.h)
@@ -35,6 +34,9 @@ class Game(Main):
         self.powerup_group = pygame.sprite.Group(self.power_up)
 
         self.player.projectile_group = self.projectile_group
+
+        self.collisions_groups = [self.player_group, self.projectile_group,
+                                  self.asteroid_group, self.powerup_group]
 
         # Level infos
         self.level_index = 0
@@ -55,6 +57,9 @@ class Game(Main):
                                       (self.SCREEN_WIDTH - 10, 40), 'right')
 
         self.fonts_group.add_fonts(self.score_text, self.target_score_text)
+
+        self.mouse_pressed = False
+        self.sprite_selected = None
 
         self.main_loop()
 
@@ -82,7 +87,7 @@ class Game(Main):
         self.check_collisions()
 
         self.current_level.level_loop()
-        # self.verify_objective_status()
+        self.verify_objective_status()
 
         # fonts
         self.fonts_group.render_fonts()
@@ -98,18 +103,29 @@ class Game(Main):
                 self.change_screen(PauseScreen, self)
             if event.key == K_TAB:
                 self.power_up.change_state('item')
+                self.power_up.pos = pygame.Vector2(pygame.mouse.get_pos())
             if event.key == K_LSHIFT:
                 self.power_up.change_state('dropped')
             if event.key == K_a:
-                import sprites
-                self.asteroid_group.add(sprites.Asteroid(pygame.math.Vector2((200, 200)), self.screen,
-                                                         self.player.pos, self.level_rules['asteroids'],
-                                                         self.set_score))
+                self.asteroid_group.add(Asteroid(pygame.math.Vector2((200, 200)), self.screen,
+                                                 self.player.pos, self.level_rules['asteroids'],
+                                                 self.set_score))
+        """ ================== TEMP ================== """
         if event.type == MOUSEBUTTONDOWN:
-            import sprites
-            self.asteroid_group.add(sprites.Asteroid(pygame.math.Vector2(pygame.mouse.get_pos()), self.screen,
-                                                     self.player.pos, self.level_rules['asteroids'],
-                                                     self.set_score))
+            for asteroid in self.asteroid_group.sprites():
+                if asteroid.rect.collidepoint(pygame.mouse.get_pos()):
+                    self.mouse_pressed = True
+                    self.sprite_selected = asteroid
+            if self.power_up.rect.collidepoint(pygame.mouse.get_pos()) and self.power_up.current_state == 'item':
+                self.mouse_pressed = True
+                self.sprite_selected = self.power_up
+        if event.type == MOUSEBUTTONUP:
+            self.mouse_pressed = False
+            self.sprite_selected = None
+
+        if self.mouse_pressed:
+            self.sprite_selected.pos[:] = pygame.mouse.get_pos()
+        """ ===================================="""
 
     def game_over(self):
         pygame.time.wait(1000)
@@ -121,50 +137,31 @@ class Game(Main):
         if self.create_new_game:
             self.change_screen(Game)
 
-    def check_collisions(self):  # TODO: classe CollideHandler?
+    def check_collisions(self):
         def break_up_all_asteroids(asteroids_list):
             for asteroid in asteroids_list:
                 asteroid.break_up()
 
-        sprites_coll = get_sprites_collided(self.projectile_group, self.player_group, self.powerup_group,
-                                            group2=self.asteroid_group)
+        sprites_coll = get_sprites_collided(self.projectile_group, self.player_group, group2=self.asteroid_group)
 
         for spr_dct in sprites_coll:  # TODO: ao invés de verificar o nome das classes, chamar um método de morte
             for spr, ast in spr_dct.items():
                 if spr == self.player:
                     """ Player has collided with a Asteroid """
-                    # self.game_over()
-                    pass
+
+                    self.game_over()
+
                 elif get_class_name(spr) == 'Projectile':
                     """ a projectile has collided with a Asteroid """
-
-                    from sprites import Projectile
-
-                    spr: Projectile
 
                     spr.kill()
                     break_up_all_asteroids(ast)
 
-                elif get_class_name(spr) == 'Shield' and spr.current_state == 'item':
-                    """ Shield has collided with an Asteroid """
+            asteroid_collided = self.power_up.get_asteroid_collided(self.asteroid_group)
+            if asteroid_collided:
+                asteroid_collided.break_up()
 
-                    spr: Shield
-
-                    try:
-                        from sprites import AsteroidFrag
-
-                        if isinstance(ast[0], AsteroidFrag):
-                            # TODO: verificar os fragmanetos dos Asteroids separadamente
-                            print(verify_asteroids_interceptions(ast[0]))
-
-                        if spr.collide_cooldown():
-                            break_up_all_asteroids(ast)
-                    except IndexError:
-                        pass
-
-        if pygame.sprite.groupcollide(self.player_group, self.powerup_group, False, False,
-                                      pygame.sprite.collide_mask):
-            self.power_up.change_state('item')
+        self.power_up.check_player_collide()
 
     def level_up(self):
         self.level_index += 1
@@ -192,7 +189,7 @@ class Game(Main):
 
     def set_score(self, score: int):
         self.player.score += score
-        self.score_text.configure(text=f'Score: {self.player.score}')
+        self.score_text.configure(text=f'Pontuação: {self.player.score}')
 
 
 __all__ = ['Game']

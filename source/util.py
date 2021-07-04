@@ -4,10 +4,13 @@ from math import cos, sin
 
 import pygame
 from pygame.math import Vector2
-from pygame.sprite import Group, Sprite
+from pygame.sprite import Group
 
 from typing import Tuple, Dict, List, Union
 from random import randrange, choice, uniform, randint
+
+
+collide_mask = pygame.sprite.collide_mask
 
 
 class Timer:
@@ -104,7 +107,7 @@ def get_sprites_collided(*groups, group2: Group) -> List[Union[Dict, Dict]]:
     sprites_coll: List = list()
 
     for group in groups:
-        sprites_coll.append(pygame.sprite.groupcollide(group, group2, False, False, pygame.sprite.collide_mask))
+        sprites_coll.append(pygame.sprite.groupcollide(group, group2, False, False, collide_mask))
 
     return sprites_coll
 
@@ -129,24 +132,28 @@ def draw_line_center_of(screen, center_pos: Tuple[int, int]):
                      (center_pos[0], screen_rect.height))
 
 
-def move_in_orbit_motion(angle: float, center_pos: pygame.Rect, radius: int) -> Tuple[float, float]:
+def move_in_orbit_motion(angle: float, center_pos: Tuple[int, int], radius: int) -> Tuple[float, float]:
     """ Returns a tuple containg a orbit motion """
 
-    return (center_pos.centerx + cos(angle) * radius,
-            center_pos.centery + sin(angle) * radius)
+    return (center_pos[0] + cos(angle) * radius,
+            center_pos[1] + sin(angle) * radius)
 
 
 def get_class_name(cls):
     return cls.__class__.__name__
 
 
-def verify_asteroids_interceptions(asteroid):
+def verify_asteroids_interceptions(asteroid):  # TODO: clear
     """ Get an Asteroid and verify if there is an intersection with another one """
 
     asteroids_frags = list(asteroid.all_frags[i].rect for i in range(1, len(asteroid.all_frags)))
     asteroids_collided = asteroid.rect.collidelistall(asteroids_frags)
 
     return asteroids_collided
+
+
+def draw_rect_zone(screen, rect):
+    return pygame.draw.rect(screen, (255, 0, 0), rect)
 
 
 __all__ = [
@@ -159,5 +166,7 @@ __all__ = [
     'draw_line_center_of',
     'move_in_orbit_motion',
     'get_class_name',
-    'verify_asteroids_interceptions'
+    'verify_asteroids_interceptions',
+    'draw_rect_zone',
+    'collide_mask'
 ]

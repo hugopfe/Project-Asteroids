@@ -23,6 +23,9 @@ class PowerUp(pygame.sprite.Sprite):
         self.current_state = ''
         self.change_state('dropped')
 
+        self.asteroids_ignored = []
+        self.asteroid_big_collided = None
+
     def _sub_update(self):
         """ Method to all Subclasses """
 
@@ -58,6 +61,45 @@ class PowerUp(pygame.sprite.Sprite):
 
         pass
 
+    def get_asteroid_collided(self, asteroids_group: pygame.sprite.Group):
+        """ Check collision between some powerup and an asteroid.
+
+        If the asteroid collided is colliding too, with others asteroid, \
+        the collision_handler will ignore the others asteroid. """
+
+        from sprites import Asteroid
+
+        collided_asteroid: Asteroid
+        collided_asteroid = pygame.sprite.spritecollideany(self, asteroids_group, collide_mask)
+
+        min_distance = 80
+
+        if collided_asteroid and self.current_state == 'item':
+            asteroids_collided = collided_asteroid.get_collided_asteroids()
+            for ast in asteroids_collided:
+                ast.set_ignore(True)
+                self.asteroids_ignored.append(ast)
+
+            if collided_asteroid.id == 'AA':
+                self.asteroid_big_collided = collided_asteroid
+            elif collided_asteroid.id in ['A', 'B', 'C'] and \
+                    collided_asteroid.super_instance == self.asteroid_big_collided:
+                # TODO: frags não estão deixando de ser ignorados
+                collided_asteroid.set_ignore(True)
+                self.asteroid_big_collided = None
+
+            if not collided_asteroid.collision_ignored:
+                return collided_asteroid
+            # else:
+            #     if collided_asteroid not in self.asteroids_to_watch:
+            #         self.asteroids_to_watch.append(collided_asteroid)
+            #         print(f'To watch: {self.asteroids_to_watch} → {len(self.asteroids_to_watch)}')
+
+        for asteroid_ignored in self.asteroids_ignored:
+            if self.pos.distance_to(asteroid_ignored.pos) > min_distance:
+                asteroid_ignored.set_ignore(False)
+                self.asteroids_ignored.remove(asteroid_ignored)
+
 
 class Shield(PowerUp):
     def __init__(self, screen, pos: pygame.math.Vector2, player):
@@ -67,37 +109,17 @@ class Shield(PowerUp):
         self.angle = radians(10)
         self.center_point = self.player.rect.center
 
-        self.cooldown_initial = 10
-        self.cooldown_end = 10
-        self.cooldown_pass = 1
-
-        self.cooldown_timer = Timer(self.cooldown_initial, self.cooldown_end, self.cooldown_pass)
-
     def _sub_update(self):
         self.move()
-        self.cooldown_timer.count()
-        # print(self.cooldown_timer)
 
     def move(self):
         self.angle += 0.09
-        self.pos.x, self.pos.y = move_in_orbit_motion(self.angle, self.player.rect, 100)
+        self.pos[:] = move_in_orbit_motion(self.angle, self.player.rect.center, 100)
 
     def get_item_state(self):  # TODO: codificar em base64
         self.image = pygame.image.load('media/images/sprites/shield_prototype.png').convert_alpha()
         self.rect = self.image.get_rect(center=self.pos.xy)
         self.mask = pygame.mask.from_surface(self.image)
-
-    def collide_cooldown(self):
-        """ Returns True if cooldown timer is over """
-
-        self.cooldown_timer.initial_time = 0
-        self.cooldown_timer.start()
-
-        if self.cooldown_timer.time_is_over:
-            self.cooldown_timer.initial_time = self.cooldown_initial
-            return True
-        else:
-            return False
 
 
 __all__ = ['Shield']

@@ -1,6 +1,6 @@
 from images import *
 
-from math import cos, sin, radians
+from math import radians
 from random import randint
 
 from util import *
@@ -21,6 +21,8 @@ class Asteroid(pygame.sprite.Sprite):
         self.screen = screen
         self.screen_rect = self.screen.get_rect()
 
+        self.id = 'AA'
+
         self.rules = level_rules
         self.life = self.rules['life']
         self.score_value = 5
@@ -34,12 +36,12 @@ class Asteroid(pygame.sprite.Sprite):
         self.copy_img = self.image.copy()
         self.mask = pygame.mask.from_surface(self.image)
 
-        self.rect = self.image.get_rect(center=(pos.x, pos.y))
-        self.pos = Vector2(self.rect.center)
+        self.pos = Vector2((pos.x, pos.y))
+        self.rect = self.image.get_rect(center=self.pos)
 
         self.center_point = Vector2(pos.x, pos.y)
         self.target_pos = target_pos
-        self.target_dist = self.center_point.distance_to(self.target_pos)
+        self.target_dist = int(self.center_point.distance_to(self.target_pos))
         self.orbit_rect = None
 
         self.speed = get_random_speed(self.rules['min_speed'], self.rules['max_speed'])
@@ -49,7 +51,10 @@ class Asteroid(pygame.sprite.Sprite):
 
         self.observers = list(level_observers)
 
-        if self.rect.colliderect(self.screen_rect):
+        self.collision_ignored = False
+        self.previous_collided_state = self.collision_ignored
+
+        if not self.screen_rect.contains(self.rect):
             self.kill()
 
     def update(self):
@@ -58,6 +63,7 @@ class Asteroid(pygame.sprite.Sprite):
         self.rotate()
         self.move()
         self.clear_garbage()
+        self.rect.center = self.pos
 
     def clear_garbage(self):
         if self.screen_rect.colliderect(self.rect):
@@ -68,14 +74,11 @@ class Asteroid(pygame.sprite.Sprite):
 
     def break_up(self):
         for i in range(0, 3):
-            try:
-                self.groups()[0].add(AsteroidFrag(self.pos, i, self.screen, self.target_pos,
-                                                  self.rules, *self.observers))
-            except IndexError:
-                print('Não foi possível remover o asteroide')
-
+            self.groups()[0].add(AsteroidFrag(self.pos, i, self.screen, self.target_pos,
+                                              self.rules, list(['A', 'B', 'C'])[i], self, *self.observers))
         self.observers[0](self.score_value)
         self.kill()
+        print(f'\n{self} destroyed!\n'.center(100))
 
     def rotate(self):
         self.current_rotation += self.rotation
@@ -88,19 +91,37 @@ class Asteroid(pygame.sprite.Sprite):
 
     def move(self):
         self.angle += radians(sum(self.speed.xy))
-        self.rect.centerx = self.center_point.x + cos(self.angle) * self.target_dist
-        self.rect.centery = self.center_point.y + sin(self.angle) * self.target_dist
-        self.pos = Vector2(self.rect.center)
+        self.pos[:] = move_in_orbit_motion(self.angle, self.center_point.xy, self.target_dist)
+
+    def get_collided_asteroids(self):
+        collided_asteroids = pygame.sprite.spritecollide(self, self.groups()[0], False, collide_mask)
+        collided_asteroids.remove(self)
+
+        return collided_asteroids
+
+    def set_ignore(self, value):
+        self.collision_ignored = value
+        if self.previous_collided_state != self.collision_ignored:
+            self.previous_collided_state = self.collision_ignored
+            print(f'{self} ignored: {self.collision_ignored}')
+
+    def __str__(self):
+        return f'<{get_class_name(self)} {self.id}>'
 
 
 class AsteroidFrag(Asteroid):
     all_frags: list[Asteroid] = []
+    super_instance = None
 
     def __init__(self, pos: Vector2, img_index: int, screen: pygame.Surface, target_pos,
-                 level_rules, *level_observers):
+                 level_rules, id, super_instance, *level_observers):
+
         Asteroid.__init__(self, pos, screen, target_pos, level_rules, *level_observers)
 
         self.all_frags.append(self)
+        self.super_instance = super_instance
+
+        self.id = id
 
         self.image = pygame.image.load(decode_b64_img(frags[img_index])).convert_alpha()
         self.copy_img = self.image.copy()
@@ -108,20 +129,24 @@ class AsteroidFrag(Asteroid):
 
         self.rect = self.image.get_rect(center=(pos.x, pos.y))
         self.rotation = randint(-5, 5)
-        self.speed = get_random_speed(1, 2)
+
+        self.min_speed = self.super_instance.rules['min_speed']
+        self.max_speed = self.super_instance.rules['max_speed']
+        self.speed = get_random_speed(self.min_speed*5, self.max_speed*5)
 
         self.score_value = 3
 
-        self.spread_frags()
+        # self.spread_frags()
 
     def move(self):
-        self.rect.centerx += self.speed.x
-        self.rect.centery += self.speed.y
+        self.pos.x += self.speed.x
+        self.pos.y += self.speed.y
 
     def break_up(self):
         self.observers[0](self.score_value)
-        self.all_frags.remove(self)
+        # self.all_frags.remove(self)
         self.kill()
+        print(f'{self} destroyed!')
 
     def get_orbit_rect(self):
         pass
