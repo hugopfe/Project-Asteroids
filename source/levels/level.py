@@ -117,7 +117,7 @@ class Level1(Level):
         }  # TODO: A velocidade deve ser relativa a resistência do player e ao dano
         self.player.set_rules(self.level_rules)
 
-        self.level_objectives = {'score': 5 * 14}  # Each asteroid can give at maximus, 14 points
+        self.level_objectives = {'score': 5 * 14}  # Each asteroid can give at maximus 14 points
         self.current_reach = {'score': self.player.score}
 
     def level_loop(self):
