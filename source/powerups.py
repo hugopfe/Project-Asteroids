@@ -9,7 +9,7 @@ class PowerUp(pygame.sprite.Sprite):
 
         self.pos = pos
 
-        # these two attributes will be setted on get_dropped_form
+        # These three attributes will be setted on get_dropped_form
         self.image = None
         self.rect = None
         self.mask = None
@@ -84,16 +84,12 @@ class PowerUp(pygame.sprite.Sprite):
                 self.asteroid_big_collided = collided_asteroid
             elif collided_asteroid.id in ['A', 'B', 'C'] and \
                     collided_asteroid.super_instance == self.asteroid_big_collided:
-                # TODO: frags não estão deixando de ser ignorados
+
                 collided_asteroid.set_ignore(True)
                 self.asteroid_big_collided = None
 
             if not collided_asteroid.collision_ignored:
                 return collided_asteroid
-            # else:
-            #     if collided_asteroid not in self.asteroids_to_watch:
-            #         self.asteroids_to_watch.append(collided_asteroid)
-            #         print(f'To watch: {self.asteroids_to_watch} → {len(self.asteroids_to_watch)}')
 
         for asteroid_ignored in self.asteroids_ignored:
             if self.pos.distance_to(asteroid_ignored.pos) > min_distance:

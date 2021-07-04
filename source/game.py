@@ -10,6 +10,8 @@ from sprites import *
 
 levels = [Level1, Level2, Level3]
 
+collide_mask = pygame.sprite.collide_mask
+
 
 class Game(Main):
     def __init__(self):
@@ -138,24 +140,23 @@ class Game(Main):
             self.change_screen(Game)
 
     def check_collisions(self):
-        def break_up_all_asteroids(asteroids_list):
-            for asteroid in asteroids_list:
-                asteroid.break_up()
+        sprites_coll = []
 
-        sprites_coll = get_sprites_collided(self.projectile_group, self.player_group, group2=self.asteroid_group)
+        for group in [self.player_group, self.projectile_group]:
+            sprites_coll.append(pygame.sprite.groupcollide(group, self.asteroid_group, False, False, collide_mask))
 
         for spr_dct in sprites_coll:  # TODO: ao invés de verificar o nome das classes, chamar um método de morte
-            for spr, ast in spr_dct.items():
-                if spr == self.player:
+            for sprite, asteroids_list in spr_dct.items():
+                if sprite == self.player:
                     """ Player has collided with a Asteroid """
 
                     self.game_over()
 
-                elif get_class_name(spr) == 'Projectile':
-                    """ a projectile has collided with a Asteroid """
+                elif get_class_name(sprite) == 'Projectile':
+                    """ A projectile has collided with a Asteroid """
 
-                    spr.kill()
-                    break_up_all_asteroids(ast)
+                    sprite.kill()
+                    asteroids_list[0].break_up()
 
             asteroid_collided = self.power_up.get_asteroid_collided(self.asteroid_group)
             if asteroid_collided:
