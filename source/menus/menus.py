@@ -5,7 +5,7 @@ from util import *
 from constants import FPS, VERSION
 from ui.button import *
 from ui.font import *
-from images import bg, logo
+from media.paths import bg, logo
 
 
 class Main:
@@ -15,7 +15,7 @@ class Main:
         """
 
         # Constants
-        self.BACKGROUND = pygame.image.load(decode_b64_img(bg))
+        self.BACKGROUND = pygame.image.load(bg)
         self.SCREEN_WIDTH = 600
         self.SCREEN_HEIGHT = 600
 
@@ -100,7 +100,7 @@ class MainMenu(Main):
 
         Main.__init__(self)
 
-        self.logo = pygame.image.load(decode_b64_img(logo)).convert_alpha()
+        self.logo = pygame.image.load(logo).convert_alpha()
         self.logo_rect = self.logo.get_rect(center=(self.SCREEN_WIDTH / 2, 150))
 
         # Buttons

@@ -1,3 +1,4 @@
+from media.paths import shield
 import pygame
 from util import *
 from math import radians
@@ -113,7 +114,7 @@ class Shield(PowerUp):
         self.pos[:] = move_in_orbit_motion(self.angle, self.player.rect.center, 100)
 
     def get_item_state(self):  # TODO: codificar em base64
-        self.image = pygame.image.load('media/images/sprites/shield_prototype.png').convert_alpha()
+        self.image = pygame.image.load(shield).convert_alpha()
         self.rect = self.image.get_rect(center=self.pos.xy)
         self.mask = pygame.mask.from_surface(self.image)
 

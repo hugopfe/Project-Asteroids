@@ -1,4 +1,4 @@
-from images import *
+from media.paths import *
 
 from math import radians
 from random import randint
@@ -31,7 +31,7 @@ class Asteroid(pygame.sprite.Sprite):
         self.rotation = randint(-10, 10)
         self.angle = 0
 
-        self.image = pygame.image.load(decode_b64_img(asteroid)).convert_alpha()
+        self.image = pygame.image.load(asteroid).convert_alpha()
         self.image = pygame.transform.scale(self.image, (70, 60))
         self.copy_img = self.image.copy()
         self.mask = pygame.mask.from_surface(self.image)
@@ -119,7 +119,7 @@ class AsteroidFrag(Asteroid):
 
         self.id = id
 
-        self.image = pygame.image.load(decode_b64_img(frags[img_index])).convert_alpha()
+        self.image = pygame.image.load(frags[img_index]).convert_alpha()
         self.copy_img = self.image.copy()
         self.mask = pygame.mask.from_surface(self.image)
 

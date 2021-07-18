@@ -1,4 +1,4 @@
-from images import ship
+from media.paths import ship
 from .projectile import Projectile
 
 from util import *
@@ -16,7 +16,7 @@ class Player(pygame.sprite.Sprite):
         self.screen: pygame.surface.Surface = screen
         self.screen_rect = self.screen.get_rect()
 
-        self.image = pygame.image.load(decode_b64_img(ship)).convert_alpha()
+        self.image = pygame.image.load(ship).convert_alpha()
         self.image = pygame.transform.scale(self.image, (50, 40))
         self.mask = pygame.mask.from_surface(self.image)
         self.copy_img = self.image.copy()

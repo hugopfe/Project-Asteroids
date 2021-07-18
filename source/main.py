@@ -1,7 +1,7 @@
 import menus
 import pygame
 from util import decode_b64_img
-from images import asteroid
+from media.paths import asteroid
 from game import *
 import os
 
@@ -10,7 +10,7 @@ import os
 if __name__ == '__main__':
     pygame.init()
     pygame.display.set_caption('Asteroids')
-
+    
     icon = pygame.image.load(asteroid)
     pygame.display.set_icon(icon)
 
