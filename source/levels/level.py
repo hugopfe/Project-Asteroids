@@ -42,7 +42,7 @@ class Level:
         pass
 
     def spawn_asteroids(self):
-        import sprites
+        import assets
 
         def get_asteroid_random_pos():
             negative_position = get_random_pos(300, 300)
@@ -62,12 +62,12 @@ class Level:
             while True:
                 position = get_asteroid_random_pos()
 
-                if position.distance_to(self.player.rect.center) > sprites.Asteroid.min_distance:
+                if position.distance_to(self.player.rect.center) > assets.Asteroid.min_distance:
                     break
                 else:
                     continue
 
-            self.asteroid_group.add(sprites.Asteroid(position, self.screen, self.player.pos,
+            self.asteroid_group.add(assets.Asteroid(position, self.screen, self.player.pos,
                                                      self.level_rules['asteroids'], self.set_score))
             print('Asteroid spawned')
 

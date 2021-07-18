@@ -2,11 +2,10 @@ import pygame
 from pygame.locals import *
 
 from util import *
-from powerups import *
 from menus import *
 from levels.level import *
 from ui import *
-from sprites import *
+from assets import *
 
 levels = [Level1, Level2, Level3]
 
