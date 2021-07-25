@@ -144,7 +144,7 @@ def get_class_name(cls):
 
 
 def draw_rect_zone(screen, rect):
-    return pygame.draw.rect(screen, (255, 0, 0), rect)
+    return pygame.draw.rect(screen, (255, 0, 0), rect, 2)
 
 
 __all__ = [

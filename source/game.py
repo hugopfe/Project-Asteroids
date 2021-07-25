@@ -76,6 +76,7 @@ class Game(Main):
         self.projectile_group.update()
 
         # player
+        # draw_rect_zone(self.screen, self.player.rect)
         self.player_group.draw(self.screen)
         self.player_group.update()
 
@@ -140,7 +141,13 @@ class Game(Main):
         sprites_coll = []
 
         for group in [self.player_group, self.projectile_group]:
-            sprites_coll.append(pygame.sprite.groupcollide(group, self.asteroid_group, False, False, collide_mask))
+            rect_collision = pygame.sprite.groupcollide(group, self.asteroid_group, False, False)
+
+            if rect_collision:
+                mask_collision = pygame.sprite.groupcollide(group, self.asteroid_group, False, False, collide_mask)
+
+                if mask_collision:
+                    sprites_coll.append(mask_collision)
 
         for spr_dct in sprites_coll:
             for sprite, asteroids_list in spr_dct.items():
@@ -165,7 +172,6 @@ class Game(Main):
         self.level_index += 1
         try:
             self.current_level = levels[self.level_index](self)
-            # self.change_screen(WinScreen, self)
         except IndexError:  # Player wins
             self.change_screen(WinScreen, self)
         else:

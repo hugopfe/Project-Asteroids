@@ -19,8 +19,8 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load(ship).convert_alpha()
         self.image = pygame.transform.scale(self.image, (50, 40))
         self.mask = pygame.mask.from_surface(self.image)
+        self.rect = self.image.get_rect(center=self.screen_rect.center)
         self.copy_img = self.image.copy()
-        self.rect = self.image.get_rect(center=screen.get_rect().center)
         self.pos = Vector2(self.rect.center)
 
         self.angle = 0
