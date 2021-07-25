@@ -78,7 +78,6 @@ class Game(Main):
         self.projectile_group.update()
 
         # player
-        # draw_rect_zone(self.screen, self.player.rect)
         self.player_group.draw(self.screen)
         self.player_group.update()
 
@@ -143,6 +142,8 @@ class Game(Main):
         sprites_coll = []
 
         for group in [self.player_group, self.projectile_group]:
+            """ Verifying collisions """
+            
             rect_collision = pygame.sprite.groupcollide(group, self.asteroid_group, False, False)
 
             if rect_collision:
@@ -164,9 +165,9 @@ class Game(Main):
                     sprite.kill()
                     asteroids_list[0].break_up()
 
-            asteroid_collided = self.power_up.get_asteroid_collided(self.asteroid_group)
-            if asteroid_collided:
-                asteroid_collided.break_up()
+        asteroid_collided = self.power_up.get_asteroid_collided(self.asteroid_group)
+        if asteroid_collided:
+            asteroid_collided.break_up()
 
         self.power_up.check_player_collide()
 

@@ -128,9 +128,6 @@ class Level1(Level):
         # asteroids
         self.spawn_asteroids()
 
-        # for asteroid in self.asteroid_group.sprites():
-        #     draw_rect_zone(self.screen, asteroid.rect)
-
         self.asteroid_group.update()
         self.asteroid_group.draw(self.screen)
 
