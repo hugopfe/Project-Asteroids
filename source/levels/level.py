@@ -4,6 +4,8 @@ from pygame.locals import *
 from random import choice, random
 from ui import Font
 from util import *
+from media.paths import title_font
+
 
 
 class Level:
@@ -22,11 +24,11 @@ class Level:
         # Text
         self.level_text = ''
         self.text_pos = (self.screen_rect.centerx, 100)
-        self.text_size = 30
+        self.text_size = 45
         self._get_level_text()
 
         self.text = Font(self.level_text, self.text_pos, 'center')
-        self.text.configure(screen=self.screen, font_name='Lucida Sans',
+        self.text.configure(screen=self.screen, font_name=title_font,
                             size=self.text_size, bold=True, color=(255, 255, 255),
                             bg_color=None, antialias=True)
         self.text_copy = self.text.font_screen.copy()

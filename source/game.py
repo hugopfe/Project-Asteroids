@@ -6,6 +6,8 @@ from menus import *
 from levels.level import *
 from ui import *
 from assets import *
+from media.paths import body_font
+
 
 levels = [Level1, Level2, Level3]
 
@@ -47,7 +49,7 @@ class Game(Main):
 
         # Fonts
         self.fonts_group = FontsGroup(screen=self.screen,
-                                      font_name='Lucida Sans',
+                                      font_name=body_font,
                                       size=20,
                                       bold=True,
                                       color=(255, 255, 255),
@@ -145,7 +147,7 @@ class Game(Main):
                 if sprite == self.player:
                     """ Player has collided with a Asteroid """
 
-                    # self.game_over()
+                    self.game_over()
 
                 elif get_class_name(sprite) == 'Projectile':
                     """ A projectile has collided with a Asteroid """
@@ -163,6 +165,7 @@ class Game(Main):
         self.level_index += 1
         try:
             self.current_level = levels[self.level_index](self)
+            # self.change_screen(WinScreen, self)
         except IndexError:  # Player wins
             self.change_screen(WinScreen, self)
         else:

@@ -1,4 +1,6 @@
 import pygame
+from media.paths import button_font
+
 
 
 class Button:
@@ -48,7 +50,8 @@ class Button:
 
         # Text
         self.txt_size = int((self.width+self.height)*0.2)-self.padding
-        self.font = pygame.font.SysFont('Century Gothic', self.txt_size, bold=True)
+        self.font = pygame.font.Font(button_font, self.txt_size, bold=True)
+        
         if self.split_text:
             text_space = 10
             self.screen_text1 = self.font.render(self.text1, True, (255, 255, 255), (0, 0, 0))

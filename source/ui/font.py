@@ -54,10 +54,10 @@ class Font:
             if k in self.__dict__:
                 self.__dict__[k] = v
 
-        self.font = pygame.font.SysFont(self.font_name, self.size, True)
-        self.get_font_surface(self.font)
+        self.font = pygame.font.Font(self.font_name, self.size)
+        self._get_font_surface(self.font)
 
-    def get_font_surface(self, font: pygame.font.Font):
+    def _get_font_surface(self, font: pygame.font.Font):
         self.font_screen = font.render(self.text, True, self.color, self.bg_color)
         self.rect = self.font_screen.get_rect(x=self.x, y=self.y)
 

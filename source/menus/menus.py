@@ -5,7 +5,7 @@ from util import *
 from constants import FPS, VERSION
 from ui.button import *
 from ui.font import *
-from media.paths import bg, logo
+from media.paths import bg, logo, body_font, title_font
 
 
 class Main:
@@ -115,7 +115,7 @@ class MainMenu(Main):
                                     x=120, y=self.SCREEN_HEIGHT - 160,
                                     width=90, height=40,
                                     text='Teclas',
-                                    padding=8,
+                                    padding=5,
                                     command=lambda: self.change_screen(ControlsMenu))
 
         self.jogar_button = Button(screen=self.screen,
@@ -134,7 +134,7 @@ class MainMenu(Main):
 
         # Version
         self.version_txt = Font(f'version: {VERSION}', (self.SCREEN_WIDTH - 10, self.SCREEN_HEIGHT - 30), 'right')
-        self.version_txt.configure(font_name='Lucida Sans', size=15, color='white',
+        self.version_txt.configure(font_name=body_font, size=15, color='white',
                                    bg_color='black', screen=self.screen)
 
         self.main_loop()
@@ -177,9 +177,9 @@ class ControlsMenu(Main):
         self.voltar_button = Button(screen=self.screen,
                                     x=self.SCREEN_WIDTH / 2,
                                     y=self.SCREEN_HEIGHT - 100,
-                                    width=70,
+                                    width=80,
                                     height=40,
-                                    text='Voltar', padding=5,
+                                    text='Voltar', padding=3,
                                     command=lambda: self.back_screen())
         self.add_buttons(self.voltar_button)
 
@@ -204,20 +204,21 @@ class ControlsMenu(Main):
     def frame_content(self, frame_color):
         # Title command_list
 
-        self.controle_txt = Font('Controles', pos=(170, 90))
+        self.controle_txt = Font('Controles', pos=(self.frame_rect.centerx, 90))
         self.controle_txt.configure(screen=self.screen,
-                                    font_name='Lucida Console',
-                                    size=45,
+                                    font_name=title_font,
+                                    size=50,
                                     bold=True,
                                     antialias=True,
                                     color=(255, 255, 255),
-                                    bg_color=(0, 0, 0))
+                                    bg_color=(0, 0, 0),
+                                    align='center') 
 
         # Keys fonts
         font_space = 30
 
         self.keys_fontgroup = FontsGroup(screen=self.screen,
-                                         font_name='Lucida Sans',
+                                         font_name=body_font,
                                          size=18,
                                          bold=True,
                                          antialias=True,
@@ -248,13 +249,13 @@ class PauseScreen(Main):
         Main.__init__(self)
 
         self.pausado_font = Font('Pausado', (self.screen_rect.centerx, 100), 'center')
-        self.pausado_font.configure(font_name='Lucida Console', size=45, bold=True, antialias=True,
+        self.pausado_font.configure(font_name=title_font, size=50, bold=True, antialias=True,
                                     color='white', bg_color='black')
 
         # Buttons
         self.continuar_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
                                        width=110, height=40, text='Continuar',
-                                       padding=13, command=self.back_screen)
+                                       padding=10, command=self.back_screen)
 
         self.teclas_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=460,
                                     width=110, height=40, text='Teclas',

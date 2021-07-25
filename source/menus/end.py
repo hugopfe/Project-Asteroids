@@ -1,5 +1,6 @@
 from menus.menus import Main
 from ui import *
+from media.paths import title_font
 
 
 class EndScreen(Main):
@@ -9,15 +10,15 @@ class EndScreen(Main):
         Main.__init__(self)
 
         # Fonts
-        self.fonts = FontsGroup(screen=self.screen, font_name='Lucida Sans',
+        self.fonts = FontsGroup(screen=self.screen, font_name=title_font,
                                 size=45, color=(255, 255, 255), bg_color=(0, 0, 0))
         self.main_text = None
-        self.score_text = Font(f'Score: {game.player.score}', (self.SCREEN_WIDTH / 2, 180), 'center')
+        self.score_text = Font(f'Pontuação: {game.player.score}', (self.SCREEN_WIDTH / 2, 180), 'center')
 
         # Buttons
         self.menu_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=460,
                                   width=110, height=40, text='Menu',
-                                  padding=10, command=lambda: self.back_mainmenu(game))
+                                  padding=5, command=lambda: self.back_mainmenu(game))
         self.add_buttons(self.menu_button)
 
     def loop(self):
@@ -47,7 +48,7 @@ class GOScreen(EndScreen):
 
         self.tentar_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
                                     width=130, height=50, text='Tentar\nnovamente',
-                                    padding=20, command=lambda: self.try_again(game))
+                                    padding=17, command=lambda: self.try_again(game))
         self.add_buttons(self.tentar_button)
 
         self.main_loop()
@@ -63,10 +64,10 @@ class WinScreen(EndScreen):
 
         self.nov_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
                                  width=130, height=50, text='Jogar\nnovamente',
-                                 padding=20, command=lambda: self.try_again(game))
+                                 padding=17, command=lambda: self.try_again(game))
         self.add_buttons(self.nov_button)
 
         self.main_loop()
 
 
-__all__ = ['EndScreen', 'GOScreen', 'WinScreen']
+__all__ = ['GOScreen', 'WinScreen']

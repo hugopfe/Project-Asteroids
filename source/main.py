@@ -1,5 +1,6 @@
-import menus
+from menus import *
 import pygame
+import menus
 from util import decode_b64_img
 from media.paths import asteroid
 from game import *
@@ -15,6 +16,7 @@ if __name__ == '__main__':
     pygame.display.set_icon(icon)
 
     menus.MainMenu(Game)
+    # menus.ControlsMenu()
     # Game()
 
     pygame.quit()
