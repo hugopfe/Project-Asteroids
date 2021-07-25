@@ -67,6 +67,8 @@ class Main:
 
     @staticmethod
     def change_screen(next_screen, previous_screen=None, kill_prev=False):
+        pygame.mouse.set_visible(True)
+        
         if kill_prev:
             previous_screen.running = False
 

@@ -67,6 +67,8 @@ class Game(Main):
         self.main_loop()
 
     def loop(self):
+        pygame.mouse.set_visible(False)
+        
         self.screen.blit(self.BACKGROUND, (0, 0))
         self.current_time += 1
         self.update_infos()
@@ -183,7 +185,7 @@ class Game(Main):
 
         infos = self.current_level.request_news_infos()
 
-        for str_attr, attr in self.__dict__.items():
+        for str_attr in self.__dict__.keys():
             for str_info, info in infos.items():
                 if str_attr == str_info:
                     self.__setattr__(str_attr, info)
