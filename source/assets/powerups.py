@@ -113,7 +113,7 @@ class Shield(PowerUp):
         self.angle += 0.09
         self.pos[:] = move_in_orbit_motion(self.angle, self.player.rect.center, 100)
 
-    def get_item_state(self):  # TODO: codificar em base64
+    def get_item_state(self):
         self.image = pygame.image.load(shield).convert_alpha()
         self.rect = self.image.get_rect(center=self.pos.xy)
         self.mask = pygame.mask.from_surface(self.image)

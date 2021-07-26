@@ -94,8 +94,6 @@ class Game(Main):
         self.fonts_group.render_fonts()
         self.current_level.print_level_font()
 
-        pygame.display.update()
-
     def check_events(self, event):
         self.player.evet_handler(event)
 

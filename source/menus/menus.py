@@ -47,7 +47,7 @@ class Main:
 
         self.screen.blit(self.BACKGROUND, (0, 0))
         self.loop()
-        pygame.display.update()
+        pygame.display.flip()
 
     def loop(self):
         pass
