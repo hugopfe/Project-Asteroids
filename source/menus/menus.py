@@ -279,6 +279,8 @@ class PauseScreen(Main):
         self.screen.blit(self.pausado_font.font_screen, self.pausado_font.rect)
         self.render_buttons()
 
+        pygame.display.flip()
+
     def check_events(self, event):
         if event.type == KEYDOWN:
             if event.key == K_p:

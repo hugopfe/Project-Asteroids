@@ -127,7 +127,7 @@ class Game(Main):
         """ ===================================="""
 
     def game_over(self):
-        pygame.time.wait(1000)
+        pygame.time.wait(300)
         self.player.kill()
         self.projectile_group.empty()
         self.asteroid_group.empty()
@@ -135,6 +135,7 @@ class Game(Main):
 
         if self.create_new_game:
             self.change_screen(Game)
+            
 
     def check_collisions(self):
         sprites_coll = []
