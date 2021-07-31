@@ -13,38 +13,6 @@ from random import randrange, choice, uniform, randint
 collide_mask = pygame.sprite.collide_mask
 
 
-class Timer:
-    def __init__(self, initial_time, end_time, interval):
-        """ Class for timing """
-
-        self.initial_time = initial_time
-        self.end_time = end_time
-        self.interval = interval
-        self.current_time = self.initial_time
-        self.time_is_over = False
-        self.start_count = False
-
-    def count(self):
-        if self.start_count:
-            self.current_time += self.interval
-
-            if self.current_time >= self.end_time:
-                self.time_is_over = True
-                self.stop()
-        else:
-            pass
-
-    def start(self):
-        self.start_count = True
-
-    def stop(self):
-        self.start_count = False
-        self.current_time = self.initial_time
-
-    def __str__(self):
-        return f'Current time: {self.current_time}'
-
-
 def get_random_pos(x: Union[int, Tuple[int, int]], y: Union[int, Tuple[int, int]]) -> Vector2:
     """
     Returns a random pos.
@@ -148,7 +116,6 @@ def draw_rect_zone(screen, rect):
 
 
 __all__ = [
-    'Timer',
     'get_random_pos',
     'get_random_speed',
     'rotate_img',
