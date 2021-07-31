@@ -47,11 +47,11 @@ class Level:
         import assets
 
         def get_asteroid_random_pos():
-            negative_position = get_random_pos(300, 300)
+            negative_position = get_random_pos(200, 200)
             negative_position.x *= -1
             negative_position.y *= -1
-            positive_position = get_random_pos((self.screen_rect.width, self.screen_rect.width + 300),
-                                               (self.screen_rect.height, self.screen_rect.height + 300))
+            positive_position = get_random_pos((self.screen_rect.width, self.screen_rect.width + 200),
+                                               (self.screen_rect.height, self.screen_rect.height + 200))
 
             positionx = choice([negative_position.x, positive_position.x])
             positiony = choice([negative_position.y, positive_position.y])
