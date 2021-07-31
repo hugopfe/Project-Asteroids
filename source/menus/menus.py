@@ -67,7 +67,6 @@ class Main:
 
     @staticmethod
     def change_screen(next_screen, previous_screen=None, kill_prev=False):
-        pygame.mouse.set_visible(True)
         
         if kill_prev:
             previous_screen.running = False
@@ -106,32 +105,31 @@ class MainMenu(Main):
         self.logo_rect = self.logo.get_rect(center=(self.SCREEN_WIDTH / 2, 150))
 
         # Buttons
-        self.sair_button = Button(screen=self.screen,
+        self.play_button = Button(screen=self.screen,
+                                   x=120, y=self.SCREEN_HEIGHT - 220,
+                                   width=90, height=40,
+                                   text='Jogar',
+                                   padding=5,
+                                   command=lambda: self.change_screen(game_cls))
+
+        self.controls_button = Button(screen=self.screen,
+                                    x=120, y=self.SCREEN_HEIGHT - 160,
+                                    width=90, height=40,
+                                    text='Controles',
+                                    padding=5,
+                                    command=lambda: self.change_screen(ControlsMenu))
+
+        self.exit_button = Button(screen=self.screen,
                                   x=120, y=self.SCREEN_HEIGHT - 100,
                                   width=90, height=40,
                                   text='Sair',
                                   padding=5,
                                   command=self.exit)
 
-        self.teclas_button = Button(screen=self.screen,
-                                    x=120, y=self.SCREEN_HEIGHT - 160,
-                                    width=90, height=40,
-                                    text='Teclas',
-                                    padding=5,
-                                    command=lambda: self.change_screen(ControlsMenu))
-
-        self.jogar_button = Button(screen=self.screen,
-                                   x=120, y=self.SCREEN_HEIGHT - 220,
-                                   width=90, height=40,
-                                   text='Jogar',
-                                   padding=5,
-                                   command=lambda: self.change_screen(game_cls)
-)
-
         self.add_buttons(
-            self.sair_button,
-            self.teclas_button,
-            self.jogar_button
+            self.play_button,
+            self.controls_button,
+            self.exit_button
         )
 
         # Version
@@ -171,19 +169,19 @@ class ControlsMenu(Main):
             'pause_font': {'command_text': 'Pausar', 'command_key': 'P'}
         }
 
-        self.controle_font = None
+        self.control_font = None
         self.keys_fontgroup = None
 
         self.keys_frame()
 
-        self.voltar_button = Button(screen=self.screen,
+        self.back_button = Button(screen=self.screen,
                                     x=self.SCREEN_WIDTH / 2,
                                     y=self.SCREEN_HEIGHT - 100,
                                     width=80,
                                     height=40,
                                     text='Voltar', padding=3,
                                     command=lambda: self.back_screen())
-        self.add_buttons(self.voltar_button)
+        self.add_buttons(self.back_button)
 
         self.main_loop()
 
@@ -191,7 +189,7 @@ class ControlsMenu(Main):
         self.screen.blit(self.frame, self.frame_rect)
 
         self.render_buttons()
-        self.controle_txt.render()
+        self.control_txt.render()
         self.keys_fontgroup.render_fonts()
 
     def keys_frame(self):
@@ -206,8 +204,8 @@ class ControlsMenu(Main):
     def frame_content(self, frame_color):
         # Title command_list
 
-        self.controle_txt = Font('Controles', pos=(self.frame_rect.centerx, 90))
-        self.controle_txt.configure(screen=self.screen,
+        self.control_txt = Font('Controles', pos=(self.frame_rect.centerx, 90))
+        self.control_txt.configure(screen=self.screen,
                                     font_name=title_font,
                                     size=50,
                                     bold=True,
@@ -250,33 +248,33 @@ class PauseScreen(Main):
 
         Main.__init__(self)
 
-        self.pausado_font = Font('Pausado', (self.screen_rect.centerx, 100), 'center')
-        self.pausado_font.configure(font_name=title_font, size=50, bold=True, antialias=True,
+        self.paused_font = Font('Pausado', (self.screen_rect.centerx, 100), 'center')
+        self.paused_font.configure(font_name=title_font, size=50, bold=True, antialias=True,
                                     color='white', bg_color='black')
 
         # Buttons
-        self.continuar_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
+        self.continue_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
                                        width=110, height=40, text='Continuar',
                                        padding=10, command=self.back_screen)
 
-        self.teclas_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=460,
-                                    width=110, height=40, text='Teclas',
+        self.controls_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=460,
+                                    width=110, height=40, text='Controles',
                                     padding=8, command=lambda: self.change_screen(ControlsMenu))
 
-        self.menuprincipal_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=520,
+        self.mainmenu_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=520,
                                            width=110, height=40, text='Menu',
                                            padding=7, command=lambda: self.back_mainmenu(game))
 
         self.add_buttons(
-            self.continuar_button,
-            self.teclas_button,
-            self.menuprincipal_button
+            self.continue_button,
+            self.controls_button,
+            self.mainmenu_button
         )
 
         self.main_loop()
 
     def loop(self):
-        self.screen.blit(self.pausado_font.font_screen, self.pausado_font.rect)
+        self.screen.blit(self.paused_font.font_screen, self.paused_font.rect)
         self.render_buttons()
 
         pygame.display.flip()

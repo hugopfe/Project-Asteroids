@@ -67,7 +67,6 @@ class Game(Main):
         self.main_loop()
 
     def loop(self):
-        pygame.mouse.set_visible(False)
         
         self.screen.blit(self.BACKGROUND, (0, 0))
         self.current_time += 1
@@ -143,7 +142,6 @@ class Game(Main):
         if self.create_new_game:
             self.change_screen(Game)
             
-
     def check_collisions(self):
         sprites_coll = []
 
