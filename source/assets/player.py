@@ -111,16 +111,6 @@ class Player(pygame.sprite.Sprite):
         self.image, self.rect = rotate_img(self.copy_img, self.rect, self.angle)
         self.mask = pygame.mask.from_surface(self.image)
 
-    def evet_handler(self, event):
-        if event.type == KEYDOWN:
-            if event.key == K_SPACE:
-                self.space_pressed = True
-        if event.type == KEYUP:
-            if event.key == K_SPACE:
-                self.time_pressed = 0
-                self.space_pressed = False
-                self.single_shots = {0}
-
     def set_rules(self, level_rules):
         """ Set the rules from level """
 

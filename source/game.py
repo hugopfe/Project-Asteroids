@@ -95,9 +95,10 @@ class Game(Main):
         self.current_level.print_level_font()
 
     def check_events(self, event):
-        self.player.evet_handler(event)
-
         if event.type == KEYDOWN:
+            if event.key == K_SPACE:
+                self.player.space_pressed = True
+            
             if event.key == K_p:
                 self.change_screen(PauseScreen, self)
             if event.key == K_TAB:
@@ -109,6 +110,12 @@ class Game(Main):
                 self.asteroid_group.add(Asteroid(pygame.math.Vector2((200, 200)), self.screen,
                                                  self.player.pos, self.level_rules['asteroids'],
                                                  self.set_score))
+        if event.type == KEYUP:
+            if event.key == K_SPACE:
+                self.time_pressed = 0
+                self.space_pressed = False
+                self.single_shots = {0}
+
         """ ================== TEMP ================== """
         if event.type == MOUSEBUTTONDOWN:
             for asteroid in self.asteroid_group.sprites():
