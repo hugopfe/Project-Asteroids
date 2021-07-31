@@ -28,16 +28,11 @@ class Player(pygame.sprite.Sprite):
         self.acc = 1
 
         self.score = 0
-        self.time_pressed = 0
+        self.time_pressed = {}
 
         self.keys_pressed = pygame.key.get_pressed()
 
         self.projectile_group = None
-
-        self.space_pressed = False
-        self.single_shots = {0}
-        self.fire_rate = 450
-        self.shots_count = 0
 
         self.player_rules = None
         self.life = None
@@ -54,39 +49,50 @@ class Player(pygame.sprite.Sprite):
     def handle_keydown(self):
         """ Verify the pressed keys """
 
-        if self.keys_pressed[K_UP] and self.vel.y > -PLAYER_SPEED:
+        k = self.keys_pressed
+
+        if k[K_UP] and self.vel.y > -PLAYER_SPEED:
             self.vel.y -= self.acc
 
-        elif self.keys_pressed[K_DOWN] and self.vel.y < PLAYER_SPEED:
+        elif k[K_DOWN] and self.vel.y < PLAYER_SPEED:
             self.vel.y += self.acc
 
-        elif not self.keys_pressed[K_UP] and not self.keys_pressed[K_DOWN]:
+        elif not k[K_UP] and not k[K_DOWN]:
             self.vel.y *= FRICTION
 
-        if self.keys_pressed[K_LEFT] and self.vel.x > -PLAYER_SPEED:
+        if k[K_LEFT] and self.vel.x > -PLAYER_SPEED:
             self.vel.x -= self.acc
 
-        elif self.keys_pressed[K_RIGHT] and self.vel.x < PLAYER_SPEED:
+        elif k[K_RIGHT] and self.vel.x < PLAYER_SPEED:
             self.vel.x += self.acc
 
-        elif not self.keys_pressed[K_LEFT] and not self.keys_pressed[K_RIGHT]:
+        elif not k[K_LEFT] and not k[K_RIGHT]:
             self.vel.x *= FRICTION
 
         self.rect.x += int(self.vel.x)
         self.rect.y += int(self.vel.y)
 
-        if self.keys_pressed[K_q]:
-            self.angle += PLAYER_SPEED
+        if k[K_q]:
+            if self.time_pressed['K_q'] < 30:
+                self.time_pressed['K_q'] += 1
+            self.angle += PLAYER_SPEED // 2 + self.time_pressed['K_q'] * 0.3
             self.rotate()
-        if self.keys_pressed[K_e]:
-            self.angle -= PLAYER_SPEED
+        else:
+            self.time_pressed['K_q'] = 0
+
+            
+        if k[K_e]:
+            if self.time_pressed['K_e'] < 30:
+                self.time_pressed['K_e'] += 1
+            self.angle -= PLAYER_SPEED // 2 + self.time_pressed['K_e'] * 0.3
             self.rotate()
+        else:
+            self.time_pressed['K_e'] = 0
 
-        if self.space_pressed and self.single_shots == {0}:
-            self.shoot_single()
-            self.single_shots.add(1)
+            
 
-    def shoot_single(self):
+
+    def shoot(self):
         """ Shoots a projectile """
 
         self.projectile_group.add(Projectile(self.rect.centerx, self.rect.centery,

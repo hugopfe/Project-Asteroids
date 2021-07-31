@@ -71,7 +71,6 @@ class Level:
 
             self.asteroid_group.add(assets.Asteroid(position, self.screen, self.player.pos,
                                                      self.level_rules['asteroids'], self.set_score))
-            print('Asteroid spawned')
 
     def request_news_infos(self):
         """ Returns the informations that was changed """

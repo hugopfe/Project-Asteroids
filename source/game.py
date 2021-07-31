@@ -97,7 +97,7 @@ class Game(Main):
     def check_events(self, event):
         if event.type == KEYDOWN:
             if event.key == K_SPACE:
-                self.player.space_pressed = True
+                self.player.shoot()
             
             if event.key == K_p:
                 self.change_screen(PauseScreen, self)
