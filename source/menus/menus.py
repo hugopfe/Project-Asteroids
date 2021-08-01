@@ -249,8 +249,8 @@ class PauseScreen(Main):
         Main.__init__(self)
 
         self.paused_font = Font('Pausado', (self.screen_rect.centerx, 100), 'center')
-        self.paused_font.configure(font_name=title_font, size=50, bold=True, antialias=True,
-                                    color='white', bg_color='black')
+        self.paused_font.configure(screen=self.screen, font_name=title_font, size=50, bold=True, 
+                                   antialias=True, color='white', bg_color='black')
 
         # Buttons
         self.continue_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
@@ -274,7 +274,7 @@ class PauseScreen(Main):
         self.main_loop()
 
     def loop(self):
-        self.screen.blit(self.paused_font.font_screen, self.paused_font.rect)
+        self.paused_font.render()
         self.render_buttons()
 
         pygame.display.flip()

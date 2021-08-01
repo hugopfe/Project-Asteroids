@@ -9,6 +9,8 @@ from media.paths import title_font
 
 
 class Level:
+
+
     def __init__(self, game):
         """ Abstract class for levels """
 
@@ -23,7 +25,7 @@ class Level:
 
         # Text
         self.level_text = ''
-        self.text_pos = (self.screen_rect.centerx, 100)
+        self.text_pos = (self.screen_rect.centerx, 10)
         self.text_size = 45
         self._get_level_text()
 
@@ -31,7 +33,11 @@ class Level:
         self.text.configure(screen=self.screen, font_name=title_font,
                             size=self.text_size, bold=True, color=(255, 255, 255),
                             bg_color=None, antialias=True)
-        self.text_copy = self.text.font_screen.copy()
+        self.text_copy = self.text.font_surface.copy()
+
+        self.surf = pygame.Surface((self.text.rect.width, self.text.rect.height), SRCALPHA)
+        self.surf_alpha = 255
+        self.surf.fill((0, 0, 0, self.surf_alpha))
 
         # player
         self.player = game.player
@@ -84,12 +90,13 @@ class Level:
         self.level_text = 'Nível ' + self.__class__.__name__[-1]
 
     def print_level_font(self):
-        surf = pygame.Surface((self.text.rect.width, self.text.rect.height)).convert_alpha()
-        surf.fill((255, 255, 255, 255))
+        self.surf_alpha = max(0, self.surf_alpha-3)
+        self.text_copy = self.text.font_surface.copy()
+        self.surf.fill((0, 0, 0, self.surf_alpha), special_flags=BLEND_RGBA_MULT)
 
-        if self.current_time < 210:  # Making sure that the font will stop to be blitting
-            self.text_copy.blit(surf, (0, 0), special_flags=BLEND_RGBA_MULT)
-            self.screen.blit(self.text_copy, self.text.rect)
+        # if self.current_time < 210:  # Making sure that the font will stop to be blitting
+        self.text_copy.blit(self.surf, (0, 0))
+        self.screen.blit(self.text_copy, self.text.rect)
 
 
 class Level1(Level):
@@ -125,7 +132,7 @@ class Level1(Level):
         self.current_time += 1
 
         # asteroids
-        self.spawn_asteroids()
+        # self.spawn_asteroids()
 
         self.asteroid_group.update()
         self.asteroid_group.draw(self.screen)

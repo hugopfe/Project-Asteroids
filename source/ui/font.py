@@ -39,7 +39,7 @@ class Font:
         self.bg_color = None
         self.font = None
 
-        self.font_screen = None
+        self.font_surface = None
         self.rect = None
 
         self.text = text
@@ -58,8 +58,8 @@ class Font:
         self._get_font_surface(self.font)
 
     def _get_font_surface(self, font: pygame.font.Font):
-        self.font_screen = font.render(self.text, True, self.color, self.bg_color)
-        self.rect = self.font_screen.get_rect(x=self.x, y=self.y)
+        self.font_surface = font.render(self.text, True, self.color, self.bg_color)
+        self.rect = self.font_surface.get_rect(x=self.x, y=self.y)
 
         align = self.align
         if align == 'left':
@@ -70,7 +70,7 @@ class Font:
             self.rect.right = self.x
 
     def render(self):
-        self.screen.blit(self.font_screen, self.rect)
+        self.screen.blit(self.font_surface, self.rect)
 
 
 __all__ = ['FontsGroup', 'Font']
