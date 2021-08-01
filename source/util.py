@@ -44,7 +44,7 @@ def get_random_pos(x: Union[int, Tuple[int, int]], y: Union[int, Tuple[int, int]
 def get_random_speed(min_speed: Union[int, float], max_speed: Union[int, float]) -> Vector2:
     sign = choice([-1, 1])
 
-    if type(min_speed) == float and type(min_speed) == float:
+    if isinstance(min_speed, float) and isinstance(max_speed, float):
         speed_x = uniform(min_speed, max_speed)
         speed_y = uniform(min_speed, max_speed)
     else:

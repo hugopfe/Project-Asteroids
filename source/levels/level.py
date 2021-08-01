@@ -113,7 +113,7 @@ class Level1(Level):
             'projectile': {
                 'damage_single': projectile_damage,
                 'damage_mult': projectile_damage*0.5,
-                'speed': 20/2
+                'speed': 10
             }
         }  # TODO: A velocidade deve ser relativa a resistência do player e ao dano
         self.player.set_rules(self.level_rules)
@@ -125,7 +125,7 @@ class Level1(Level):
         self.current_time += 1
 
         # asteroids
-        self.spawn_asteroids()
+        # self.spawn_asteroids()
 
         self.asteroid_group.update()
         self.asteroid_group.draw(self.screen)
@@ -150,9 +150,24 @@ class Level2(Level):
     def __init__(self, game):
         Level.__init__(self, game)
 
-        self.level_rules = {'asteroids': {'max_spawned': 10, 'min_speed': 0.15, 'max_speed': 0.25, 'life': 20},
-                            'player': {'life': 10, 'max_powerups': 2, 'burnout': 10},
-                            'projectile': {'damage': 10, 'speed': 10}}
+        self.level_rules = {
+            'asteroids': {
+                'max_spawned': 10, 
+                'min_speed': 0.15, 
+                'max_speed': 0.25, 
+                'life': 20
+            },
+            'player': {
+                'life': 10, 
+                'max_powerups': 2, 
+                'burnout': 10
+            },
+            'projectile': {
+                'damage': 10, 
+                'speed': 10
+            }
+        }
+
         self.player.rules = self.level_rules
 
         self.current_reach = {'score': self.player.score}
@@ -187,9 +202,24 @@ class Level3(Level):
     def __init__(self, game):
         Level.__init__(self, game)
 
-        self.level_rules = {'asteroids': {'max_spawned': 15, 'min_speed': 0.2, 'max_speed': 0.3, 'life': 35},
-                            'player': {'life': 10, 'max_powerups': 2, 'burnout': 10},
-                            'projectile': {'damage': 15, 'speed': 10}}
+        self.level_rules = {
+            'asteroids': {
+                'max_spawned': 15, 
+                'min_speed': 0.2, 
+                'max_speed': 0.2, 
+                'life': 35
+            },
+            'player': {
+                'life': 10, 
+                'max_powerups': 2, 
+                'burnout': 10
+            },
+            'projectile': {
+                'damage': 15, 
+                'speed': 10
+            }
+        }
+                            
         self.player.rules = self.level_rules
 
         self.current_reach = {'score': self.player.score}

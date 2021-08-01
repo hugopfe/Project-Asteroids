@@ -45,6 +45,11 @@ class Asteroid(pygame.sprite.Sprite):
         self.orbit_rect = None
 
         self.speed = get_random_speed(self.rules['min_speed'], self.rules['max_speed'])
+        self.frags_speed = {
+            'A': (-self.speed.x, -self.speed.y),
+            'B': (self.speed.x, -self.speed.y),
+            'C': (self.speed.x, self.speed.y),
+        }
 
         self.screen_passed = {0}
         self.time = 0
@@ -73,9 +78,11 @@ class Asteroid(pygame.sprite.Sprite):
             self.kill()
 
     def break_up(self):
+        group = self.groups()[0]
+        id_list = ['A', 'B', 'C']
         for i in range(0, 3):
-            self.groups()[0].add(AsteroidFrag(self.pos, i, self.screen, self.target_pos,
-                                              self.rules, list(['A', 'B', 'C'])[i], self, *self.observers))
+            group.add(AsteroidFrag(self.pos, i, self.screen, self.target_pos,
+                                   self.rules, id_list[i], self, *self.observers))
         self.observers[0](self.score_value)
         self.kill()
 
@@ -93,7 +100,7 @@ class Asteroid(pygame.sprite.Sprite):
         self.pos[:] = move_in_orbit_motion(self.angle, self.center_point.xy, self.target_dist)
 
     def get_collided_asteroids(self):
-        collided_asteroids = pygame.sprite.spritecollide(self, self.groups()[0], False, collide_mask)
+        collided_asteroids = pygame.sprite.spritecollide(self, self.groups()[0], False)
         collided_asteroids.remove(self)
 
         return collided_asteroids
@@ -126,9 +133,9 @@ class AsteroidFrag(Asteroid):
         self.rect = self.image.get_rect(center=(pos.x, pos.y))
         self.rotation = randint(-5, 5)
 
-        self.min_speed = self.super_instance.rules['min_speed']
-        self.max_speed = self.super_instance.rules['max_speed']
-        self.speed = get_random_speed(self.min_speed*5, self.max_speed*5)
+        self.min_speed = self.super_instance.frags_speed[self.id][0] * 5
+        self.max_speed = self.super_instance.frags_speed[self.id][1] * 5
+        self.speed = get_random_speed(self.min_speed, self.max_speed)  # TODO: cada asteroide pra seu lado
 
         self.score_value = 3
 
@@ -139,9 +146,6 @@ class AsteroidFrag(Asteroid):
     def break_up(self):
         self.observers[0](self.score_value)
         self.kill()
-
-    def get_orbit_rect(self):
-        pass
 
 
 __all__ = ['Asteroid', 'AsteroidFrag']
