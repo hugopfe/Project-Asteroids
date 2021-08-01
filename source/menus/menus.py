@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 
 from util import *
-from constants import FPS, VERSION
+from constants import FPS, VERSION, SCREEN_WIDTH, SCREEN_HEIGHT
 from ui.button import *
 from ui.font import *
 from media.paths import bg, logo, body_font, title_font
@@ -16,11 +16,9 @@ class Main:
 
         # Constants
         self.BACKGROUND = pygame.image.load(bg)
-        self.SCREEN_WIDTH = 600
-        self.SCREEN_HEIGHT = 600
 
         # Variables
-        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.screen_rect = self.screen.get_rect()
 
         self.clock = pygame.time.Clock()
@@ -102,25 +100,25 @@ class MainMenu(Main):
         Main.__init__(self)
 
         self.logo = pygame.image.load(logo).convert_alpha()
-        self.logo_rect = self.logo.get_rect(center=(self.SCREEN_WIDTH / 2, 150))
+        self.logo_rect = self.logo.get_rect(center=(SCREEN_WIDTH / 2, 150))
 
         # Buttons
         self.play_button = Button(screen=self.screen,
-                                   x=120, y=self.SCREEN_HEIGHT - 220,
+                                   x=120, y=SCREEN_HEIGHT - 220,
                                    width=90, height=40,
                                    text='Jogar',
                                    padding=5,
                                    command=lambda: self.change_screen(game_cls))
 
         self.controls_button = Button(screen=self.screen,
-                                    x=120, y=self.SCREEN_HEIGHT - 160,
+                                    x=120, y=SCREEN_HEIGHT - 160,
                                     width=90, height=40,
                                     text='Controles',
                                     padding=5,
                                     command=lambda: self.change_screen(ControlsMenu))
 
         self.exit_button = Button(screen=self.screen,
-                                  x=120, y=self.SCREEN_HEIGHT - 100,
+                                  x=120, y=SCREEN_HEIGHT - 100,
                                   width=90, height=40,
                                   text='Sair',
                                   padding=5,
@@ -133,7 +131,7 @@ class MainMenu(Main):
         )
 
         # Version
-        self.version_txt = Font(f'version: {VERSION}', (self.SCREEN_WIDTH - 10, self.SCREEN_HEIGHT - 30), 'right')
+        self.version_txt = Font(f'version: {VERSION}', (SCREEN_WIDTH - 10, SCREEN_HEIGHT - 30), 'right')
         self.version_txt.configure(font_name=body_font, size=15, color='white',
                                    bg_color='black', screen=self.screen)
 
@@ -175,8 +173,8 @@ class ControlsMenu(Main):
         self.keys_frame()
 
         self.back_button = Button(screen=self.screen,
-                                    x=self.SCREEN_WIDTH / 2,
-                                    y=self.SCREEN_HEIGHT - 100,
+                                    x=SCREEN_WIDTH / 2,
+                                    y=SCREEN_HEIGHT - 100,
                                     width=80,
                                     height=40,
                                     text='Voltar', padding=3,

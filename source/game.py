@@ -7,6 +7,7 @@ from levels.level import *
 from ui import *
 from assets import *
 from media.paths import body_font
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 levels = [Level1, Level2, Level3]
@@ -55,9 +56,9 @@ class Game(Main):
                                       color=(255, 255, 255),
                                       bg_color=(0, 0, 0),
                                       antialias=True)
-        self.score_text = Font(f'Pontuação: {self.player.score}', (self.SCREEN_WIDTH - 10, 10), 'right')
+        self.score_text = Font(f'Pontuação: {self.player.score}', (SCREEN_WIDTH - 10, 10), 'right')
         self.target_score_text = Font(f'Objetivo: {self.current_level.level_objectives["score"]}',
-                                      (self.SCREEN_WIDTH - 10, 40), 'right')
+                                      (SCREEN_WIDTH - 10, 40), 'right')
 
         self.fonts_group.add_fonts(self.score_text, self.target_score_text)
 

@@ -1,6 +1,7 @@
 from menus.menus import Main
 from ui import *
 from media.paths import title_font
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 class EndScreen(Main):
@@ -13,7 +14,7 @@ class EndScreen(Main):
         self.fonts = FontsGroup(screen=self.screen, font_name=title_font,
                                 size=45, color=(255, 255, 255), bg_color=(0, 0, 0))
         self.main_text = None
-        self.score_text = Font(f'Pontuação: {game.player.score}', (self.SCREEN_WIDTH / 2, 180), 'center')
+        self.score_text = Font(f'Pontuação: {game.player.score}', (SCREEN_WIDTH / 2, 180), 'center')
 
         # Buttons
         self.menu_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=460,
@@ -26,7 +27,7 @@ class EndScreen(Main):
         self.render_buttons()
 
     def set_main_text(self, txt):
-        self.main_text = Font(txt, (self.SCREEN_WIDTH / 2, 100), 'center')
+        self.main_text = Font(txt, (SCREEN_WIDTH / 2, 100), 'center')
         self.fonts.add_fonts(self.main_text, self.score_text)
         self.score_text.configure(size=30)
 
@@ -46,10 +47,10 @@ class GOScreen(EndScreen):
 
         self.set_main_text('Game Over!')
 
-        self.tentar_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
+        self.try_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
                                     width=130, height=50, text='Tentar\nnovamente',
                                     padding=17, command=lambda: self.try_again(game))
-        self.add_buttons(self.tentar_button)
+        self.add_buttons(self.try_button)
 
         self.main_loop()
 
@@ -62,10 +63,10 @@ class WinScreen(EndScreen):
 
         self.set_main_text('Você Venceu!!')
 
-        self.nov_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
+        self.try_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
                                  width=130, height=50, text='Jogar\nnovamente',
                                  padding=17, command=lambda: self.try_again(game))
-        self.add_buttons(self.nov_button)
+        self.add_buttons(self.try_button)
 
         self.main_loop()
 
