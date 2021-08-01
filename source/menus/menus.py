@@ -27,14 +27,14 @@ class Main:
         self._buttons = []
 
     def main_loop(self):
+        self.screen.blit(self.BACKGROUND, (0, 0))
         while self.running:
             self._base_loop()
-        self.screen.blit(self.BACKGROUND, (0, 0))
 
     def _base_loop(self):
         self.clock.tick(FPS)
         for event in pygame.event.get():
-            if event.type == QUIT:
+            if event.type == QUIT:  # Making sure that all screens is stopped to run
                 for sub in Main.__subclasses__():
                     sub.running = False
             if event.type == KEYDOWN:
@@ -148,7 +148,7 @@ class MainMenu(Main):
 
 class ControlsMenu(Main):
     def __init__(self):
-        """ Class for Controls menu or Keymap """
+        """ Class for Controls menu """
 
         Main.__init__(self)
 
@@ -173,12 +173,11 @@ class ControlsMenu(Main):
         self.keys_frame()
 
         self.back_button = Button(screen=self.screen,
-                                    x=SCREEN_WIDTH / 2,
-                                    y=SCREEN_HEIGHT - 100,
-                                    width=80,
-                                    height=40,
-                                    text='Voltar', padding=3,
-                                    command=lambda: self.back_screen())
+                                  x=SCREEN_WIDTH / 2,
+                                  y=SCREEN_HEIGHT - 100,
+                                  width=80,
+                                  height=40,
+                                  command=lambda: self.back_screen())
         self.add_buttons(self.back_button)
 
         self.main_loop()
