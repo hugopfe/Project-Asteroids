@@ -46,9 +46,9 @@ class Asteroid(pygame.sprite.Sprite):
 
         self.speed = get_random_speed(self.rules['min_speed'], self.rules['max_speed'])
         self.frags_speed = {
-            'A': (-self.speed.x, -self.speed.y),
-            'B': (self.speed.x, -self.speed.y),
-            'C': (self.speed.x, self.speed.y),
+            'A': {'x': -self.rules['min_speed'], 'y': -self.rules['max_speed']},
+            'B': {'x': self.rules['min_speed'], 'y': -self.rules['max_speed']},
+            'C': {'x': self.rules['min_speed'], 'y': self.rules['max_speed']},
         }
 
         self.screen_passed = {0}
@@ -91,10 +91,6 @@ class Asteroid(pygame.sprite.Sprite):
         self.image, self.rect = rotate_img(self.copy_img, self.rect, self.current_rotation)
         self.mask = pygame.mask.from_surface(self.image)
 
-    def get_orbit_rect(self):
-        self.orbit_rect = pygame.draw.circle(self.screen, (0, 0, 0),
-                                             self.center_point, self.target_dist)
-
     def move(self):
         self.angle += radians(sum(self.speed.xy))
         self.pos[:] = move_in_orbit_motion(self.angle, self.center_point.xy, self.target_dist)
@@ -133,9 +129,10 @@ class AsteroidFrag(Asteroid):
         self.rect = self.image.get_rect(center=(pos.x, pos.y))
         self.rotation = randint(-5, 5)
 
-        self.min_speed = self.super_instance.frags_speed[self.id][0] * 5
-        self.max_speed = self.super_instance.frags_speed[self.id][1] * 5
-        self.speed = get_random_speed(self.min_speed, self.max_speed)  # TODO: cada asteroide pra seu lado
+        self.min_speed = self.super_instance.frags_speed[self.id]['x'] * 5
+        self.max_speed = self.super_instance.frags_speed[self.id]['y'] * 5
+        # self.speed = get_random_speed(self.min_speed, self.max_speed)
+        self.speed = Vector2(self.min_speed, self.max_speed)
 
         self.score_value = 3
 
