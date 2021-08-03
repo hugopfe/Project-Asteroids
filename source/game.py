@@ -87,9 +87,6 @@ class Game(Main):
         # collisions
         self.check_collisions()
 
-        # if self.asteroid_group:
-        #     self.spread_asteroids_frags()
-
         # Level and objective
         self.current_level.level_loop()
         self.verify_objective_status()
@@ -207,18 +204,6 @@ class Game(Main):
     def set_score(self, score: int):
         self.player.score += score
         self.score_text.configure(text=f'Pontuação: {self.player.score}')
-
-    def spread_asteroids_frags(self):
-        for asteroid in self.asteroid_group.sprites():
-            if not isinstance(asteroid, AsteroidFrag) or not asteroid.get_collided_asteroids():
-                return
-
-            for asteroid_coll in asteroid.get_collided_asteroids():
-                speed_diff = ((asteroid.speed.x - asteroid_coll.speed.x)*0.02, 
-                              (asteroid.speed.y - asteroid_coll.speed.y)*0.02)
-
-            asteroid.speed.x += speed_diff[0]
-            asteroid.speed.y += speed_diff[1]
 
 
 __all__ = ['Game']
