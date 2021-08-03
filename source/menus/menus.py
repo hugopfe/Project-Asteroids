@@ -175,8 +175,8 @@ class ControlsMenu(Main):
         self.back_button = Button(screen=self.screen,
                                   x=SCREEN_WIDTH / 2,
                                   y=SCREEN_HEIGHT - 100,
-                                  width=80,
-                                  height=40,
+                                  width=80,height=40,
+                                  text='Voltar', padding=3,
                                   command=lambda: self.back_screen())
         self.add_buttons(self.back_button)
 
@@ -251,16 +251,16 @@ class PauseScreen(Main):
 
         # Buttons
         self.continue_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
-                                       width=110, height=40, text='Continuar',
-                                       padding=10, command=self.back_screen)
+                                      width=110, height=40, text='Continuar',
+                                      padding=10, command=self.back_screen)
 
         self.controls_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=460,
-                                    width=110, height=40, text='Controles',
-                                    padding=8, command=lambda: self.change_screen(ControlsMenu))
+                                      width=110, height=40, text='Controles',
+                                      padding=8, command=lambda: self.change_screen(ControlsMenu))
 
         self.mainmenu_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=520,
-                                           width=110, height=40, text='Menu',
-                                           padding=7, command=lambda: self.back_mainmenu(game))
+                                      width=110, height=40, text='Menu',
+                                      padding=7, command=lambda: self.back_mainmenu(game))
 
         self.add_buttons(
             self.continue_button,
