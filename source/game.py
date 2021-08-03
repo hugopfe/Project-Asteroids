@@ -7,7 +7,7 @@ from levels.level import *
 from ui import *
 from assets import *
 from media.paths import body_font
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from constants import *
 
 
 levels = [Level1, Level2, Level3]
@@ -65,11 +65,11 @@ class Game(Main):
         self.mouse_pressed = False
         self.sprite_selected = None
 
+        self.controls_input = self.keyboard_listener
+
         self.main_loop()
 
     def loop(self):
-        
-        self.screen.blit(self.BACKGROUND, (0, 0))
         self.current_time += 1
         self.update_infos()
 
@@ -80,6 +80,7 @@ class Game(Main):
         # player
         self.player_group.draw(self.screen)
         self.player_group.update()
+        self.controls_input()
 
         # power_up
         self.power_up.update()
@@ -95,11 +96,14 @@ class Game(Main):
         self.fonts_group.render_fonts()
         self.current_level.print_level_font()
 
+
+
     def check_events(self, event):
+        
         if event.type == KEYDOWN:
             if event.key == K_SPACE:
                 self.player.shoot()
-            
+
             if event.key == K_p:
                 self.change_screen(PauseScreen, self)
             if event.key == K_TAB:
@@ -111,28 +115,6 @@ class Game(Main):
                 self.asteroid_group.add(Asteroid(pygame.math.Vector2((200, 200)), self.screen,
                                                  self.player.pos, self.level_rules['asteroids'],
                                                  self.set_score))
-        if event.type == KEYUP:
-            if event.key == K_SPACE:
-                self.time_pressed = 0
-                self.space_pressed = False
-                self.single_shots = {0}
-
-        """ ================== TEMP ================== """
-        if event.type == MOUSEBUTTONDOWN:
-            for asteroid in self.asteroid_group.sprites():
-                if asteroid.rect.collidepoint(pygame.mouse.get_pos()):
-                    self.mouse_pressed = True
-                    self.sprite_selected = asteroid
-            if self.power_up.rect.collidepoint(pygame.mouse.get_pos()) and self.power_up.current_state == 'item':
-                self.mouse_pressed = True
-                self.sprite_selected = self.power_up
-        if event.type == MOUSEBUTTONUP:
-            self.mouse_pressed = False
-            self.sprite_selected = None
-
-        if self.mouse_pressed:
-            self.sprite_selected.pos[:] = pygame.mouse.get_pos()
-        """ ===================================="""
 
     def game_over(self):
         pygame.time.wait(300)
@@ -159,6 +141,8 @@ class Game(Main):
                     sprites_coll.append(mask_collision)
 
         for spr_dct in sprites_coll:
+            """ Applying collisions """
+            
             for sprite, asteroids_list in spr_dct.items():
                 if sprite == self.player:
                     """ Player has collided with a Asteroid """
@@ -204,6 +188,43 @@ class Game(Main):
     def set_score(self, score: int):
         self.player.score += score
         self.score_text.configure(text=f'Pontuação: {self.player.score}')
+
+    def keyboard_listener(self):
+        """ Verify the pressed keys """
+
+        k = pygame.key.get_pressed()
+
+        if k[K_UP] and self.player.vel.y > -PLAYER_SPEED:
+            self.player.vel.y -= self.player.acc
+
+        elif k[K_DOWN] and self.player.vel.y < PLAYER_SPEED:
+            self.player.vel.y += self.player.acc
+
+        elif not k[K_UP] and not k[K_DOWN]:
+            self.player.vel.y *= FRICTION
+
+        if k[K_LEFT] and self.player.vel.x > -PLAYER_SPEED:
+            self.player.vel.x -= self.player.acc
+
+        elif k[K_RIGHT] and self.player.vel.x < PLAYER_SPEED:
+            self.player.vel.x += self.player.acc
+
+        elif not k[K_LEFT] and not k[K_RIGHT]:
+            self.player.vel.x *= FRICTION
+
+        if k[K_q]:
+            if self.player.time_pressed['K_q'] < 30:
+                self.player.time_pressed['K_q'] += 1
+            self.player.angle += PLAYER_SPEED // 2 + self.player.time_pressed['K_q'] * 0.3
+        else:
+            self.player.time_pressed['K_q'] = 0
+
+        if k[K_e]:
+            if self.player.time_pressed['K_e'] < 30:
+                self.player.time_pressed['K_e'] += 1
+            self.player.angle -= PLAYER_SPEED // 2 + self.player.time_pressed['K_e'] * 0.3
+        else:
+            self.player.time_pressed['K_e'] = 0
 
 
 __all__ = ['Game']

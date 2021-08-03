@@ -10,6 +10,9 @@ from pygame.math import Vector2
 
 
 class Player(pygame.sprite.Sprite):
+    acc = 1
+
+
     def __init__(self, screen):
         pygame.sprite.Sprite.__init__(self)
 
@@ -25,12 +28,9 @@ class Player(pygame.sprite.Sprite):
 
         self.angle = 0
         self.vel = Vector2(0, 0)
-        self.acc = 1
 
         self.score = 0
         self.time_pressed = {}
-
-        self.keys_pressed = pygame.key.get_pressed()
 
         self.projectile_group = None
 
@@ -40,58 +40,16 @@ class Player(pygame.sprite.Sprite):
         self.projectile_rules = None
 
     def update(self):
-        self.pos = Vector2(self.rect.center)
-        self.keys_pressed = pygame.key.get_pressed()
-
-        self.handle_keydown()
+        self.move()
+        self.rotate()
         self.screen_collision()
 
-    def handle_keydown(self):
-        """ Verify the pressed keys """
-
-        k = self.keys_pressed
-
-        if k[K_UP] and self.vel.y > -PLAYER_SPEED:
-            self.vel.y -= self.acc
-
-        elif k[K_DOWN] and self.vel.y < PLAYER_SPEED:
-            self.vel.y += self.acc
-
-        elif not k[K_UP] and not k[K_DOWN]:
-            self.vel.y *= FRICTION
-
-        if k[K_LEFT] and self.vel.x > -PLAYER_SPEED:
-            self.vel.x -= self.acc
-
-        elif k[K_RIGHT] and self.vel.x < PLAYER_SPEED:
-            self.vel.x += self.acc
-
-        elif not k[K_LEFT] and not k[K_RIGHT]:
-            self.vel.x *= FRICTION
-
-        self.rect.x += int(self.vel.x)
-        self.rect.y += int(self.vel.y)
-
-        if k[K_q]:
-            if self.time_pressed['K_q'] < 30:
-                self.time_pressed['K_q'] += 1
-            self.angle += PLAYER_SPEED // 2 + self.time_pressed['K_q'] * 0.3
-            self.rotate()
-        else:
-            self.time_pressed['K_q'] = 0
-
-            
-        if k[K_e]:
-            if self.time_pressed['K_e'] < 30:
-                self.time_pressed['K_e'] += 1
-            self.angle -= PLAYER_SPEED // 2 + self.time_pressed['K_e'] * 0.3
-            self.rotate()
-        else:
-            self.time_pressed['K_e'] = 0
-
-            
-
-
+    def move(self):
+        self.pos.x += int(self.vel.x)
+        self.pos.y += int(self.vel.y) # TODO: Ao colidir está continuando a se mover
+        print(f'{tuple(self.pos.xy) = }')
+        self.rect.center = tuple(self.pos.xy)
+        
     def shoot(self):
         """ Shoots a projectile """
 

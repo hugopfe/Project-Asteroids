@@ -27,7 +27,6 @@ class Main:
         self._buttons = []
 
     def main_loop(self):
-        self.screen.blit(self.BACKGROUND, (0, 0))
         while self.running:
             self._base_loop()
 
@@ -41,6 +40,7 @@ class Main:
                 if event.key == K_ESCAPE:
                     for sub in Main.__subclasses__():
                         sub.running = False
+            
             self.check_events(event)
 
         self.screen.blit(self.BACKGROUND, (0, 0))
