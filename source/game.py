@@ -99,7 +99,6 @@ class Game(Main):
 
 
     def check_events(self, event):
-        
         if event.type == KEYDOWN:
             if event.key == K_SPACE:
                 self.player.shoot()
