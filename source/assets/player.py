@@ -45,10 +45,9 @@ class Player(pygame.sprite.Sprite):
         self.screen_collision()
 
     def move(self):
-        self.pos.x += int(self.vel.x)
-        self.pos.y += int(self.vel.y) # TODO: Ao colidir está continuando a se mover
-        print(f'{tuple(self.pos.xy) = }')
-        self.rect.center = tuple(self.pos.xy)
+        self.rect.centerx += int(self.vel.x)
+        self.rect.centery += int(self.vel.y) 
+        self.pos.update(self.rect.center)
         
     def shoot(self):
         """ Shoots a projectile """
