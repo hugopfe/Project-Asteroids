@@ -27,6 +27,8 @@ class Game(Main):
         # Player
         self.player = Player(self.screen)
 
+        self.shoot_handler = ShootInputHandler(K_SPACE)
+
         # Power_Up
         self.power_up_pos = get_random_pos(self.screen_rect.w, self.screen_rect.h)
         self.power_up = Shield(self.screen, self.power_up_pos, self.player)
@@ -96,13 +98,8 @@ class Game(Main):
         self.fonts_group.render_fonts()
         self.current_level.print_level_font()
 
-
-
     def check_events(self, event):
         if event.type == KEYDOWN:
-            if event.key == K_SPACE:
-                self.player.shoot()
-
             if event.key == K_p:
                 self.change_screen(PauseScreen, self)
             if event.key == K_TAB:
@@ -211,6 +208,12 @@ class Game(Main):
         elif not k[K_LEFT] and not k[K_RIGHT]:
             self.player.vel.x *= FRICTION
 
+        if k[self.shoot_handler.key] and not self.shoot_handler.key_pressed:
+            self.shoot_handler.key_pressed = True
+            self.player.shoot()
+        elif not k[self.shoot_handler.key]:
+            self.shoot_handler.key_pressed = False
+
         if k[K_q]:
             if self.player.time_pressed['K_q'] < 30:
                 self.player.time_pressed['K_q'] += 1
@@ -224,6 +227,12 @@ class Game(Main):
             self.player.angle -= PLAYER_SPEED // 2 + self.player.time_pressed['K_e'] * 0.3
         else:
             self.player.time_pressed['K_e'] = 0
+
+
+class ShootInputHandler:
+    def __init__(self, key):
+        self.key = key
+        self.key_pressed = False
 
 
 __all__ = ['Game']
