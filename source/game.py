@@ -1,4 +1,5 @@
 import pygame
+from pygame import joystick
 from pygame.locals import *
 
 from util import *
@@ -102,9 +103,14 @@ class Game(Main):
         if event.type == KEYDOWN:
             if event.key == K_p:
                 self.change_screen(PauseScreen, self)
+
+            """==================== TEMP ==================== """
             if event.key == K_TAB:
-                self.power_up.change_state('item')
-                self.power_up.pos = pygame.Vector2(pygame.mouse.get_pos())
+                if self.controls_input == self.keyboard_listener:
+                    self.controls_input = self.joystick_listener
+                else:
+                    self.controls_input = self.keyboard_listener
+                print(f'Switched to {self.controls_input.__name__}')
             if event.key == K_LSHIFT:
                 self.power_up.change_state('dropped')
             if event.key == K_a:
@@ -227,6 +233,21 @@ class Game(Main):
             self.player.angle -= PLAYER_SPEED // 2 + self.player.time_pressed['K_e'] * 0.3
         else:
             self.player.time_pressed['K_e'] = 0
+
+    def joystick_listener(self):
+        joystick = pygame.joystick.Joystick(0)
+        axis = joystick.get_axis
+        j_axes = joystick.get_numaxes()
+
+        # TODO: Nenhum evento do joystick está sendo disparado
+        player_acc = self.player.acc
+        axis_lst = {_: axis(_) for _ in range(j_axes)}
+        # print(axis_lst)
+
+        for i in range(j_axes):
+            if axis_lst[0] < -0.5:
+                self.player.vel.x -= player_acc 
+        # print(f'{axis(0):.4f}')
 
 
 class ShootInputHandler:

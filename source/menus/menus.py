@@ -40,7 +40,7 @@ class Main:
                 if event.key == K_ESCAPE:
                     for sub in Main.__subclasses__():
                         sub.running = False
-            
+            print(event)
             self.check_events(event)
 
         self.screen.blit(self.BACKGROUND, (0, 0))
