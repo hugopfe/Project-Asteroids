@@ -83,6 +83,7 @@ class Game(Main):
         # player
         self.player_group.draw(self.screen)
         self.player_group.update()
+        
         self.controls_input()
 
         # power_up
@@ -238,6 +239,10 @@ class Game(Main):
         joystick = pygame.joystick.Joystick(0)
         axis = joystick.get_axis
         j_axes = joystick.get_numaxes()
+
+        pygame.event.set_allowed(JOYAXISMOTION)
+        pygame.event.set_allowed(JOYBUTTONDOWN)
+        pygame.event.set_allowed(JOYBUTTONUP)
 
         # TODO: Nenhum evento do joystick está sendo disparado
         player_acc = self.player.acc
