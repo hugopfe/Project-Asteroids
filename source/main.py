@@ -16,7 +16,7 @@ if __name__ == '__main__':
     pygame.event.set_allowed(QUIT)
     pygame.event.set_allowed(KEYUP)
     pygame.event.set_allowed(KEYDOWN)
-
+    
     icon = pygame.image.load(asteroid)
     pygame.display.set_icon(icon)
 

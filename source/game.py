@@ -236,6 +236,11 @@ class Game(Main):
             self.player.time_pressed['K_e'] = 0
 
     def joystick_listener(self):
+        if pygame.joystick.get_count() < 1:
+            print('Nenhum controle encontrado!')
+            self.controls_input = self.keyboard_listener
+            return
+
         joystick = pygame.joystick.Joystick(0)
         axis = joystick.get_axis
         j_axes = joystick.get_numaxes()
