@@ -1,7 +1,7 @@
 from menus.menus import Main
 from ui import *
 from media.paths import title_font
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from components.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 class EndScreen(Main):

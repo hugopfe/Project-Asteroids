@@ -3,7 +3,7 @@ from pygame.locals import *
 
 from random import choice, random
 from ui import Font
-from util import *
+from components.util import *
 from media.paths import title_font
 
 

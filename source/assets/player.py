@@ -1,8 +1,8 @@
 from media.paths import ship
 from .projectile import Projectile
 
-from util import *
-from constants import *
+from components.util import *
+from components.constants import *
 
 import pygame
 from pygame.locals import *

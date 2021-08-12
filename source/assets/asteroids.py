@@ -3,7 +3,7 @@ from media.paths import *
 from math import radians
 from random import randint
 
-from util import *
+from components.util import *
 
 import pygame
 from pygame.math import Vector2

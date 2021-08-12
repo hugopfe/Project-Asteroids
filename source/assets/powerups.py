@@ -1,6 +1,6 @@
 from media.paths import shield
 import pygame
-from util import *
+from components.util import *
 from math import radians
 
 

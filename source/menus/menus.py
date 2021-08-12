@@ -1,8 +1,8 @@
 import pygame
 from pygame.locals import *
 
-from util import *
-from constants import FPS, VERSION, SCREEN_WIDTH, SCREEN_HEIGHT
+from components.util import *
+from components.constants import FPS, VERSION, SCREEN_WIDTH, SCREEN_HEIGHT
 from ui.button import *
 from ui.font import *
 from media.paths import bg, logo, body_font, title_font
