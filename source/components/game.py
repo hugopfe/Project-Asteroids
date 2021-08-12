@@ -1,14 +1,14 @@
 import pygame
-from pygame import joystick
 from pygame.locals import *
 
-from components.util import *
 from menus import *
 from levels.level import *
 from ui import *
 from assets import *
 from media.paths import body_font
+from components.util import *
 from components.constants import *
+from components.controls_inputs_handler import *
 
 
 levels = [Level1, Level2, Level3]
@@ -27,8 +27,6 @@ class Game(Main):
 
         # Player
         self.player = Player(self.screen)
-
-        self.shoot_handler = ShootInputHandler(K_SPACE)
 
         # Power_Up
         self.power_up_pos = get_random_pos(self.screen_rect.w, self.screen_rect.h)
@@ -65,10 +63,11 @@ class Game(Main):
 
         self.fonts_group.add_fonts(self.score_text, self.target_score_text)
 
+        """ TEMP """
         self.mouse_pressed = False
         self.sprite_selected = None
 
-        self.controls_input = self.keyboard_listener
+        self.controls_handler = ControlsInputsHandler()
 
         self.main_loop()
 
@@ -84,7 +83,7 @@ class Game(Main):
         self.player_group.draw(self.screen)
         self.player_group.update()
         
-        self.controls_input()
+        self.controls_handler.device_listener(self.player)
 
         # power_up
         self.power_up.update()
@@ -107,15 +106,7 @@ class Game(Main):
 
             """==================== TEMP ==================== """
             if event.key == K_TAB:
-                if self.controls_input == self.keyboard_listener:
-                    self.controls_input = self.joystick_listener
-                else:
-                    if pygame.joystick.get_count() < 1:
-                        print('Nenhum controle encontrado!')
-                        self.controls_input = self.keyboard_listener
-                    else:
-                        self.controls_input = self.keyboard_listener
-                print(f'Switched to {self.controls_input.__name__}')
+                self.controls_handler.change_device()
             if event.key == K_LSHIFT:
                 self.power_up.change_state('dropped')
             if event.key == K_a:
@@ -201,70 +192,6 @@ class Game(Main):
     def set_score(self, score: int):
         self.player.score += score
         self.score_text.configure(text=f'Pontuação: {self.player.score}')
-
-    def keyboard_listener(self):
-        """ Verify the pressed keys """
-
-        k = pygame.key.get_pressed()
-
-        if k[K_UP] and self.player.vel.y > -PLAYER_SPEED:
-            self.player.vel.y -= self.player.acc
-
-        elif k[K_DOWN] and self.player.vel.y < PLAYER_SPEED:
-            self.player.vel.y += self.player.acc
-
-        elif not k[K_UP] and not k[K_DOWN]:
-            self.player.vel.y *= FRICTION
-
-        if k[K_LEFT] and self.player.vel.x > -PLAYER_SPEED:
-            self.player.vel.x -= self.player.acc
-
-        elif k[K_RIGHT] and self.player.vel.x < PLAYER_SPEED:
-            self.player.vel.x += self.player.acc
-
-        elif not k[K_LEFT] and not k[K_RIGHT]:
-            self.player.vel.x *= FRICTION
-
-        if k[self.shoot_handler.key] and not self.shoot_handler.key_pressed:
-            self.shoot_handler.key_pressed = True
-            self.player.shoot()
-        elif not k[self.shoot_handler.key]:
-            self.shoot_handler.key_pressed = False
-
-        if k[K_q]:
-            if self.player.time_pressed['K_q'] < 30:
-                self.player.time_pressed['K_q'] += 1
-            self.player.angle += PLAYER_SPEED // 2 + self.player.time_pressed['K_q'] * 0.3
-        else:
-            self.player.time_pressed['K_q'] = 0
-
-        if k[K_e]:
-            if self.player.time_pressed['K_e'] < 30:
-                self.player.time_pressed['K_e'] += 1
-            self.player.angle -= PLAYER_SPEED // 2 + self.player.time_pressed['K_e'] * 0.3
-        else:
-            self.player.time_pressed['K_e'] = 0
-
-    def joystick_listener(self):
-        joystick = pygame.joystick.Joystick(0)
-        axis = joystick.get_axis
-        j_axes = joystick.get_numaxes()
-
-        # TODO: Nenhum evento do joystick está sendo disparado
-        player_acc = self.player.acc
-        axis_lst = {_: axis(_) for _ in range(j_axes)}
-        # print(axis_lst)
-
-        for i in range(j_axes):
-            if axis_lst[0] < -0.5:
-                self.player.vel.x -= player_acc 
-        # print(f'{axis(0):.4f}')
-
-
-class ShootInputHandler:
-    def __init__(self, key):
-        self.key = key
-        self.key_pressed = False
 
 
 __all__ = ['Game']
