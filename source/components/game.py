@@ -67,7 +67,7 @@ class Game(Main):
         self.mouse_pressed = False
         self.sprite_selected = None
 
-        self.controls_handler = ControlsInputsHandler()
+        self.controls_handler = ControlsInputsHandler(self.player)
 
         self.main_loop()
 
@@ -83,7 +83,7 @@ class Game(Main):
         self.player_group.draw(self.screen)
         self.player_group.update()
         
-        self.controls_handler.device_listener(self.player)
+        self.controls_handler.device_listener()
 
         # power_up
         self.power_up.update()
@@ -113,13 +113,7 @@ class Game(Main):
                 self.asteroid_group.add(Asteroid(pygame.math.Vector2((200, 200)), self.screen,
                                                  self.player.pos, self.level_rules['asteroids'],
                                                  self.set_score))
-        if event.type == JOYAXISMOTION:
-            print(event)
-        if event.type == JOYBUTTONDOWN:
-            print(event)
-        if event.type == JOYBUTTONUP:
-            print(event)
-        
+
     def game_over(self):
         pygame.time.wait(300)
         self.player.kill()
