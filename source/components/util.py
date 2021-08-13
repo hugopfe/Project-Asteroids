@@ -59,7 +59,7 @@ def get_random_speed(min_speed: Union[int, float], max_speed: Union[int, float])
 def rotate_img(image: pygame.Surface, rect: pygame.Rect, angle: int) -> Tuple[pygame.Surface, pygame.Rect]:
     """ Rotate a image maintaining the center """
 
-    copy_img = pygame.transform.rotate(image, angle)
+    copy_img = pygame.transform.rotozoom(image, angle, 1)
     copy_rect = copy_img.get_rect(center=rect.center)
 
     return copy_img, copy_rect

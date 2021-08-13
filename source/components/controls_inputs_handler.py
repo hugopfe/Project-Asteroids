@@ -35,19 +35,19 @@ class ControlsInputsHandler:
         k = pygame.key.get_pressed()
 
         if k[K_UP] and self.player.vel.y > -PLAYER_SPEED:
-            self.player.vel.y -= self.player.acc
+            self.player.vel.y -= self.player.ACC
 
         elif k[K_DOWN] and self.player.vel.y < PLAYER_SPEED:
-            self.player.vel.y += self.player.acc
+            self.player.vel.y += self.player.ACC
 
         elif not k[K_UP] and not k[K_DOWN]:
             self.player.vel.y *= FRICTION
 
         if k[K_LEFT] and self.player.vel.x > -PLAYER_SPEED:
-            self.player.vel.x -= self.player.acc
+            self.player.vel.x -= self.player.ACC
 
         elif k[K_RIGHT] and self.player.vel.x < PLAYER_SPEED:
-            self.player.vel.x += self.player.acc
+            self.player.vel.x += self.player.ACC
 
         elif not k[K_LEFT] and not k[K_RIGHT]:
             self.player.vel.x *= FRICTION
@@ -61,14 +61,14 @@ class ControlsInputsHandler:
         if k[K_q]:
             if self.player.time_pressed['K_q'] < 30:
                 self.player.time_pressed['K_q'] += 1
-            self.player.angle += PLAYER_SPEED // 2 + self.player.time_pressed['K_q'] * 0.3
+            self.player.angle += PLAYER_SPEED // 2 + self.player.time_pressed['K_q'] * 0.15
         else:
             self.player.time_pressed['K_q'] = 0
 
         if k[K_e]:
             if self.player.time_pressed['K_e'] < 30:
                 self.player.time_pressed['K_e'] += 1
-            self.player.angle -= PLAYER_SPEED // 2 + self.player.time_pressed['K_e'] * 0.3
+            self.player.angle -= PLAYER_SPEED // 2 + self.player.time_pressed['K_e'] * 0.15
         else:
             self.player.time_pressed['K_e'] = 0
 
@@ -77,11 +77,11 @@ class ControlsInputsHandler:
         axis = self.joystick.get_axis
         j_axes = self.joystick.get_numaxes()
 
-        axis_lst = [round(axis(_), 3) for _ in range(j_axes)]
-
+        axis_lst = [round(axis(_), 3) for _ in range(j_axes)]  
+        
         vel_x, vel_y = 0, 0
 
-        # Player movement
+        """ Player movement """
 
         for i in range(j_axes):
             x = 0

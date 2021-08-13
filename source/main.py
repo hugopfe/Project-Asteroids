@@ -18,5 +18,5 @@ if __name__ == '__main__':
 
     # menus.MainMenu(Game)
     Game()
-
+    
     pygame.quit()

@@ -103,27 +103,14 @@ class Level1(Level):
     def __init__(self, game):
         Level.__init__(self, game)
 
-        projectile_damage = 300
-
         self.level_rules = {
             'asteroids': {
                 'max_spawned': 10,
-                'min_speed': 0.1,
+                'min_speed': 0.05,
                 'max_speed': 0.2,
                 'life': 300
-            },
-            'player': {
-                'life': 100,
-                'max_powerups': 2,
-                'resistance': 100
-            },
-            'projectile': {
-                'damage_single': projectile_damage,
-                'damage_mult': projectile_damage*0.5,
-                'speed': 10
             }
-        }  # TODO: A velocidade deve ser relativa a resistência do player e ao dano
-        self.player.set_rules(self.level_rules)
+        }  
 
         self.level_objectives = {'score': 5 * 14}  # Each asteroid can give at maximus 14 points
         self.current_reach = {'score': self.player.score}

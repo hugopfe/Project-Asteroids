@@ -10,7 +10,7 @@ from pygame.math import Vector2
 
 
 class Player(pygame.sprite.Sprite):
-    acc = 1
+    ACC = 0.5
 
 
     def __init__(self, screen):
@@ -34,53 +34,40 @@ class Player(pygame.sprite.Sprite):
 
         self.projectile_group = None
 
-        self.player_rules = None
-        self.life = None
-        self.resistance = 100
-        self.projectile_rules = None
-
     def update(self):
         self.move()
         self.rotate()
         self.screen_collision()
 
     def move(self):
-        self.rect.centerx += int(self.vel.x)
-        self.rect.centery += int(self.vel.y) 
+        self.rect.centerx += round(self.vel.x)
+        self.rect.centery += round(self.vel.y)
         self.pos.update(self.rect.center)
         
     def shoot(self):
         """ Shoots a projectile """
 
         self.projectile_group.add(Projectile(self.rect.centerx, self.rect.centery,
-                                             self.angle, self.screen, self.projectile_rules))
+                                             self.angle, self.screen))
 
     def screen_collision(self):
         self.rect.clamp_ip(self.screen.get_rect())
 
-        if self.rect.right == self.screen.get_width():
+        if self.rect.right + self.vel.x == self.screen.get_width():
             self.vel.x = 0
 
-        if self.rect.left == 0:
+        if self.rect.left + self.vel.x == 0:
             self.vel.x = 0
 
-        if self.rect.bottom == self.screen.get_height():
+        if self.rect.bottom + self.vel.y == self.screen.get_height():
             self.vel.y = 0
 
-        if self.rect.top == 0:
+        if self.rect.top + self.vel.y == 0:
             self.vel.y = 0
 
     def rotate(self):
         self.image, self.rect = rotate_img(self.copy_img, self.rect, self.angle)
         self.mask = pygame.mask.from_surface(self.image)
-
-    def set_rules(self, level_rules):
-        """ Set the rules from level """
-
-        self.player_rules = level_rules['player']
-        self.life = self.player_rules['life']
-        self.resistance = self.player_rules['resistance']
-        self.projectile_rules = level_rules['projectile']
 
 
 __all__ = ['Player']

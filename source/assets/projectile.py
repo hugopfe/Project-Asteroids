@@ -5,13 +5,11 @@ from math import cos, sin, radians
 
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, angle, screen, level_rules):
+    def __init__(self, x_pos, y_pos, angle, screen):
         pygame.sprite.Sprite.__init__(self)
 
-        self.rules = level_rules
-        self.speed = self.rules['speed']
-        self.damage = self.rules['damage_single']
-
+        self.speed = 8
+        
         self.screen = screen
 
         self.angle = radians(angle)
@@ -19,15 +17,10 @@ class Projectile(pygame.sprite.Sprite):
         self.y_pos = y_pos - sin(angle) * 2
 
         self.image = pygame.Surface((7, 3), SRCALPHA)
-
-        if self.damage == self.rules['damage_single']:
-            self.image.fill('white')
-        else:
-            self.image.fill('red')
-
+        self.image.fill('white')
         self.copy_img = self.image.copy()
         self.image = pygame.transform.rotate(self.copy_img, angle)
-
+        
         self.mask = pygame.mask.from_surface(self.image)
 
         self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))

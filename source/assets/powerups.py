@@ -110,7 +110,7 @@ class Shield(PowerUp):
         self.move()
 
     def move(self):
-        self.angle += 0.09
+        self.angle += 0.07
         self.pos[:] = move_in_orbit_motion(self.angle, self.player.rect.center, 100)
 
     def get_item_state(self):

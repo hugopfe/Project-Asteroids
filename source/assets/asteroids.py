@@ -28,7 +28,7 @@ class Asteroid(pygame.sprite.Sprite):
         self.score_value = 5
 
         self.current_rotation = 0
-        self.rotation = randint(-10, 10)
+        self.rotation = randint(-7, 7)
         self.angle = 0
 
         self.image = pygame.image.load(asteroid).convert_alpha()
@@ -51,7 +51,7 @@ class Asteroid(pygame.sprite.Sprite):
             'C': {'x': self.rules['min_speed'], 'y': self.rules['max_speed']},
         }
 
-        self.screen_passed = {0}
+        self.screen_passed = False
         self.time = 0
 
         self.observers = list(level_observers)
@@ -72,9 +72,9 @@ class Asteroid(pygame.sprite.Sprite):
 
     def clear_garbage(self):
         if self.screen_rect.colliderect(self.rect):
-            self.screen_passed.add(1)
+            self.screen_passed = True
 
-        if not self.screen_rect.colliderect(self.rect) and self.screen_passed == {0, 1}:
+        if not self.screen_rect.colliderect(self.rect) and self.screen_passed:
             self.kill()
 
     def break_up(self):
@@ -87,12 +87,12 @@ class Asteroid(pygame.sprite.Sprite):
         self.kill()
 
     def rotate(self):
-        self.current_rotation += self.rotation
+        self.current_rotation += self.rotation * sum(self.speed)
         self.image, self.rect = rotate_img(self.copy_img, self.rect, self.current_rotation)
         self.mask = pygame.mask.from_surface(self.image)
 
     def move(self):
-        self.angle += radians(sum(self.speed.xy))
+        self.angle += radians(sum(self.speed))
         self.pos[:] = move_in_orbit_motion(self.angle, self.center_point.xy, self.target_dist)
 
     def get_collided_asteroids(self):
