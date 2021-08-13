@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 
 from .constants import PLAYER_SPEED, FRICTION
+from ui import Button
 
 
 class ControlsInputsHandler:
@@ -34,7 +35,12 @@ class ControlsInputsHandler:
         """ Verifyies the pressed keys on keyboard """
 
 
-        class MouseNavigation:
+        class AbsNavigation:
+            def handle_navigation(buttons_list, button_cfg=None):
+                pass
+        
+
+        class MouseNavigation(AbsNavigation):
             def handle_navigation(self, buttons_list):
                 for button in buttons_list:
                     is_above = button.bd_rect.collidepoint(pygame.mouse.get_pos()) 
@@ -44,9 +50,37 @@ class ControlsInputsHandler:
                         button.press(bt_pressed[0])
 
         
-        class KeyboardNavigation:
+        class KeyboardNavigation(AbsNavigation):
+            def __init__(self):
+                super().__init__()
+
+                self.btn_i = 0
+                self.key_was_pressed = {
+                    'K_UP': False,
+                    'K_DOWN': False
+                }
+            
             def handle_navigation(self, buttons_list):
-                pass
+                selected_button: Button = buttons_list[self.btn_i]
+                selected_button.select(True)
+
+                k = pygame.key.get_pressed()
+
+                if k[K_UP] and not self.key_was_pressed['K_UP']:
+                    self.key_was_pressed['K_UP'] = True
+                    selected_button.select(False)
+                    self.btn_i = self.btn_i - 1 if self.btn_i > 0 else len(buttons_list) - 1
+                elif not k[K_UP]:
+                    self.key_was_pressed['K_UP'] = False
+
+                if k[K_DOWN] and not self.key_was_pressed['K_DOWN']:
+                    self.key_was_pressed['K_DOWN'] = True
+                    selected_button.select(False)
+                    self.btn_i = self.btn_i + 1 if self.btn_i < len(buttons_list) - 1 else 0
+                elif not k[K_DOWN]:
+                    self.key_was_pressed['K_DOWN'] = False
+
+                selected_button.press(k[K_RETURN])
 
         
         class KeyboardListener:
@@ -54,8 +88,7 @@ class ControlsInputsHandler:
             
             def __init__(self, shoot_key_pressed):
                 self.shoot_key_pressed = shoot_key_pressed
-                self.btn_i = 0
-                self.current_dev = self.DEVICES['mouse']
+                self.current_dev = self.DEVICES['keyboard']
             
             def in_game_control(self, player):
                 """ Player movement """
@@ -110,13 +143,8 @@ class ControlsInputsHandler:
                 if not buttons_list:
                     return
 
-                if self.current_dev == 'keyboard':
-                    selected_button = buttons_list[self.btn_i]
-
                 self.current_dev.handle_navigation(buttons_list)
 
-            # TODO: navegação pelo teclado
-        
 
         return KeyboardListener(self.shoot_key_pressed)
 
