@@ -24,13 +24,18 @@ class Player(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center=self.screen_rect.center)
         self.copy_img = self.image.copy()
-        self.pos = Vector2(self.rect.center)
 
+        self.pos = Vector2(self.rect.center)
         self.angle = 0
         self.vel = Vector2(0, 0)
 
         self.score = 0
-        self.time_pressed = {}
+        self.time_pressed = {
+            'K_q': 0,
+            'K_e': 0,
+            'RB_button': 0,
+            'LB_button': 0,
+        }
 
         self.projectile_group = None
 
@@ -40,6 +45,7 @@ class Player(pygame.sprite.Sprite):
         self.screen_collision()
 
     def move(self):
+        print(tuple(map(round, self.vel)))
         self.rect.centerx += round(self.vel.x)
         self.rect.centery += round(self.vel.y)
         self.pos.update(self.rect.center)

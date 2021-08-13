@@ -131,7 +131,7 @@ class MainMenu(Main):
         )
 
         # Version
-        self.version_txt = Font(f'version: {VERSION}', (SCREEN_WIDTH - 10, SCREEN_HEIGHT - 30), 'right')
+        self.version_txt = Font(f'versão: {VERSION}', (SCREEN_WIDTH - 10, SCREEN_HEIGHT - 30), 'right')
         self.version_txt.configure(font_name=body_font, size=15, color='white',
                                    bg_color='black', screen=self.screen)
 
