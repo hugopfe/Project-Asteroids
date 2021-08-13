@@ -45,7 +45,6 @@ class Player(pygame.sprite.Sprite):
         self.screen_collision()
 
     def move(self):
-        print(tuple(map(round, self.vel)))
         self.rect.centerx += round(self.vel.x)
         self.rect.centery += round(self.vel.y)
         self.pos.update(self.rect.center)

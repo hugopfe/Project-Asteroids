@@ -2,24 +2,22 @@ import pygame
 from pygame.locals import *
 
 from components.util import *
+from components.controls_inputs_handler import *
 from components.constants import FPS, VERSION, SCREEN_WIDTH, SCREEN_HEIGHT
-from ui.button import *
-from ui.font import *
+from ui import *
 from media.paths import bg, logo, body_font, title_font
 
 
 class Main:
     def __init__(self):
-        """
-        It's the abstract class for all screens (with your own main loop)
-        """
+        """ It's the abstract class for all screens (with your own main loop) """
 
-        # Constants
         self.BACKGROUND = pygame.image.load(bg)
 
-        # Variables
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.screen_rect = self.screen.get_rect()
+
+        self.controls_handler = ControlsInputsHandler()
 
         self.clock = pygame.time.Clock()
         self.running = True
@@ -28,24 +26,24 @@ class Main:
 
     def main_loop(self):
         while self.running:
-            self._base_loop()
-
-    def _base_loop(self):
-        self.clock.tick(FPS)
-        for event in pygame.event.get():
-            if event.type == QUIT:  # Making sure that all screens is stopped to run
-                for sub in Main.__subclasses__():
-                    sub.running = False
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
+            self.clock.tick(FPS)
+            for event in pygame.event.get():
+                if event.type == QUIT:  
+                    # Making sure that all screens is stopped to run
                     for sub in Main.__subclasses__():
                         sub.running = False
-            
-            self.check_events(event)
+                if event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        # Making sure that all screens is stopped to run
+                        for sub in Main.__subclasses__():
+                            sub.running = False
+                
+                self.check_events(event)
 
-        self.screen.blit(self.BACKGROUND, (0, 0))
-        self.loop()
-        pygame.display.flip()
+            self.screen.blit(self.BACKGROUND, (0, 0))
+            self.loop()
+            self.controls_handler.device_listener.menu_control(self._buttons)
+            pygame.display.flip()
 
     def loop(self):
         pass
@@ -65,7 +63,6 @@ class Main:
 
     @staticmethod
     def change_screen(next_screen, previous_screen=None, kill_prev=False):
-        
         if kill_prev:
             previous_screen.running = False
 

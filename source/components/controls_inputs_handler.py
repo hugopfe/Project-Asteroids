@@ -5,17 +5,18 @@ from .constants import PLAYER_SPEED, FRICTION
 
 
 class ControlsInputsHandler:
-    def __init__(self, player):
+    def __init__(self):
         """ Handles all controls inputs upcoming from keyboard or controller """
         
-        self.player = player
-        self.shoot_key_pressed = False
         try:
             self.joystick = pygame.joystick.Joystick(0)
         except pygame.error:
             pass
 
-        self.device_listener = self.keyboard_listener
+        self.player = None
+        self.shoot_key_pressed = False
+
+        self.device_listener = self.keyboard_listener()
 
     def change_device(self):
         if self.device_listener == self.keyboard_listener:
@@ -30,53 +31,94 @@ class ControlsInputsHandler:
         print(f'Switched to {self.device_listener.__name__}')
 
     def keyboard_listener(self):
-        """ Verify the pressed keys """
+        """ Verifyies the pressed keys on keyboard """
 
-        k = pygame.key.get_pressed()
 
-        """ Player movement """
+        class MouseNavigation:
+            def handle_navigation(self, buttons_list):
+                for button in buttons_list:
+                    is_above = button.bd_rect.collidepoint(pygame.mouse.get_pos()) 
+                
+                    if button.select(is_above):
+                        bt_pressed = pygame.mouse.get_pressed(3)
+                        button.press(bt_pressed[0])
+
         
-        if k[K_UP] and self.player.vel.y > -PLAYER_SPEED:
-            self.player.vel.y -= self.player.ACC
+        class KeyboardNavigation:
+            def handle_navigation(self, buttons_list):
+                pass
 
-        elif k[K_DOWN] and self.player.vel.y < PLAYER_SPEED:
-            self.player.vel.y += self.player.ACC
-
-        elif not k[K_UP] and not k[K_DOWN]:
-            self.player.vel.y *= FRICTION
-
-        if k[K_LEFT] and self.player.vel.x > -PLAYER_SPEED:
-            self.player.vel.x -= self.player.ACC
-
-        elif k[K_RIGHT] and self.player.vel.x < PLAYER_SPEED:
-            self.player.vel.x += self.player.ACC
-
-        elif not k[K_LEFT] and not k[K_RIGHT]:
-            self.player.vel.x *= FRICTION
         
-        """ Player shooting """
+        class KeyboardListener:
+            DEVICES = {'mouse': MouseNavigation(), 'keyboard': KeyboardNavigation()}
+            
+            def __init__(self, shoot_key_pressed):
+                self.shoot_key_pressed = shoot_key_pressed
+                self.btn_i = 0
+                self.current_dev = self.DEVICES['mouse']
+            
+            def in_game_control(self, player):
+                """ Player movement """
+                
+                k = pygame.key.get_pressed()
+                
+                if k[K_UP] and player.vel.y > -PLAYER_SPEED:
+                    player.vel.y -= player.ACC
 
-        if k[K_SPACE] and not self.shoot_key_pressed:
-            self.shoot_key_pressed = True
-            self.player.shoot()
-        elif not k[K_SPACE]:
-            self.shoot_key_pressed = False
+                elif k[K_DOWN] and player.vel.y < PLAYER_SPEED:
+                    player.vel.y += player.ACC
 
-        if k[K_q]:
-            if self.player.time_pressed['K_q'] < 30:
-                self.player.time_pressed['K_q'] += 1
-            self.player.angle += PLAYER_SPEED // 2 + self.player.time_pressed['K_q'] * 0.15
-        else:
-            self.player.time_pressed['K_q'] = 0
+                elif not k[K_UP] and not k[K_DOWN]:
+                    player.vel.y *= FRICTION
 
-        """ Player rotating """
+                if k[K_LEFT] and player.vel.x > -PLAYER_SPEED:
+                    player.vel.x -= player.ACC
 
-        if k[K_e]:
-            if self.player.time_pressed['K_e'] < 30:
-                self.player.time_pressed['K_e'] += 1
-            self.player.angle -= PLAYER_SPEED // 2 + self.player.time_pressed['K_e'] * 0.15
-        else:
-            self.player.time_pressed['K_e'] = 0
+                elif k[K_RIGHT] and player.vel.x < PLAYER_SPEED:
+                    player.vel.x += player.ACC
+
+                elif not k[K_LEFT] and not k[K_RIGHT]:
+                    player.vel.x *= FRICTION
+                
+                """ Player shooting """
+
+                if k[K_SPACE] and not self.shoot_key_pressed:
+                    self.shoot_key_pressed = True
+                    player.shoot()
+                elif not k[K_SPACE]:
+                    self.shoot_key_pressed = False
+
+                if k[K_q]:
+                    if player.time_pressed['K_q'] < 30:
+                        player.time_pressed['K_q'] += 1
+                    player.angle += PLAYER_SPEED // 2 + player.time_pressed['K_q'] * 0.15
+                else:
+                    player.time_pressed['K_q'] = 0
+
+                """ Player rotating """
+
+                if k[K_e]:
+                    if player.time_pressed['K_e'] < 30:
+                        player.time_pressed['K_e'] += 1
+                    player.angle -= PLAYER_SPEED // 2 + player.time_pressed['K_e'] * 0.15
+                else:
+                    player.time_pressed['K_e'] = 0
+        
+            def menu_control(self, buttons_list):
+                """ Interacts with buttons on menu """
+
+                if not buttons_list:
+                    return
+
+                if self.current_dev == 'keyboard':
+                    selected_button = buttons_list[self.btn_i]
+
+                self.current_dev.handle_navigation(buttons_list)
+
+            # TODO: navegação pelo teclado
+        
+
+        return KeyboardListener(self.shoot_key_pressed)
 
     def joystick_listener(self):
         self.joystick = pygame.joystick.Joystick(0)
@@ -99,8 +141,7 @@ class ControlsInputsHandler:
             if abs(axis_lst[x]) > 0.1:
                 self.player.vel.x = axis_lst[x] * PLAYER_SPEED
             else:
-                self.player.vel.x = max(self.player.vel.x * FRICTION, 0)
-                # print(self.player.vel.x)
+                self.player.vel.x *= FRICTION
           
             if abs(axis_lst[y]) > 0.1:
                 self.player.vel.y = axis_lst[y] * PLAYER_SPEED

@@ -63,11 +63,7 @@ class Game(Main):
 
         self.fonts_group.add_fonts(self.score_text, self.target_score_text)
 
-        """ TEMP """
-        self.mouse_pressed = False
-        self.sprite_selected = None
-
-        self.controls_handler = ControlsInputsHandler(self.player)
+        self.controls_handler.player = self.player
 
         self.main_loop()
 
@@ -83,7 +79,7 @@ class Game(Main):
         self.player_group.draw(self.screen)
         self.player_group.update()
         
-        self.controls_handler.device_listener()
+        self.controls_handler.device_listener.in_game_control(self.player)
 
         # power_up
         self.power_up.update()

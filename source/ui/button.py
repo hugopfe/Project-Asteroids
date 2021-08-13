@@ -36,7 +36,7 @@ class Button:
             self.text2 = splitted_text[1]
 
         self.current_color = pygame.Color('#4948D9')
-        self.clicked = set()
+        self.clicked = False
 
         # Button Border
         self.border = pygame.Surface((self.width, self.height))
@@ -63,35 +63,32 @@ class Button:
             self.txt_rect = self.screen_text.get_rect(center=(self.rect.centerx, self.rect.centery))
 
     def render(self):
-        self.mouse_above()
-
         if self.split_text:
             self.background.blit(self.screen_text1, self.txt_rect1)
             self.background.blit(self.screen_text2, self.txt_rect2)
         else:
             self.background.blit(self.screen_text, self.txt_rect)
+
         self.border.blit(self.background, self.rect)
         self.screen.blit(self.border, self.bd_rect)
 
-    def mouse_above(self):
-        is_above = self.bd_rect.collidepoint(pygame.mouse.get_pos())
-
+    def select(self, is_above: bool) -> bool:
         if is_above:
-            self.mouse_click()
             self.current_color = self.current_color.lerp('#9848D9', 0.5)
-
         else:
-            self.clicked.clear()
+            self.clicked = False
             self.current_color = self.current_color.lerp('#4948D9', 0.5)
 
         self.border.fill(self.current_color)
 
-    def mouse_click(self):
-        bt_pressed = pygame.mouse.get_pressed(3)
+        return True if is_above else False
 
-        if bt_pressed[0]:
-            self.clicked.add(True)
+    def press(self, pressed: bool):
+        if pressed:
+            self.clicked = True
             self.background.fill('white')
+
+            """ Changing colors"""
 
             if self.split_text:
                 self.screen_text1 = self.font.render(self.text1, True, (0, 0, 0), (255, 255, 255))
@@ -102,18 +99,23 @@ class Button:
         else:
             self.background.fill('black')
 
+            """ Changing colors """
+
             if self.split_text:
                 self.screen_text1 = self.font.render(self.text1, True, (255, 255, 255), (0, 0, 0))
                 self.screen_text2 = self.font.render(self.text2, True, (255, 255, 255), (0, 0, 0))
             else:
                 self.screen_text = self.font.render(self.text, True, (255, 255, 255), (0, 0, 0))
 
-            if self.clicked == {True}:
-                self.clicked.clear()
+            """ Executing button command """
+
+            if self.clicked == True:
+                self.clicked = False
+
                 try:
                     self.command()
-                except TypeError:
-                    pass
+                except Exception as e:
+                    print(str(e))
 
 
 __all__ = ['Button']
