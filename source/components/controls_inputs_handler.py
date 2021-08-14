@@ -88,7 +88,7 @@ class ControlsInputsHandler:
             
             def __init__(self, shoot_key_pressed):
                 self.shoot_key_pressed = shoot_key_pressed
-                self.current_dev = self.DEVICES['keyboard']
+                self.current_dev = self.DEVICES['mouse']
             
             def in_game_control(self, player):
                 """ Player movement """
@@ -140,9 +140,24 @@ class ControlsInputsHandler:
             def menu_control(self, buttons_list):
                 """ Interacts with buttons on menu """
 
+                def catch_event(u_event) -> bool:
+                    for event in pygame.event.get():
+                        if event.type == u_event:
+                            return True
+                        else:
+                            return False
+                        
                 if not buttons_list:
                     return
-
+                
+                k = pygame.key.get_pressed()
+                b = pygame.mouse.get_pressed(3)
+                
+                if any((k[K_UP], k[K_DOWN], k[K_RETURN])):
+                    self.current_dev = self.DEVICES['keyboard']
+                if any((*b, catch_event(MOUSEMOTION))):
+                    self.current_dev = self.DEVICES['mouse']
+                
                 self.current_dev.handle_navigation(buttons_list)
 
 
