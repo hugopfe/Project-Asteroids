@@ -102,7 +102,7 @@ class Game(Main):
 
             """==================== TEMP ==================== """
             if event.key == K_TAB:
-                self.controls_handler.change_device()
+                self.controls_handler.change_default_device()
             if event.key == K_LSHIFT:
                 self.power_up.change_state('dropped')
             if event.key == K_a:
