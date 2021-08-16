@@ -37,7 +37,7 @@ class Main:
                         # Making sure that all screens is stopped to run
                         for sub in Main.__subclasses__():
                             sub.running = False
-                
+                            
                 self.check_events(event)
 
             self.screen.blit(self.BACKGROUND, (0, 0))

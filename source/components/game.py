@@ -63,8 +63,6 @@ class Game(Main):
 
         self.fonts_group.add_fonts(self.score_text, self.target_score_text)
 
-        self.controls_handler.player = self.player
-
         self.main_loop()
 
     def loop(self):
