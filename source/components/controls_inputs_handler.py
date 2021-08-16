@@ -137,8 +137,7 @@ class ControlsInputsHandler:
             self.nav_buttons = {
                 'up': [K_UP, False], 
                 'down': [K_DOWN, False], 
-                'enter': [K_RETURN, False],
-                'pause': [K_p, False]
+                'enter': [K_RETURN, False]
             }
 
             self.shoot_key_pressed = False
@@ -226,8 +225,7 @@ class ControlsInputsHandler:
             self.nav_buttons = {
                 'up': [1, False],
                 'down': [-1, False],
-                'enter': [self.a_button, False],
-                'pause': [, False]
+                'enter': [self.a_button, False]
             }
             
         def in_game_control(self, player):
