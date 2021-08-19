@@ -9,6 +9,8 @@ from media.paths import bg, logo, body_font, title_font
 
 
 class Main:
+    controls_handler = ControlsInputsHandler()
+
     def __init__(self):
         """ It's the abstract class for all screens (with your own main loop) """
 
@@ -17,7 +19,7 @@ class Main:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.screen_rect = self.screen.get_rect()
 
-        self.controls_handler = ControlsInputsHandler()
+        self.controls_handler = self.controls_handler
 
         self.clock = pygame.time.Clock()
         self.running = True
@@ -28,7 +30,7 @@ class Main:
         while self.running:
             self.clock.tick(FPS)
             for event in pygame.event.get():
-                if event.type == QUIT:  
+                if event.type == QUIT:
                     # Making sure that all screens is stopped to run
                     for sub in Main.__subclasses__():
                         sub.running = False
@@ -37,7 +39,8 @@ class Main:
                         # Making sure that all screens is stopped to run
                         for sub in Main.__subclasses__():
                             sub.running = False
-                            
+
+                self.controls_handler.check_press_events(event)
                 self.check_events(event)
 
             self.screen.blit(self.BACKGROUND, (0, 0))
@@ -101,18 +104,18 @@ class MainMenu(Main):
 
         # Buttons
         self.play_button = Button(screen=self.screen,
-                                   x=120, y=SCREEN_HEIGHT - 220,
-                                   width=90, height=40,
-                                   text='Jogar',
-                                   padding=5,
-                                   command=lambda: self.change_screen(game_cls))
+                                  x=120, y=SCREEN_HEIGHT - 220,
+                                  width=90, height=40,
+                                  text='Jogar',
+                                  padding=5,
+                                  command=lambda: self.change_screen(game_cls))
 
         self.controls_button = Button(screen=self.screen,
-                                    x=120, y=SCREEN_HEIGHT - 160,
-                                    width=90, height=40,
-                                    text='Controles',
-                                    padding=5,
-                                    command=lambda: self.change_screen(ControlsMenu))
+                                      x=120, y=SCREEN_HEIGHT - 160,
+                                      width=90, height=40,
+                                      text='Controles',
+                                      padding=5,
+                                      command=lambda: self.change_screen(ControlsMenu))
 
         self.exit_button = Button(screen=self.screen,
                                   x=120, y=SCREEN_HEIGHT - 100,
@@ -128,7 +131,8 @@ class MainMenu(Main):
         )
 
         # Version
-        self.version_txt = Font(f'versão: {VERSION}', (SCREEN_WIDTH - 10, SCREEN_HEIGHT - 30), 'right')
+        self.version_txt = Font(
+            f'versão: {VERSION}', (SCREEN_WIDTH - 10, SCREEN_HEIGHT - 30), 'right')
         self.version_txt.configure(font_name=body_font, size=15, color='white',
                                    bg_color='black', screen=self.screen)
 
@@ -172,7 +176,7 @@ class ControlsMenu(Main):
         self.back_button = Button(screen=self.screen,
                                   x=SCREEN_WIDTH / 2,
                                   y=SCREEN_HEIGHT - 100,
-                                  width=80,height=40,
+                                  width=80, height=40,
                                   text='Voltar', padding=3,
                                   command=lambda: self.back_screen())
         self.add_buttons(self.back_button)
@@ -188,7 +192,8 @@ class ControlsMenu(Main):
 
     def keys_frame(self):
         frame_color = '#353535'
-        self.frame = pygame.Surface((int(self.screen_x * 0.9), int(self.screen_y * 0.5)))
+        self.frame = pygame.Surface(
+            (int(self.screen_x * 0.9), int(self.screen_y * 0.5)))
         self.frame.fill(frame_color)
 
         self.frame_rect = self.frame.get_rect(center=self.screen_rect.center)
@@ -200,13 +205,13 @@ class ControlsMenu(Main):
 
         self.control_txt = Font('Controles', pos=(self.frame_rect.centerx, 90))
         self.control_txt.configure(screen=self.screen,
-                                    font_name=title_font,
-                                    size=50,
-                                    bold=True,
-                                    antialias=True,
-                                    color=(255, 255, 255),
-                                    bg_color=(0, 0, 0),
-                                    align='center') 
+                                   font_name=title_font,
+                                   size=50,
+                                   bold=True,
+                                   antialias=True,
+                                   color=(255, 255, 255),
+                                   bg_color=(0, 0, 0),
+                                   align='center')
 
         # Keys fonts
         font_space = 30
@@ -224,7 +229,8 @@ class ControlsMenu(Main):
             keys_fonts_objects.append([Font(text=value['command_text'],
                                             pos=(self.frame_rect.x + 30, self.frame_rect.y)),
                                        Font(text=value['command_key'],
-                                            pos=(self.frame_rect.right - 30, self.frame_rect.y),
+                                            pos=(self.frame_rect.right -
+                                                 30, self.frame_rect.y),
                                             align='right')
                                        ])
         c = 1
@@ -242,8 +248,9 @@ class PauseScreen(Main):
 
         Main.__init__(self)
 
-        self.paused_font = Font('Pausado', (self.screen_rect.centerx, 100), 'center')
-        self.paused_font.configure(screen=self.screen, font_name=title_font, size=50, bold=True, 
+        self.paused_font = Font(
+            'Pausado', (self.screen_rect.centerx, 100), 'center')
+        self.paused_font.configure(screen=self.screen, font_name=title_font, size=50, bold=True,
                                    antialias=True, color='white', bg_color='black')
 
         # Buttons
@@ -272,9 +279,9 @@ class PauseScreen(Main):
         self.render_buttons()
 
     def check_events(self, event):
-        if event.type == KEYDOWN:
-            if event.key == K_p:
-                self.back_screen()
+        d = self.controls_handler.device_listener
+        if d.get_key_state(d.nav_buttons['pause'][0]):
+            self.back_screen()
 
 
 __all__ = ['Main', 'MainMenu', 'PauseScreen', 'ControlsMenu']

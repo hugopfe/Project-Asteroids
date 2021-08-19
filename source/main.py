@@ -10,11 +10,11 @@ if __name__ == '__main__':
     pygame.init()
     pygame.display.set_caption('Asteroids')
     pygame.event.pump()
-
+    
     icon = pygame.image.load(asteroid)
     pygame.display.set_icon(icon)
 
     MainMenu(Game)
     # Game()
-    
+
     pygame.quit()

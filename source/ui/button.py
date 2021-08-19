@@ -2,7 +2,6 @@ import pygame
 from media.paths import button_font
 
 
-
 class Button:
     def __init__(self, **kwargs):
         """
@@ -51,16 +50,22 @@ class Button:
         # Text
         self.txt_size = int((self.width+self.height)*0.2)-self.padding
         self.font = pygame.font.Font(button_font, self.txt_size, bold=True)
-        
+
         if self.split_text:
             text_space = 10
-            self.screen_text1 = self.font.render(self.text1, True, (255, 255, 255), (0, 0, 0))
-            self.screen_text2 = self.font.render(self.text2, True, (255, 255, 255), (0, 0, 0))
-            self.txt_rect1 = self.screen_text1.get_rect(center=(self.rect.centerx, self.rect.centery-10))
-            self.txt_rect2 = self.screen_text2.get_rect(center=(self.rect.centerx, self.rect.centery+text_space))
+            self.screen_text1 = self.font.render(
+                self.text1, True, (255, 255, 255), (0, 0, 0))
+            self.screen_text2 = self.font.render(
+                self.text2, True, (255, 255, 255), (0, 0, 0))
+            self.txt_rect1 = self.screen_text1.get_rect(
+                center=(self.rect.centerx, self.rect.centery-10))
+            self.txt_rect2 = self.screen_text2.get_rect(
+                center=(self.rect.centerx, self.rect.centery+text_space))
         else:
-            self.screen_text = self.font.render(self.text, True, (255, 255, 255), (0, 0, 0))
-            self.txt_rect = self.screen_text.get_rect(center=(self.rect.centerx, self.rect.centery))
+            self.screen_text = self.font.render(
+                self.text, True, (255, 255, 255), (0, 0, 0))
+            self.txt_rect = self.screen_text.get_rect(
+                center=(self.rect.centerx, self.rect.centery))
 
     def render(self):
         if self.split_text:
@@ -76,12 +81,9 @@ class Button:
         if is_above:
             self.current_color = self.current_color.lerp('#9848D9', 0.5)
         else:
-            self.clicked = False
             self.current_color = self.current_color.lerp('#4948D9', 0.5)
 
         self.border.fill(self.current_color)
-
-        return True if is_above else False
 
     def press(self, pressed: bool):
         if pressed:
@@ -91,10 +93,13 @@ class Button:
             """ Changing colors"""
 
             if self.split_text:
-                self.screen_text1 = self.font.render(self.text1, True, (0, 0, 0), (255, 255, 255))
-                self.screen_text2 = self.font.render(self.text2, True, (0, 0, 0), (255, 255, 255))
+                self.screen_text1 = self.font.render(
+                    self.text1, True, (0, 0, 0), (255, 255, 255))
+                self.screen_text2 = self.font.render(
+                    self.text2, True, (0, 0, 0), (255, 255, 255))
             else:
-                self.screen_text = self.font.render(self.text, True, (0, 0, 0), (255, 255, 255))
+                self.screen_text = self.font.render(
+                    self.text, True, (0, 0, 0), (255, 255, 255))
 
         else:
             self.background.fill('black')
@@ -102,15 +107,20 @@ class Button:
             """ Changing colors """
 
             if self.split_text:
-                self.screen_text1 = self.font.render(self.text1, True, (255, 255, 255), (0, 0, 0))
-                self.screen_text2 = self.font.render(self.text2, True, (255, 255, 255), (0, 0, 0))
+                self.screen_text1 = self.font.render(
+                    self.text1, True, (255, 255, 255), (0, 0, 0))
+                self.screen_text2 = self.font.render(
+                    self.text2, True, (255, 255, 255), (0, 0, 0))
             else:
-                self.screen_text = self.font.render(self.text, True, (255, 255, 255), (0, 0, 0))
+                self.screen_text = self.font.render(
+                    self.text, True, (255, 255, 255), (0, 0, 0))
 
             """ Executing button command """
 
             if self.clicked == True:
                 self.clicked = False
+
+                self.select(False)
 
                 try:
                     self.command()

@@ -16,7 +16,6 @@ levels = [Level1, Level2, Level3]
 
 class Game(Main):
 
-
     def __init__(self):
         """ Class for main game loop """
 
@@ -29,7 +28,8 @@ class Game(Main):
         self.player = Player(self.screen)
 
         # Power_Up
-        self.power_up_pos = get_random_pos(self.screen_rect.w, self.screen_rect.h)
+        self.power_up_pos = get_random_pos(
+            self.screen_rect.w, self.screen_rect.h)
         self.power_up = Shield(self.screen, self.power_up_pos, self.player)
 
         # Groups
@@ -57,7 +57,9 @@ class Game(Main):
                                       color=(255, 255, 255),
                                       bg_color=(0, 0, 0),
                                       antialias=True)
-        self.score_text = Font(f'Pontuação: {self.player.score}', (SCREEN_WIDTH - 10, 10), 'right')
+
+        self.score_text = Font(
+            f'Pontuação: {self.player.score}', (SCREEN_WIDTH - 10, 10), 'right')
         self.target_score_text = Font(f'Objetivo: {self.current_level.level_objectives["score"]}',
                                       (SCREEN_WIDTH - 10, 40), 'right')
 
@@ -76,7 +78,7 @@ class Game(Main):
         # player
         self.player_group.draw(self.screen)
         self.player_group.update()
-        
+
         self.controls_handler.device_listener.in_game_control(self.player)
 
         # power_up
@@ -94,13 +96,15 @@ class Game(Main):
         self.current_level.print_level_font()
 
     def check_events(self, event):
-        if event.type == KEYDOWN:
-            if event.key == K_p:
-                self.change_screen(PauseScreen, self)
+        c = self.controls_handler
 
+        if c.device_listener.get_key_state(c.device_listener.nav_buttons['pause'][0]):
+            self.change_screen(PauseScreen, self)
+
+        if event.type == KEYDOWN:
             """==================== TEMP ==================== """
             if event.key == K_TAB:
-                self.controls_handler.change_default_device()
+                c.change_default_device()
             if event.key == K_LSHIFT:
                 self.power_up.change_state('dropped')
             if event.key == K_a:
@@ -117,24 +121,26 @@ class Game(Main):
 
         if self.create_new_game:
             self.change_screen(Game)
-            
+
     def check_collisions(self):
         sprites_coll = []
 
         for group in [self.player_group, self.projectile_group]:
             """ Verifying collisions """
-            
-            rect_collision = pygame.sprite.groupcollide(group, self.asteroid_group, False, False)
+
+            rect_collision = pygame.sprite.groupcollide(
+                group, self.asteroid_group, False, False)
 
             if rect_collision:
-                mask_collision = pygame.sprite.groupcollide(group, self.asteroid_group, False, False, collide_mask)
+                mask_collision = pygame.sprite.groupcollide(
+                    group, self.asteroid_group, False, False, collide_mask)
 
                 if mask_collision:
                     sprites_coll.append(mask_collision)
 
         for spr_dct in sprites_coll:
             """ Applying collisions """
-            
+
             for sprite, asteroids_list in spr_dct.items():
                 if sprite == self.player:
                     """ Player has collided with a Asteroid """
@@ -147,7 +153,8 @@ class Game(Main):
                     sprite.kill()
                     asteroids_list[0].break_up()
 
-        asteroid_collided = self.power_up.get_asteroid_collided(self.asteroid_group)
+        asteroid_collided = self.power_up.get_asteroid_collided(
+            self.asteroid_group)
         if asteroid_collided:
             asteroid_collided.break_up()
 
@@ -161,7 +168,8 @@ class Game(Main):
             self.change_screen(WinScreen, self)
         else:
             self.update_infos()
-            self.target_score_text.configure(text=f'Objetivo: {self.level_objectives["score"]}')
+            self.target_score_text.configure(
+                text=f'Objetivo: {self.level_objectives["score"]}')
 
     def update_infos(self):
         """ Get the updated informations from level """
