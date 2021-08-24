@@ -54,6 +54,7 @@ class AbsNavigationDevice:
             get_events = get_ev_func
 
             if get_events(KEYDOWN, ('key', K_UP)):
+
                 selected_button.select(False)
                 self.btn_i = self.btn_i - \
                     1 if self.btn_i > 0 else len(buttons_list) - 1
@@ -393,9 +394,7 @@ class ControlsInputsHandler:
             ev_attr = getattr(event, comp_ev[0])
             if ev_attr == comp_ev[1]:
                 dev.trigger_event(True, e, comp_ev)
-                # switch_states(e, comp_ev)
             else:
-                print(dev.get_events(KEYDOWN))
                 dev.trigger_event(False, e, comp_ev)
 
         dev = self.device_listener
@@ -406,11 +405,15 @@ class ControlsInputsHandler:
                 d_values[k] = v
 
         clear_events()
+
         for e, i in dev.get_events():
             if event.type == e:
                 event_type()
             elif event.type == e and not isinstance(i, dict):
                 dev.trigger_event(False, e)
+
+        """ ESSE MÉTODO NÃO FUNCIONA, POIS O VALOR SAI DAQUI COMO TRUE E FICA ASSIM
+        PELO RESTO DO CÓDIGO INTEIRO, ATÉ CHEGAR AQUI E VIRAR FALSE """
 
 
 __all__ = ['ControlsInputsHandler']

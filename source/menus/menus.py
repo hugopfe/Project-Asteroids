@@ -44,8 +44,8 @@ class Main:
                 self.check_events(event)
 
             self.screen.blit(self.BACKGROUND, (0, 0))
-            self.loop()
             self.controls_handler.device_listener.menu_control(self._buttons)
+            self.loop()
             pygame.display.flip()
 
     def loop(self):
