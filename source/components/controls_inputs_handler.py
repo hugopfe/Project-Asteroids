@@ -1,3 +1,4 @@
+from types import FunctionType
 from typing import List, Tuple, Union
 import pygame
 from pygame.locals import *
@@ -34,38 +35,44 @@ class AbsNavigationDevice:
 
     class DefaultNavigationDevice:
 
+        selected_button: Button
+
         def __init__(self, nav_buttons: dict):
             self.btn_i = 0
 
             for button, bt_id in nav_buttons.items():
                 self.__dict__[button] = bt_id
 
-        def handle_navigation(self, buttons_list: List[Button], get_ev_func):
+        def handle_navigation(self, buttons_list: List[Button], add_ev_func):
             """
             Handle navigation by using the screen buttons and the giving keys/buttons.
 
             :param: buttons_list -> List of all buttons of screen.
             :param: get_ev_func -> Funtion to get events.
+            :param: add_ev_func -> Funtion to add functions when a event is triggered.
             """
 
-            selected_button: Button = buttons_list[self.btn_i]
-            selected_button.select(True)
-
-            get_events = get_ev_func
-
-            if get_events(KEYDOWN, ('key', K_UP)):
-
-                selected_button.select(False)
+            def key_up():
+                self.selected_button.select(False)
                 self.btn_i = self.btn_i - \
                     1 if self.btn_i > 0 else len(buttons_list) - 1
 
-            if get_events(KEYDOWN, ('key', K_DOWN)):
-                selected_button.select(False)
+            def key_down():
+                self.selected_button.select(False)
                 self.btn_i = self.btn_i + \
                     1 if self.btn_i < len(buttons_list) - 1 else 0
 
+            self.selected_button: Button = buttons_list[self.btn_i]
+            self.selected_button.select(True)
+
+            add_ev_func(
+                (key_up, (KEYDOWN, ('key', K_UP))),
+                (key_down, (KEYDOWN, ('key', K_DOWN)))
+            )
+
             # TODO: Arrumar o índice do botão
-            selected_button.press(get_events(KEYDOWN, ('key', self.enter)))
+            enter_key = pygame.key.get_pressed()[self.enter]
+            self.selected_button.press(enter_key)
 
     def check_for_switch_devices(self, nav_keys_state: Union[Tuple[int, int, int], List[int]]):
         """
@@ -89,7 +96,7 @@ class AbsNavigationDevice:
             else:
                 self.active_device = self.DefaultNavigationDevice(
                     self.nav_buttons)
-        if any((*m, catch_event(MOUSEMOTION))):
+        if any((*m, catch_event(MOUSEMOTION))):  # TODO: Fix it
             if isinstance(self.active_device, self.MouseNavigation):
                 pass
             else:
@@ -98,48 +105,62 @@ class AbsNavigationDevice:
     def menu_control(self, buttons_list):
         pass
 
-    def get_key_state(self, key: int) -> bool:
-        """ 
-        Returns the state of given key. 
-
-        :param: key -> The key id, it can be a key of keyboard or button of a controller.
-        """
-
-        pass
-
 
 class EventsHandler:
 
     def __init__(self, keys: list) -> None:
         self.events = {
             KEYDOWN: {
-                ('key', k): set() for k in keys
+                ('key', k): [] for k in keys
             },
             KEYUP: {
-                ('key', k): set() for k in keys
+                ('key', k): [] for k in keys
             }
         }
 
-    def get_events(self, k1=None, k2=None):
-        return_ev = self.events.items()
-        if k1 is not None:
-            return_ev = self.events[k1]
-            if k2 is not None:
-                return_ev = self.events[k1][k2]
+    def add_event_function(self, *command: Tuple[FunctionType, Union[int, Tuple[int, Tuple[str, int]]]]):
+        """
+        Adds many function to event's list.
 
-        return return_ev
+        :param: command -> A tuple with 2 values:
 
-    def trigger_event(self, value, k1, k2=None):
+            1st Value-> The funtion to be stored.
+            2nd Value -> The event identifier, it can be a pygame constant or a tuple, \
+            being the first value the constant identifier and the second value another tuple\
+            with the event attibute to get.
+
+        Example:
+            (keydown, (KEYDOWN, ('key', K_UP)))
+        """
+
+        for c in command:
+            func = c[0]
+            ev_keys = c[1]
+
+            if isinstance(c[1], tuple):
+                funcs_list = self.events[ev_keys[0]][ev_keys[1]]
+
+                for f in funcs_list:
+                    if f.__name__ == func.__name__:
+                        return
+
+                self.events[ev_keys[0]][ev_keys[1]].append(func)
+            else:
+                funcs_list = self.events[ev_keys[0]]
+
+                for f in funcs_list:
+                    if f.__name__ == func.__name__:
+                        return
+
+                self.events[ev_keys[0]].append(func)
+
+    def trigger_event(self, k1, k2=None):
         if k2 is not None:
-            if value:
-                self.events[k1][k2].add(value)
-            else:
-                self.events[k1][k2].clear()
+            for func in self.events[k1][k2]:
+                func()
         else:
-            if value:
-                self.events[k1].add(value)
-            else:
-                self.events[k1].clear()
+            for func in self.events[k1]:
+                func()
 
 
 class ControlsInputsHandler:
@@ -193,7 +214,7 @@ class ControlsInputsHandler:
             """ Player shooting """
 
             if k[K_SPACE] and not self.shoot_key_pressed:
-                self.shoot_key_pressed = True
+                self.shoot_key_pressed = True  # TODO: Fix it
                 player.shoot()
             elif not k[K_SPACE]:
                 self.shoot_key_pressed = False
@@ -228,10 +249,7 @@ class ControlsInputsHandler:
 
             self.check_for_switch_devices(k)
             self.active_device.handle_navigation(
-                buttons_list, self.get_events)
-
-        def get_key_state(self, key: int) -> bool:  # TODO: Delete this
-            return pygame.key.get_pressed()[key]
+                buttons_list, self.add_event_function)
 
     class JoystickListener(AbsNavigationDevice):
 
@@ -347,7 +365,7 @@ class ControlsInputsHandler:
 
         This dict must have pygame constants as keys that will be
         compared with event.type, it's value can be: 
-        a set (it's state) or another dict.
+        a list, containg the functions that will be called or another dict.
 
         Value as dict is for compare another attribute of event. Dict
         must have tuples as keys:
@@ -357,9 +375,9 @@ class ControlsInputsHandler:
         Example:
 
             dict_events = {
-                QUIT: set(),
+                QUIT: [something()],
                 KEYDOWN: {
-                    ('key', K_up): set()
+                    ('key', K_up): [foo()]
                 }
             }
 
@@ -368,52 +386,26 @@ class ControlsInputsHandler:
 
         """
 
-        # def switch_states(k1: any, k_value: dict):
-        #     if k1 in d_values:
-        #         for k, v in d_values.items():
-        #             if k == k1:
-        #                 continue
-        #             dev.set_event(not dev.get_events(k1, k_value), k, k_value)
-
-        def clear_events():
-            for event, value in dev.get_events():
-                if isinstance(value, dict):
-                    for ev_tuple in value.keys():
-                        dev.trigger_event(False, event, ev_tuple)
-                else:
-                    dev.trigger_event(False, event)
+        def check_events():
+            if event.type == e:
+                event_type()
+            elif event.type == e and not isinstance(v, dict):
+                dev.trigger_event(e)
 
         def event_type():
-            if e in d_values:
-                for comparation_events in i.keys():
+            if isinstance(e, dict):
+                for comparation_events in v.keys():
                     sub_dict(comparation_events)
-            else:
-                dev.trigger_event(True, e)
 
         def sub_dict(comp_ev):
             ev_attr = getattr(event, comp_ev[0])
             if ev_attr == comp_ev[1]:
-                dev.trigger_event(True, e, comp_ev)
-            else:
-                dev.trigger_event(False, e, comp_ev)
+                dev.trigger_event(e, comp_ev)
 
         dev = self.device_listener
-        d_values = dict()
 
-        for k, v in dev.get_events():
-            if isinstance(v, dict):
-                d_values[k] = v
-
-        clear_events()
-
-        for e, i in dev.get_events():
-            if event.type == e:
-                event_type()
-            elif event.type == e and not isinstance(i, dict):
-                dev.trigger_event(False, e)
-
-        """ ESSE MÉTODO NÃO FUNCIONA, POIS O VALOR SAI DAQUI COMO TRUE E FICA ASSIM
-        PELO RESTO DO CÓDIGO INTEIRO, ATÉ CHEGAR AQUI E VIRAR FALSE """
+        for e, v in dev.events.items():
+            check_events()
 
 
 __all__ = ['ControlsInputsHandler']

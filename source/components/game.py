@@ -98,8 +98,8 @@ class Game(Main):
     def check_events(self, event):
         c = self.controls_handler
 
-        if c.device_listener.get_key_state(c.device_listener.nav_buttons['pause'][0]):
-            self.change_screen(PauseScreen, self)
+        c.device_listener.add_event_function((self.change_screen(PauseScreen, self),
+                                              (KEYDOWN, ('key', c.device_listener.nav_buttons['pause']))))
 
         if event.type == KEYDOWN:
             """==================== TEMP ==================== """
