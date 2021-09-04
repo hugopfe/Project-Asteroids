@@ -282,8 +282,6 @@ class PauseScreen(Main):
         d = self.controls_handler.device_listener
         d.add_event_function((self.back_screen,
                               (KEYDOWN, ('key', d.nav_buttons['pause']))))
-        # TODO: Navegação parou de funcionar, e ao inves de iniciar o game, esta
-        # chamando o pause menu
 
 
 __all__ = ['Main', 'MainMenu', 'PauseScreen', 'ControlsMenu']

@@ -11,7 +11,7 @@ class AbsNavigationDevice:
 
     nav_buttons: dict
 
-    def __init__(self):
+    def __init__(self, nav_buttons):
         """ 
         Abstract class to handle actual devices on menus navigation 
 
@@ -21,10 +21,16 @@ class AbsNavigationDevice:
         """
 
         self.active_device = self.MouseNavigation()
+        self.nav_buttons = nav_buttons
 
-    class MouseNavigation:
+    class MenuNavigation:
 
-        def handle_navigation(self, buttons_list, k=None, get_ev_func=None):
+        def handle_navigation(self, buttons_list: List[Button], add_ev_func=None):
+            pass
+
+    class MouseNavigation(MenuNavigation):
+
+        def handle_navigation(self, buttons_list: List[Button], add_ev_func=None):
             for button in buttons_list:
                 is_above = button.bd_rect.collidepoint(pygame.mouse.get_pos())
                 button.select(is_above)
@@ -33,7 +39,7 @@ class AbsNavigationDevice:
                     bt_pressed = pygame.mouse.get_pressed(3)
                     button.press(bt_pressed[0])
 
-    class DefaultNavigationDevice:
+    class DefaultNavigationDevice(MenuNavigation):
 
         selected_button: Button
 
@@ -42,6 +48,15 @@ class AbsNavigationDevice:
 
             for button, bt_id in nav_buttons.items():
                 self.__dict__[button] = bt_id
+
+        @property
+        def btn_i(self):
+            return self._btn_i
+
+        @btn_i.setter
+        def btn_i(self, value):
+            self._btn_i = value
+            print('\n', value)
 
         def handle_navigation(self, buttons_list: List[Button], add_ev_func):
             """
@@ -96,6 +111,7 @@ class AbsNavigationDevice:
             else:
                 self.active_device = self.DefaultNavigationDevice(
                     self.nav_buttons)
+
         if any((*m, catch_event(MOUSEMOTION))):  # TODO: Fix it
             if isinstance(self.active_device, self.MouseNavigation):
                 pass
@@ -171,20 +187,21 @@ class ControlsInputsHandler:
         self.device_listener = self.KeyboardListener()
 
     class KeyboardListener(AbsNavigationDevice, EventsHandler):
+
         keys = [K_UP, K_DOWN, K_SPACE, K_RETURN, K_p]
+        nav_keys = {
+            'up': K_UP,
+            'down': K_DOWN,
+            'enter': K_RETURN,
+            'pause': K_p
+        }
 
         def __init__(self):
             """ Verify the pressed keys on keyboard """
 
             EventsHandler.__init__(self, self.keys)
-            AbsNavigationDevice.__init__(self)
+            AbsNavigationDevice.__init__(self, self.nav_keys)
 
-            self.nav_buttons = {
-                'up': K_UP,
-                'down': K_DOWN,
-                'enter': K_RETURN,
-                'pause': K_p
-            }
 
             self.shoot_key_pressed = False
 
@@ -243,13 +260,13 @@ class ControlsInputsHandler:
             if not buttons_list:
                 return
 
-            nav_buttons = [self.nav_buttons[i]
+            nav_k = [self.nav_keys[i]
                            for i in ['up', 'down', 'enter']]
-            k = tuple(pygame.key.get_pressed()[i] for i in nav_buttons)
+            k = tuple(pygame.key.get_pressed()[i] for i in nav_k)
 
             self.check_for_switch_devices(k)
             self.active_device.handle_navigation(
-                buttons_list, self.add_event_function)
+                buttons_list=buttons_list, add_ev_func=self.add_event_function)
 
     class JoystickListener(AbsNavigationDevice):
 
@@ -393,7 +410,7 @@ class ControlsInputsHandler:
                 dev.trigger_event(e)
 
         def event_type():
-            if isinstance(e, dict):
+            if isinstance(v, dict):
                 for comparation_events in v.keys():
                     sub_dict(comparation_events)
 
