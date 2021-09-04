@@ -1,5 +1,6 @@
 from types import FunctionType
 from typing import List, Tuple, Union
+
 import pygame
 from pygame.locals import *
 
@@ -43,22 +44,29 @@ class AbsNavigationDevice:
 
         selected_button: Button
 
-        def __init__(self, nav_buttons: dict):
+        def __init__(self, nav_buttons: dict, add_ev_func):
             self.btn_i = 0
+            self.buttons_list = None
 
             for button, bt_id in nav_buttons.items():
                 self.__dict__[button] = bt_id
 
+            add_ev_func(
+                (self.key_up, (KEYDOWN, ('key', K_UP))),
+                (self.key_down, (KEYDOWN, ('key', K_DOWN)))
+            ) # TODO: Na hora de registrar os novos métodos, não está sobrescrevendo os antigos!!!!!!
+
         @property
         def btn_i(self):
+            print(self._btn_i)
             return self._btn_i
 
         @btn_i.setter
         def btn_i(self, value):
             self._btn_i = value
-            print('\n', value)
+            # print('\n', value)
 
-        def handle_navigation(self, buttons_list: List[Button], add_ev_func):
+        def handle_navigation(self, buttons_list: List[Button]):
             """
             Handle navigation by using the screen buttons and the giving keys/buttons.
 
@@ -67,28 +75,28 @@ class AbsNavigationDevice:
             :param: add_ev_func -> Funtion to add functions when a event is triggered.
             """
 
-            def key_up():
-                self.selected_button.select(False)
-                self.btn_i = self.btn_i - \
-                    1 if self.btn_i > 0 else len(buttons_list) - 1
+            self.buttons_list = buttons_list
 
-            def key_down():
-                self.selected_button.select(False)
-                self.btn_i = self.btn_i + \
-                    1 if self.btn_i < len(buttons_list) - 1 else 0
-
-            self.selected_button: Button = buttons_list[self.btn_i]
+            self.selected_button: Button = self.buttons_list[self.btn_i]
             self.selected_button.select(True)
 
-            add_ev_func(
-                (key_up, (KEYDOWN, ('key', K_UP))),
-                (key_down, (KEYDOWN, ('key', K_DOWN)))
-            )
-
-            # TODO: Arrumar o índice do botão
             enter_key = pygame.key.get_pressed()[self.enter]
+
+            if enter_key:
+                self.btn_i = 0
+
             self.selected_button.press(enter_key)
 
+        def key_up(self):
+            self.selected_button.select(False)
+            self.btn_i = self.btn_i - \
+                1 if self.btn_i > 0 else len(self.buttons_list) - 1
+
+        def key_down(self):
+            self.selected_button.select(False)
+            self.btn_i = self.btn_i + \
+                1 if self.btn_i < len(self.buttons_list) - 1 else 0
+                
     def check_for_switch_devices(self, nav_keys_state: Union[Tuple[int, int, int], List[int]]):
         """
         Handle the switcher between devices on menus navigation.
@@ -110,7 +118,7 @@ class AbsNavigationDevice:
                 pass
             else:
                 self.active_device = self.DefaultNavigationDevice(
-                    self.nav_buttons)
+                    self.nav_buttons, self.add_event_function)
 
         if any((*m, catch_event(MOUSEMOTION))):  # TODO: Fix it
             if isinstance(self.active_device, self.MouseNavigation):
@@ -146,7 +154,7 @@ class EventsHandler:
             with the event attibute to get.
 
         Example:
-            (keydown, (KEYDOWN, ('key', K_UP)))
+            (key_down, (KEYDOWN, ('key', K_UP)))
         """
 
         for c in command:
@@ -201,7 +209,6 @@ class ControlsInputsHandler:
 
             EventsHandler.__init__(self, self.keys)
             AbsNavigationDevice.__init__(self, self.nav_keys)
-
 
             self.shoot_key_pressed = False
 
@@ -266,7 +273,7 @@ class ControlsInputsHandler:
 
             self.check_for_switch_devices(k)
             self.active_device.handle_navigation(
-                buttons_list=buttons_list, add_ev_func=self.add_event_function)
+                buttons_list=buttons_list)
 
     class JoystickListener(AbsNavigationDevice):
 

@@ -121,11 +121,7 @@ class Button:
                 self.clicked = False
 
                 self.select(False)
-
-                try:
-                    self.command()
-                except Exception as e:
-                    print(str(e))
+                self.command()
 
 
 __all__ = ['Button']
