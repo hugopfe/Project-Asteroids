@@ -31,13 +31,18 @@ class AbsNavigationDevice:
 
     class MenuNavigation:
 
+        def __init__(self):
+            self.buttons_list = list()
+
         def handle_navigation(self, buttons_list: List[Button]):
             pass
 
     class MouseNavigation(MenuNavigation):
 
         def handle_navigation(self, buttons_list: List[Button]):
-            for button in buttons_list:
+            self.buttons_list = buttons_list
+            
+            for button in self.buttons_list:
                 is_above = button.bd_rect.collidepoint(pygame.mouse.get_pos())
                 button.select(is_above)
 
@@ -49,8 +54,7 @@ class AbsNavigationDevice:
 
         def __init__(self, nav_buttons: dict):
             self.btn_i = 0
-            self.buttons_list = []
-            self.selected_button = None
+            self.selected_button: Button
 
             for button, bt_id in nav_buttons.items():
                 self.__dict__[button] = bt_id
@@ -180,7 +184,7 @@ class ControlsInputsHandler:
     class KeyboardListener(AbsNavigationDevice, EventsHandler):
 
         keys = [K_UP, K_DOWN, K_SPACE, K_RETURN, K_p]
-        nav_keys = {
+        nav_buttons = {
             'up': K_UP,
             'down': K_DOWN,
             'enter': K_RETURN,
@@ -198,7 +202,7 @@ class ControlsInputsHandler:
                     ('key', k): [] for k in self.keys
                 }
             })
-            AbsNavigationDevice.__init__(self, self.nav_keys)
+            AbsNavigationDevice.__init__(self, self.nav_buttons)
 
             self.shoot_key_pressed = False  # TODO: Fix it
 
@@ -257,7 +261,7 @@ class ControlsInputsHandler:
             if not buttons_list:
                 return
 
-            nav_k = [self.nav_keys[i]
+            nav_k = [self.nav_buttons[i]
                            for i in ['up', 'down', 'enter']]
             k = tuple(pygame.key.get_pressed()[i] for i in nav_k)
 
@@ -399,27 +403,28 @@ class ControlsInputsHandler:
                 if dict_events[type_event2]
 
         """
-
-        def check_events():
-            if event.type == e:
-                event_type()
-            elif event.type == e and not isinstance(v, dict):
-                dev.trigger_event(e)
-
-        def event_type():
-            if isinstance(v, dict):
-                for comparation_events in v.keys():
-                    sub_dict(comparation_events)
-
-        def sub_dict(comp_ev):
-            ev_attr = getattr(event, comp_ev[0])
-            if ev_attr == comp_ev[1]:
-                dev.trigger_event(e, comp_ev)
-
+        
         dev = self.device_listener
+        events = dev.events
+            
+        # def check_events():
+            
 
-        for e, v in dev.events.items():
-            check_events()
+        # def sub_dict(comp_ev):
+        #     if ev_attr == comp_ev[1]:
+        #         dev.trigger_event(e, comp_ev)
+
+        if event.type in events.keys():
+            if isinstance(events.get(event.type), dict):
+                sub_events = events.get(event.type)
+
+                for sub_event in sub_events.keys():
+                    ev_attr = getattr(event, sub_event[0])
+                    if ev_attr == sub_event[1]:
+                        dev.trigger_event(event.type, sub_event)
+
+            else:
+                dev.trigger_event(event.type)
 
 
 __all__ = ['ControlsInputsHandler']

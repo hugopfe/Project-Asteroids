@@ -19,27 +19,33 @@ class Main:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.screen_rect = self.screen.get_rect()
 
+        self._buttons = []
+
         self.controls_handler = self.controls_handler
 
         self.clock = pygame.time.Clock()
         self.running = True
 
-        self._buttons = []
+        self.controls_handler.device_listener.active_device.buttons_list = self._buttons
+        self.controls_handler.device_listener.active_device.btn_i = 0
 
     def main_loop(self):
         while self.running:
             self.clock.tick(FPS)
+            
             for event in pygame.event.get():
                 if event.type == QUIT:
                     # Making sure that all screens is stopped to run
                     for sub in Main.__subclasses__():
                         sub.running = False
+
                 if event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
-                        # Making sure that all screens is stopped to run
+                        # TODO: Try this again: pygame.event.post(pygame.event.Event(QUIT)) 
+
                         for sub in Main.__subclasses__():
                             sub.running = False
-
+                        
                 self.controls_handler.check_press_events(event)
                 self.check_events(event)
 
