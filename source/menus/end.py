@@ -19,7 +19,7 @@ class EndScreen(Main):
         # Buttons
         self.menu_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=460,
                                   width=110, height=40, text='Menu',
-                                  padding=5, command=lambda: self.back_mainmenu(game))
+                                  padding=5, callback=lambda: self.back_mainmenu(game))
         self.add_buttons(self.menu_button)
 
     def loop(self):
@@ -49,7 +49,7 @@ class GOScreen(EndScreen):
 
         self.try_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
                                     width=130, height=50, text='Tentar\nnovamente',
-                                    padding=17, command=lambda: self.try_again(game))
+                                    padding=17, callback=lambda: self.try_again(game))
         self.add_buttons(self.try_button)
 
         self.main_loop()
@@ -65,7 +65,7 @@ class WinScreen(EndScreen):
 
         self.try_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
                                  width=130, height=50, text='Jogar\nnovamente',
-                                 padding=17, command=lambda: self.try_again(game))
+                                 padding=17, callback=lambda: self.try_again(game))
         self.add_buttons(self.try_button)
 
         self.main_loop()

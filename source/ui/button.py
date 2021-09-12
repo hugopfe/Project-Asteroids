@@ -7,7 +7,7 @@ class Button:
         """
         Creates a new Button istance for UI.
 
-        Accepted Parameters: screen, x, y, width, height, text, padding, command.
+        Accepted Parameters: screen, x, y, width, height, text, padding, callback.
         """
 
         self.screen = kwargs.get('screen')
@@ -17,7 +17,7 @@ class Button:
         self.height = kwargs.get('height')
         self.text = kwargs.get('text')
         self.padding = kwargs.get('padding')
-        self.command = kwargs.get('command')
+        self.callback = kwargs.get('callback')
 
         for k, v in kwargs.items():
             if v is not None:
@@ -121,7 +121,7 @@ class Button:
                 self.clicked = False
 
                 self.select(False)
-                self.command()
+                self.callback()
 
 
 __all__ = ['Button']

@@ -29,6 +29,8 @@ class Main:
         self.controls_handler.device_listener.active_device.buttons_list = self._buttons
         self.controls_handler.device_listener.active_device.btn_i = 0
 
+        self.pressed = False
+
     def main_loop(self):
         while self.running:
             self.clock.tick(FPS)
@@ -45,7 +47,8 @@ class Main:
 
                         for sub in Main.__subclasses__():
                             sub.running = False
-                        
+
+                print(event)
                 self.controls_handler.check_press_events(event)
                 self.check_events(event)
 
@@ -114,21 +117,21 @@ class MainMenu(Main):
                                   width=90, height=40,
                                   text='Jogar',
                                   padding=5,
-                                  command=lambda: self.change_screen(game_cls))
+                                  callback=lambda: self.change_screen(game_cls))
 
         self.controls_button = Button(screen=self.screen,
                                       x=120, y=SCREEN_HEIGHT - 160,
                                       width=90, height=40,
                                       text='Controles',
                                       padding=5,
-                                      command=lambda: self.change_screen(ControlsMenu))
+                                      callback=lambda: self.change_screen(ControlsMenu))
 
         self.exit_button = Button(screen=self.screen,
                                   x=120, y=SCREEN_HEIGHT - 100,
                                   width=90, height=40,
                                   text='Sair',
                                   padding=5,
-                                  command=self.exit)
+                                  callback=self.exit)
 
         self.add_buttons(
             self.play_button,
@@ -184,7 +187,7 @@ class ControlsMenu(Main):
                                   y=SCREEN_HEIGHT - 100,
                                   width=80, height=40,
                                   text='Voltar', padding=3,
-                                  command=lambda: self.back_screen())
+                                  callback=lambda: self.back_screen())
         self.add_buttons(self.back_button)
 
         self.main_loop()
@@ -262,15 +265,15 @@ class PauseScreen(Main):
         # Buttons
         self.continue_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
                                       width=110, height=40, text='Continuar',
-                                      padding=10, command=self.back_screen)
+                                      padding=10, callback=self.back_screen)
 
         self.controls_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=460,
                                       width=110, height=40, text='Controles',
-                                      padding=8, command=lambda: self.change_screen(ControlsMenu))
+                                      padding=8, callback=lambda: self.change_screen(ControlsMenu))
 
         self.mainmenu_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=520,
                                       width=110, height=40, text='Menu',
-                                      padding=7, command=lambda: self.back_mainmenu(game))
+                                      padding=7, callback=lambda: self.back_mainmenu(game))
 
         self.add_buttons(
             self.continue_button,

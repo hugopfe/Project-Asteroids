@@ -11,7 +11,7 @@ if __name__ == '__main__':
     pygame.init()
     pygame.display.set_caption('Asteroids')
     
-    pygame.event.set_blocked(None)
+    # pygame.event.set_blocked(None)
     pygame.event.set_allowed([KEYDOWN, KEYUP, QUIT])
     
     icon = pygame.image.load(asteroid)
