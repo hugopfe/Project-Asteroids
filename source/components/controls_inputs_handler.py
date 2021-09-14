@@ -61,6 +61,13 @@ class AbsNavigationDevice:
             for button, bt_id in nav_buttons.items():
                 self.__dict__[button] = bt_id
 
+            events_commands = (
+                self.key_up, (KEYDOWN, ('key', K_UP)),
+                self.key_down, (KEYDOWN, ('key', K_DOWN))
+            )
+
+            register_ev(events_commands)
+
         def handle_navigation(self, buttons_list: List[Button]):
             """
             Handle navigation by using the screen buttons and the giving keys/buttons.

@@ -8,7 +8,7 @@ from assets import *
 from media.paths import body_font
 from components.util import *
 from components.constants import *
-from components.controls_inputs_handler import *
+from components.events import *
 
 
 levels = [Level1, Level2, Level3]
@@ -98,10 +98,11 @@ class Game(Main):
     def check_events(self, event):
         c = self.controls_handler
 
-        ev_func = (lambda: self.change_screen(PauseScreen, self),
-                    (KEYDOWN, ('key', c.device_listener.nav_buttons['pause'])))
+        ev = (KEYDOWN, ('key', c.device_listener.nav_buttons['pause']))
+        def ev_func(): return self.change_screen(PauseScreen, self)
+        ev_command = (ev_func, ev)
 
-        c.device_listener.add_event_function(ev_func)
+        c.device_listener.add_event_function(ev_command)
 
         if event.type == KEYDOWN:
             """==================== TEMP ==================== """

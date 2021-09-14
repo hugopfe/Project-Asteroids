@@ -44,7 +44,7 @@ class Main:
                         pygame.event.post(quit_ev)
 
                 self.controls_handler.check_press_events(event)
-                # self.check_events(event)
+                self.check_events(event)
 
             self.screen.blit(self.BACKGROUND, (0, 0))
             self.controls_handler.device_listener.menu_control(self._buttons)

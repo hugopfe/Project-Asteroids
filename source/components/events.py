@@ -6,32 +6,31 @@ class EventGrouping:
 
     def register(self, d_event: Dict):
         ev_command = d_event
-        ev = list(ev_command.keys())[0]
-        sub_ev = list(ev_command.values())[0]
 
-        if self.__dict__.get(ev):
+        for ev, sub_ev in ev_command.items():
+            self_ev = self.__dict__.get(ev)
             if isinstance(sub_ev, dict):
-                self.__dict__[ev].update(sub_ev)
-            else:
-                self.__dict__[ev] = sub_ev
-        else:
-            self.__dict__.update(d_event)  # TODO: Lidando com listas!!!
+                for sub, func_list in sub_ev.items():
+                    if self_ev:
+                        if self_ev.get(sub):
+                            self.__dict__[ev][sub].extend(func_list)
+                        else:
+                            self.__dict__[ev][sub] = func_list
+                    else:
+                        self.__dict__[ev] = {sub: func_list}
 
-            # >>> d = {'a': {1: ['a1', 'a2']}}
-            # >>> d
-            # {'a': {1: ['a1', 'a2']}}
-            # >>> d['a']
-            # {1: ['a1', 'a2']}
-            # >>> d['a'].update({1: ['a3']})
-            # >>> d
-            # {'a': {1: ['a3']}}
+            else:
+                if self_ev:
+                    self.__dict__[ev].extend(sub_ev)
+                else:
+                    self.__dict__[ev] = sub_ev
 
     def get(self, k1=None, k2=None):
         if k1:
             ret = self.__dict__.get(k1)
             if k2:
                 d = self.__dict__.get(k1)
-                ret = d.get(k2)
+                ret = d.get(k2) if d is not None else None
         else:
             ret = self.__dict__
 
@@ -67,17 +66,21 @@ class EventsHandler:
             d_out = {}
 
             if isinstance(c[1], tuple):
-                # funcs_list = self.events.get(ev_keys[0], ev_keys[1])
+                reg_funcs = self.events.get(ev_keys[0], ev_keys[1])
+                if reg_funcs:
+                    if func in reg_funcs:
+                        continue
 
-                # if funcs_list and func not in funcs_list:
-                d_out = {ev_keys[0]: {ev_keys[1]: func}}
+                d_out = {ev_keys[0]: {ev_keys[1]: [func]}}
                 self.events.register(d_out)
 
             else:
-                # funcs_list = self.events[ev_keys]
+                reg_funcs = self.events.get(ev_keys)
+                if reg_funcs:
+                    if func in reg_funcs:
+                        continue
 
-                # if funcs_list and func not in funcs_list:
-                d_out = {ev_keys: func}
+                d_out = {ev_keys: [func]}
                 self.events.register(d_out)
 
     def trigger_event(self, k1, k2=None):
