@@ -1,10 +1,10 @@
-from types import FunctionType
 from typing import List, Tuple, Union
 
 import pygame
 from pygame.locals import *
 
-from .constants import PLAYER_SPEED, FRICTION
+from components.constants import PLAYER_SPEED, FRICTION
+from components.events import *
 from ui import Button
 
 
@@ -23,11 +23,13 @@ class AbsNavigationDevice:
         """
 
         self.devices = {
-            'mouse': self.MouseNavigation(), 
+            'mouse': self.MouseNavigation(),
             'default': self.DefaultNavigationDevice(nav_buttons)
         }
 
         self.active_device = self.devices['mouse']
+        self.mouse_motion = False
+        register_ev((self.set_mouse_motion, MOUSEMOTION))
 
     class MenuNavigation:
 
@@ -41,7 +43,7 @@ class AbsNavigationDevice:
 
         def handle_navigation(self, buttons_list: List[Button]):
             self.buttons_list = buttons_list
-            
+
             for button in self.buttons_list:
                 is_above = button.bd_rect.collidepoint(pygame.mouse.get_pos())
                 button.select(is_above)
@@ -92,20 +94,13 @@ class AbsNavigationDevice:
                 (self.key_up, (KEYDOWN, ('key', K_UP))),
                 (self.key_down, (KEYDOWN, ('key', K_DOWN)))
             )
-        
-    def check_for_switch_devices(self, nav_keys_state: Union[Tuple[int, int, int], List[int]], add_ev_func):
+
+    def check_for_switch_devices(self, nav_keys_state: Union[Tuple[int, int, int], List[int]], reg_ev):
         """
         Handle the switcher between devices on menus navigation.
 
         :param: nav_keys_state -> The state of navigation buttons/keys: True or False.
         """
-
-        def catch_event(u_event) -> bool:
-            for event in pygame.event.get():
-                if event.type == u_event:
-                    return True
-                else:
-                    return False
 
         m = pygame.mouse.get_pressed(3)
 
@@ -114,64 +109,21 @@ class AbsNavigationDevice:
                 pass
             else:
                 self.active_device = self.devices.get('default')
-                add_ev_func(*self.active_device.get_events_commands())
+                reg_ev(*self.active_device.get_events_commands())
 
-        if any((*m, catch_event(MOUSEMOTION))):  # TODO: Fix it
+        if any((*m, self.mouse_motion)):
             if isinstance(self.active_device, self.MouseNavigation):
                 pass
             else:
                 self.active_device = self.devices.get('mouse')
 
+        self.mouse_motion = False
+
     def menu_control(self, buttons_list):
         pass
 
-
-class EventsHandler:
-
-    def __init__(self, events: dict) -> None:
-        self.events = events
-
-    def add_event_function(self, *command: Tuple[FunctionType, Union[int, Tuple[int, Tuple[str, int]]]]):
-        """
-        Adds many function to event's list.
-
-        :param: command -> A tuple with 2 values:
-
-            1st Value-> The funtion to be stored.
-            2nd Value -> The event identifier, it can be a pygame constant or a tuple, \
-            being the first value the constant identifier and the second value another tuple\
-            with the event attibute to get.
-
-        Example:
-            (key_down, (KEYDOWN, ('key', K_UP)))
-        """
-
-        for c in command:
-            func = c[0]
-            ev_keys = c[1]
-
-            if isinstance(c[1], tuple):
-                funcs_list = self.events[ev_keys[0]][ev_keys[1]]
-
-                if func not in funcs_list:
-                    self.events[ev_keys[0]][ev_keys[1]].append(func)
-
-            else:
-                funcs_list = self.events[ev_keys[0]]
-
-                for f in funcs_list:
-                    if f == func:
-                        continue
-
-                self.events[ev_keys[0]].append(func)
-
-    def trigger_event(self, k1, k2=None):
-        if k2 is not None:
-            for func in self.events[k1][k2]:
-                func()
-        else:
-            for func in self.events[k1]:
-                func()
+    def set_mouse_motion(self):
+        self.mouse_motion = True
 
 
 class ControlsInputsHandler:
@@ -181,7 +133,7 @@ class ControlsInputsHandler:
 
         self.device_listener = self.KeyboardListener()
 
-    class KeyboardListener(AbsNavigationDevice, EventsHandler):
+    class KeyboardListener(AbsNavigationDevice):
 
         keys = [K_UP, K_DOWN, K_SPACE, K_RETURN, K_p]
         nav_buttons = {
@@ -194,15 +146,16 @@ class ControlsInputsHandler:
         def __init__(self):
             """ Verify the pressed keys on keyboard """
 
-            EventsHandler.__init__(self, {
+            AbsNavigationDevice.__init__(self, self.nav_buttons)
+
+            self.events = {
                 KEYDOWN: {
                     ('key', k): [] for k in self.keys
                 },
                 KEYUP: {
                     ('key', k): [] for k in self.keys
                 }
-            })
-            AbsNavigationDevice.__init__(self, self.nav_buttons)
+            }
 
             self.shoot_key_pressed = False  # TODO: Fix it
 
@@ -232,7 +185,7 @@ class ControlsInputsHandler:
             """ Player shooting """
 
             if k[K_SPACE] and not self.shoot_key_pressed:
-                self.shoot_key_pressed = True  
+                self.shoot_key_pressed = True
                 player.shoot()
             elif not k[K_SPACE]:
                 self.shoot_key_pressed = False
@@ -262,10 +215,10 @@ class ControlsInputsHandler:
                 return
 
             nav_k = [self.nav_buttons[i]
-                           for i in ['up', 'down', 'enter']]
+                     for i in ['up', 'down', 'enter']]
             k = tuple(pygame.key.get_pressed()[i] for i in nav_k)
 
-            self.check_for_switch_devices(k, self.add_event_function)
+            self.check_for_switch_devices(k, register_ev)
             self.active_device.handle_navigation(
                 buttons_list=buttons_list)
 
@@ -395,7 +348,7 @@ class ControlsInputsHandler:
             dict_events = {
                 QUIT: [something()],
                 KEYDOWN: {
-                    ('key', K_up): [foo()]
+                    ('key', K_up): [another_thing()]
                 }
             }
 
@@ -403,16 +356,8 @@ class ControlsInputsHandler:
                 if dict_events[type_event2]
 
         """
-        
-        dev = self.device_listener
-        events = dev.events
-            
-        # def check_events():
-            
 
-        # def sub_dict(comp_ev):
-        #     if ev_attr == comp_ev[1]:
-        #         dev.trigger_event(e, comp_ev)
+        events = events_handler.events.get()
 
         if event.type in events.keys():
             if isinstance(events.get(event.type), dict):
@@ -421,10 +366,18 @@ class ControlsInputsHandler:
                 for sub_event in sub_events.keys():
                     ev_attr = getattr(event, sub_event[0])
                     if ev_attr == sub_event[1]:
-                        dev.trigger_event(event.type, sub_event)
+                        trigger_event(event.type, sub_event)
 
             else:
-                dev.trigger_event(event.type)
+                trigger_event(event.type)
+
+
+def register_ev(*e):
+    events_handler.register_event(*e)
+
+
+def trigger_event(k1, k2=None):
+    events_handler.trigger_event(k1, k2)
 
 
 __all__ = ['ControlsInputsHandler']

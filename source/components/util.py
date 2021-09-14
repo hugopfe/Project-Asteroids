@@ -75,7 +75,8 @@ def get_sprites_collided(*groups, group2: Group) -> List[Union[Dict, Dict]]:
     sprites_coll: List = list()
 
     for group in groups:
-        sprites_coll.append(pygame.sprite.groupcollide(group, group2, False, False, collide_mask))
+        sprites_coll.append(pygame.sprite.groupcollide(
+            group, group2, False, False, collide_mask))
 
     return sprites_coll
 
@@ -125,5 +126,5 @@ __all__ = [
     'move_in_orbit_motion',
     'get_class_name',
     'draw_rect_zone',
-    'collide_mask'
+    'collide_mask',
 ]
