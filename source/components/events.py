@@ -45,7 +45,7 @@ class EventsHandler:
     def __init__(self):
         self.events = EventGrouping()
 
-    def register_event(self, *command: Tuple[FunctionType, Union[int, Tuple[int, Tuple[str, int]]]]):
+    def register_event(self, *command: Tuple[FunctionType, Union[int, Tuple[str, Tuple[str, int]]]]):
         """
         Adds many function to event's list.
 
@@ -83,8 +83,32 @@ class EventsHandler:
                 d_out = {ev_keys: [func]}
                 self.events.register(d_out)
 
+    def remove_event(self, *command: Tuple[FunctionType, Union[int, Tuple[str, int]]]):
+        """
+        Removes many function to event's list.
+
+        :param: command -> A tuple with 2 values:
+
+            1st Value-> The funtion to be removed. \n
+            2nd Value -> The event identifier, it can be a pygame constant or a tuple, \
+            being the first value the constant identifier and the second value another tuple\
+            with the event attibute to get.
+
+        Example:
+            (key_down, (KEYDOWN, ('key', K_UP)))
+        """
+
+        for c in command:
+            func = c[0]
+            ev = c[1]
+            
+            if isinstance(ev, tuple):
+                self.events[ev[0]][ev[1]].remove(func)
+            else:
+                self.events[ev].remove(func)
+
     def trigger_event(self, k1, k2=None):
-        if k2 is not None:
+        if k2:
             for func in self.events[k1][k2]:
                 func()
         else:

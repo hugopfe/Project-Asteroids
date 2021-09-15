@@ -9,6 +9,7 @@ from pygame.sprite import Group
 from typing import Tuple, Dict, List, Union
 from random import randrange, choice, uniform, randint
 
+from components.events import *
 
 collide_mask = pygame.sprite.collide_mask
 
@@ -116,6 +117,18 @@ def draw_rect_zone(screen, rect):
     return pygame.draw.rect(screen, (255, 0, 0), rect, 2)
 
 
+def register_ev(*ev):
+    events_handler.register_event(*ev)
+
+
+def remove_ev(*ev):
+    events_handler.remove_event(*ev)
+
+
+def trigger_event(k1, k2=None):
+    events_handler.trigger_event(k1, k2)
+
+
 __all__ = [
     'get_random_pos',
     'get_random_speed',
@@ -127,4 +140,7 @@ __all__ = [
     'get_class_name',
     'draw_rect_zone',
     'collide_mask',
+    'register_ev',
+    'remove_ev',
+    'trigger_event'
 ]

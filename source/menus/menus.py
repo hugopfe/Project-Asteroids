@@ -2,11 +2,10 @@ import pygame
 from pygame.locals import *
 
 from components.util import *
-from components.controls_inputs_handler import *
 from components.constants import *
 from components.main_base import *
 from ui import *
-from media.paths import bg, logo, body_font, title_font
+from media.paths import logo, body_font, title_font
 
 
 class MainMenu(Main):
@@ -19,32 +18,30 @@ class MainMenu(Main):
         self.logo_rect = self.logo.get_rect(center=(SCREEN_WIDTH / 2, 150))
 
         # Buttons
-        self.play_button = Button(screen=self.screen,
-                                  x=120, y=SCREEN_HEIGHT - 220,
-                                  width=90, height=40,
-                                  text='Jogar',
-                                  padding=5,
-                                  callback=lambda: self.change_screen(game_cls))
+        self.ui_buttons = (
+            Button(screen=self.screen,
+                    x=120, y=SCREEN_HEIGHT - 220,
+                    width=90, height=40,
+                    text='Jogar',
+                    padding=5,
+                    callback=lambda: self.change_screen(game_cls)),
 
-        self.controls_button = Button(screen=self.screen,
-                                      x=120, y=SCREEN_HEIGHT - 160,
-                                      width=90, height=40,
-                                      text='Controles',
-                                      padding=5,
-                                      callback=lambda: self.change_screen(ControlsMenu))
+            Button(screen=self.screen,
+                    x=120, y=SCREEN_HEIGHT - 160,
+                    width=90, height=40,
+                    text='Controles',
+                    padding=5,
+                    callback=lambda: self.change_screen(ControlsMenu)),
 
-        self.exit_button = Button(screen=self.screen,
-                                  x=120, y=SCREEN_HEIGHT - 100,
-                                  width=90, height=40,
-                                  text='Sair',
-                                  padding=5,
-                                  callback=self.exit)
-
-        self.add_buttons(
-            self.play_button,
-            self.controls_button,
-            self.exit_button
+            Button(screen=self.screen,
+                    x=120, y=SCREEN_HEIGHT - 100,
+                    width=90, height=40,
+                    text='Sair',
+                    padding=5,
+                    callback=self.exit)
         )
+
+        self.add_buttons(*self.ui_buttons)
 
         # Version
         self.version_txt = Font(
@@ -95,6 +92,7 @@ class ControlsMenu(Main):
                                   width=80, height=40,
                                   text='Voltar', padding=3,
                                   callback=lambda: self.back_screen())
+                                  
         self.add_buttons(self.back_button)
 
         self.main_loop()
@@ -170,34 +168,33 @@ class PauseScreen(Main):
                                    antialias=True, color='white', bg_color='black')
 
         # Buttons
-        self.continue_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
-                                      width=110, height=40, text='Continuar',
-                                      padding=10, callback=self.back_screen)
-
-        self.controls_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=460,
-                                      width=110, height=40, text='Controles',
-                                      padding=8, callback=lambda: self.change_screen(ControlsMenu))
-
-        self.mainmenu_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=520,
-                                      width=110, height=40, text='Menu',
-                                      padding=7, callback=lambda: self.back_mainmenu(game))
+        self.ui_buttons = (
+            Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
+                width=110, height=40, text='Continuar',
+                padding=10, callback=self.back_screen),
+            Button(screen=self.screen, x=self.screen_rect.centerx, y=460,
+                width=110, height=40, text='Controles',
+                padding=8, callback=lambda: self.change_screen(ControlsMenu)),
+            Button(screen=self.screen, x=self.screen_rect.centerx, y=520,
+                width=110, height=40, text='Menu',
+                padding=7, callback=lambda: self.back_mainmenu(game))
+        )
 
         self.add_buttons(
-            self.continue_button,
-            self.controls_button,
-            self.mainmenu_button
+            *self.ui_buttons
         )
+
+        d = self.controls_handler.current_dev
+        self.events = (self.back_screen,
+                      (KEYDOWN, ('key', d.nav_buttons['pause'])))
+
+        self.reg_events()
 
         self.main_loop()
 
     def loop(self):
         self.paused_font.render()
         self.render_buttons()
-
-    def check_events(self, event):
-        d = self.controls_handler.device_listener
-        d.add_event_function((self.back_screen,
-                              (KEYDOWN, ('key', d.nav_buttons['pause']))))
 
 
 __all__ = ['Main', 'MainMenu', 'PauseScreen', 'ControlsMenu']

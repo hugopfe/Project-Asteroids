@@ -60,10 +60,19 @@ class Game(Main):
 
         self.score_text = Font(
             f'Pontuação: {self.player.score}', (SCREEN_WIDTH - 10, 10), 'right')
+            
         self.target_score_text = Font(f'Objetivo: {self.current_level.level_objectives["score"]}',
                                       (SCREEN_WIDTH - 10, 40), 'right')
 
         self.fonts_group.add_fonts(self.score_text, self.target_score_text)
+
+        c = self.controls_handler
+
+        ev = (KEYDOWN, ('key', c.current_dev.nav_buttons['pause']))
+        ev_func = lambda: self.change_screen(PauseScreen, self)
+        self.events = (ev_func, ev)
+
+        self.reg_events()
 
         self.main_loop()
 
@@ -79,7 +88,7 @@ class Game(Main):
         self.player_group.draw(self.screen)
         self.player_group.update()
 
-        self.controls_handler.device_listener.in_game_control(self.player)
+        self.controls_handler.current_dev.in_game_control(self.player)
 
         # power_up
         self.power_up.update()
@@ -95,26 +104,19 @@ class Game(Main):
         self.fonts_group.render_fonts()
         self.current_level.print_level_font()
 
-    def check_events(self, event):
-        c = self.controls_handler
-
-        ev = (KEYDOWN, ('key', c.device_listener.nav_buttons['pause']))
-        def ev_func(): return self.change_screen(PauseScreen, self)
-        ev_command = (ev_func, ev)
-
-        c.device_listener.add_event_function(ev_command)
-
+    def reg_events_temp(self):
+        
+        """
         if event.type == KEYDOWN:
-            """==================== TEMP ==================== """
+            # ==================== TEMP ==================== 
             if event.key == K_TAB:
                 c.change_default_device()
             if event.key == K_LSHIFT:
                 self.power_up.change_state('dropped')
             if event.key == K_a:
-                self.asteroid_group.add(Asteroid(pygame.math.Vector2((200, 200)), self.screen,
-                                                 self.player.pos, self.level_rules['asteroids'],
-                                                 self.set_score))
-
+                self.asteroid_group.add(Asteroid(pygame.math.Vector2((200, 200)), self.screen, self.player.pos, self.level_rules['asteroids'],
+                self.set_score))
+        """
     def game_over(self):
         pygame.time.wait(300)
         self.player.kill()

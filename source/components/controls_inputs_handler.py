@@ -4,7 +4,8 @@ import pygame
 from pygame.locals import *
 
 from components.constants import PLAYER_SPEED, FRICTION
-from components.events import *
+from components.util import *
+from components.events import * # TEMP
 from ui import Button
 
 
@@ -138,7 +139,7 @@ class ControlsInputsHandler:
     def __init__(self):
         """ Handles all controls inputs upcoming from keyboard or controller """
 
-        self.device_listener = self.KeyboardListener()
+        self.current_dev = self.KeyboardListener()
 
     class KeyboardListener(AbsNavigationDevice):
 
@@ -327,17 +328,17 @@ class ControlsInputsHandler:
             return self.joystick.get_button(key)
 
     def change_default_device(self):
-        if isinstance(self.device_listener, self.KeyboardListener):
+        if isinstance(self.current_dev, self.KeyboardListener):
             if pygame.joystick.get_count() < 1:
                 print('Nenhum controle encontrado!')
             else:
-                self.device_listener = self.JoystickListener()
+                self.current_dev = self.JoystickListener()
         else:
-            self.device_listener = self.KeyboardListener()
+            self.current_dev = self.KeyboardListener()
 
-        print(f'Switched to {self.device_listener.__class__.__name__}')
+        print(f'Switched to {self.current_dev.__class__.__name__}')
 
-    def check_press_events(self, event):
+    def check_press_events(self, event): # TODO: Fix it
         """
         Checks events from a dict.
 
@@ -377,14 +378,6 @@ class ControlsInputsHandler:
 
             else:
                 trigger_event(event.type)
-
-
-def register_ev(*e):
-    events_handler.register_event(*e)
-
-
-def trigger_event(k1, k2=None):
-    events_handler.trigger_event(k1, k2)
 
 
 __all__ = ['ControlsInputsHandler']
