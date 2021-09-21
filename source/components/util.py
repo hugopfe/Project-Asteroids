@@ -117,17 +117,6 @@ def draw_rect_zone(screen, rect):
     return pygame.draw.rect(screen, (255, 0, 0), rect, 2)
 
 
-def register_ev(*ev):
-    events_handler.register_event(*ev)
-
-
-def remove_ev(*ev):
-    events_handler.remove_event(*ev)
-
-
-def trigger_event(k1, k2=None):
-    events_handler.trigger_event(k1, k2)
-
 
 __all__ = [
     'get_random_pos',
@@ -139,8 +128,5 @@ __all__ = [
     'move_in_orbit_motion',
     'get_class_name',
     'draw_rect_zone',
-    'collide_mask',
-    'register_ev',
-    'remove_ev',
-    'trigger_event'
+    'collide_mask'
 ]

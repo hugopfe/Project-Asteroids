@@ -1,4 +1,3 @@
-from abc import abstractmethod
 import pygame
 from pygame.locals import *
 
@@ -6,6 +5,7 @@ from components.constants import *
 from media.paths import bg
 from components.controls_inputs_handler import *
 from components.util import *
+from components.events import *
 
 
 def add_to_call_tree(cls_instance):
@@ -26,21 +26,22 @@ def start(main_menu, game_cls):
 
 
 def quit_ev():
-    quit_ev = pygame.event.Event(QUIT)
-    pygame.event.post(quit_ev)
+    Main.running = False
 
 
 class Main:
     
     controls_handler = ControlsInputsHandler()
     call_tree = [] 
-    running = True
-    register_ev((quit_ev, (KEYDOWN, ('key', K_ESCAPE))))
     BACKGROUND = pygame.image.load(bg)
+
+    ev = ((quit_ev, QUIT), (quit_ev, (KEYDOWN, ('key', K_ESCAPE))))
+    register_ev(*ev)
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     screen_rect = screen.get_rect()
     clock = pygame.time.Clock()
+    running = True
 
     def __init__(self, event_command=None):
         """ It's the abstract class for all screens (with your own main loop) """
@@ -59,11 +60,7 @@ class Main:
 
             Main.clock.tick(FPS)
 
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    Main.running = False
-
-                Main.controls_handler.check_press_events(event)
+            test_events()
 
             Main.screen.blit(Main.BACKGROUND, (0, 0))
             Main.controls_handler.current_dev.menu_control(current_call._buttons)

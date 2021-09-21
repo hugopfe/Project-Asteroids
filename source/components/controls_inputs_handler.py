@@ -4,8 +4,7 @@ import pygame
 from pygame.locals import *
 
 from components.constants import PLAYER_SPEED, FRICTION
-from components.util import *
-from components.events import *  # TEMP
+from components.events import *
 from ui import Button
 
 
@@ -351,47 +350,6 @@ class ControlsInputsHandler:
             self.current_dev = self.KeyboardListener()
 
         print(f'Switched to {self.current_dev.__class__.__name__}')
-
-    def check_press_events(self, event):  # TODO: Fix it
-        """
-        Checks events from a dict.
-
-        This dict must have pygame constants as keys that will be
-        compared with event.type, it's value can be: 
-        a list, containg the functions that will be called or another dict.
-
-        Value as dict is for compare another attribute of event. Dict
-        must have tuples as keys:
-            1st element: event attribute 
-            2nd element: another constant
-
-        Example:
-
-            dict_events = {
-                QUIT: [something()],
-                KEYDOWN: {
-                    ('key', K_up): [another_thing()]
-                }
-            }
-
-            if event.type == dict_events[type_event2]:
-                if dict_events[type_event2]
-
-        """
-
-        events = events_handler.events.get()
-
-        if event.type in events.keys():
-            if isinstance(events.get(event.type), dict):
-                sub_events = events.get(event.type)
-
-                for sub_event in sub_events.keys():
-                    ev_attr = getattr(event, sub_event[0])
-                    if ev_attr == sub_event[1]:
-                        trigger_event(event.type, sub_event)
-
-            else:
-                trigger_event(event.type)
 
 
 __all__ = ['ControlsInputsHandler']

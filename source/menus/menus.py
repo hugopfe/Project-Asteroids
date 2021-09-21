@@ -4,6 +4,7 @@ from pygame.locals import *
 from components.util import *
 from components.constants import *
 from components.main_base import *
+from components.events import *
 from ui import *
 from media.paths import logo, body_font, title_font
 
@@ -183,8 +184,6 @@ class PauseScreen(Main):
                        (KEYDOWN, ('key', d.nav_buttons['pause'])))
 
         register_ev(self.events)
-
-        # self.main_loop()
 
     def loop(self):
         self.paused_font.render()

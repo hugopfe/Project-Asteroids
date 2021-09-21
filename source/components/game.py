@@ -10,7 +10,6 @@ from components.util import *
 from components.constants import *
 from components.events import *
 from components.main_base import *
-from components.util import register_ev
 
 
 levels = [Level1, Level2, Level3]
