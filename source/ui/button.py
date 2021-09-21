@@ -77,7 +77,7 @@ class Button:
         self.border.blit(self.background, self.rect)
         self.screen.blit(self.border, self.bd_rect)
 
-    def select(self, is_above: bool = False) -> bool:
+    def select(self, is_above: bool):
         if is_above:
             self.current_color = self.current_color.lerp('#9848D9', 0.5)
         else:

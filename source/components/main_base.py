@@ -82,7 +82,7 @@ class Main:
 
     @staticmethod
     def change_screen(next_screen, previous_screen=None, kill_prev=False):
-        # TODO: Change the way to call screens classes!!
+        # TODO: Continue to fix screens calls!!
                 
         if kill_prev and previous_screen:
             remove_ev(previous_screen.events)

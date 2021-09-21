@@ -24,7 +24,6 @@ class AbsNavigationDevice:
 
         def mouse_device():
             dev = self.MouseNavigation()
-            register_ev(dev.get_events_commands())
 
             return dev
 
@@ -44,8 +43,10 @@ class AbsNavigationDevice:
 
         mouse_interact_func = self.check_device_interactions()['mouse']
         default_interact_func = self.check_device_interactions()['default']
-        register_ev((mouse_interact_func, MOUSEMOTION))
-        register_ev((default_interact_func, KEYDOWN))
+        register_ev(
+            (mouse_interact_func, MOUSEMOTION), 
+            (default_interact_func, KEYDOWN)
+        )
         
     class MenuNavigation:
 
@@ -59,8 +60,6 @@ class AbsNavigationDevice:
         def __init__(self):
             super().__init__()
 
-            self.motion = False
-
         def handle_navigation(self, buttons_list: List[Button]):
             self.buttons_list = buttons_list
 
@@ -71,12 +70,6 @@ class AbsNavigationDevice:
                 if is_above:
                     bt_pressed = pygame.mouse.get_pressed(3)
                     button.press(bt_pressed[0])
-
-        def set_motion(self):
-            self.motion = True
-
-        def get_events_commands(self):
-            return (self.set_motion, MOUSEMOTION)
 
     class DefaultNavigationDevice(MenuNavigation):
 
@@ -103,12 +96,12 @@ class AbsNavigationDevice:
             self.selected_button = self.buttons_list[self.btn_i]
             self.selected_button.select(True)
 
-            enter_key = pygame.key.get_pressed()[self.enter]
+            enter_key = pygame.key.get_pressed()[self.enter]  # TODO: Fix it!
 
             self.selected_button.press(enter_key)
 
         def press_up(self):
-            self.selected_button.select(False)
+            self.selected_button.select(False) 
             self.btn_i = self.btn_i - \
                 1 if self.btn_i > 0 else len(self.buttons_list) - 1
 
@@ -136,11 +129,14 @@ class AbsNavigationDevice:
             if not isinstance(self.active_device, self.DefaultNavigationDevice):
                 dev = self.devices.get('default')
                 self.active_device = dev()
+                pygame.mouse.set_visible(False)
 
         def check_mouse():
             if not isinstance(self.active_device, self.MouseNavigation):
+                remove_ev(*self.active_device.get_events_commands())  # Removing old events
                 dev = self.devices.get('mouse')
                 self.active_device = dev()
+                pygame.mouse.set_visible(True)
 
         return {'mouse': check_mouse, 'default': check_default}
     

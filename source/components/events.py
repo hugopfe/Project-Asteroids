@@ -47,15 +47,17 @@ class MultiEvents(EventsReg):
         k2 = d_event['k2']
         funcs = d_event['funcs']
 
-        if self.__dict__.get(k1):  # TODO: Verificar se __dict__ é necessário
-            if self.__dict__[k1].get(k2):
-                self.__dict__[k1][k2].extend(funcs)
+        self_dict = self.__dict__
+        
+        if self_dict.get(k1):  # TODO: Verificar se __dict__ é necessário
+            if self_dict[k1].get(k2):
+                self_dict[k1][k2].extend(funcs)
             else:
-                self.__dict__[k1][k2] = funcs
+                self_dict[k1][k2] = funcs
         else:
-            self.__dict__[k1] = {k2: funcs}
+            self_dict[k1] = {k2: funcs}
 
-    def get(self, k1, k2):
+    def get(self, k1, k2=None):
         return super().get(k1, k2)
 
 
@@ -126,49 +128,26 @@ class EventsHandler:
                 func()
 
     def events_loop(self):
+        """
+        Checks events registered.
+
+        """
+
         for event in get():
-            self.test_events(event)
+            if self.multi_events[event.type]:
+                self.check_sub_ev(event)
+            if self.single_events[event.type]:
+                self.trigger_event(event.type)
     
-    def test_events(self, event):
-        """
-        Checks events from a dict.
+    def check_sub_ev(self, event):
 
-        This dict must have pygame constants as keys that will be
-        compared with event.type, it's value can be: 
-        a list, containg the functions that will be called or another dict.
+        events = self.multi_events
+        sub_events = events.get(event.type) or dict()
 
-        Value as dict is for compare another attribute of event. Dict
-        must have tuples as keys:
-            1st element: event attribute 
-            2nd element: another constant
-
-        Example:
-
-            dict_events = {
-                QUIT: [something()],
-                KEYDOWN: {
-                    ('key', K_up): [another_thing()]
-                }
-            }
-
-            if event.type == dict_events[type_event2]:
-                if dict_events[type_event2]
-
-        """
-
-        events = self.events.get()
-
-        if self.single_events[event.type]:  # TODO: Find a way to do it!!!
-            if isinstance(events.get(event.type), dict):
-                sub_events = events.get(event.type)
-
-                for sub_event in sub_events.keys():
-                    ev_attr = getattr(event, sub_event[0])
-                    if ev_attr == sub_event[1]:
-                        trigger_event(event.type, sub_event)
-
-            else:
-                trigger_event(event.type)
+        for sub_event in sub_events.keys():
+            ev_attr = getattr(event, sub_event[0])
+            if ev_attr == sub_event[1]:
+                self.trigger_event(event.type, sub_event)
 
 
 def register_ev(*ev):
@@ -179,20 +158,14 @@ def remove_ev(*ev):
     events_handler.remove_event(*ev)
 
 
-def trigger_event(k1, k2=None):
-    events_handler.trigger_event(k1, k2)
-
-
-def test_events(event):
-    events_handler.events_loop(event)    
+def test_events():
+    events_handler.events_loop()    
 
 
 events_handler = EventsHandler()
 
-
 __all__ = [
     'register_ev',
     'remove_ev',
-    'trigger_event',
     'test_events'
 ]
