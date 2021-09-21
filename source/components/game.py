@@ -9,6 +9,8 @@ from media.paths import body_font
 from components.util import *
 from components.constants import *
 from components.events import *
+from components.main_base import *
+from components.util import register_ev
 
 
 levels = [Level1, Level2, Level3]
@@ -19,18 +21,19 @@ class Game(Main):
     def __init__(self):
         """ Class for main game loop """
 
-        Main.__init__(self)
-
         self.create_new_game = False
         self.current_time = 0
+
+        self.screen = Main.screen
+        self.screen_rect = Main.screen_rect
 
         # Player
         self.player = Player(self.screen)
 
         # Power_Up
-        self.power_up_pos = get_random_pos(
+        power_up_pos = get_random_pos(
             self.screen_rect.w, self.screen_rect.h)
-        self.power_up = Shield(self.screen, self.power_up_pos, self.player)
+        self.power_up = Shield(self.screen, power_up_pos, self.player)
 
         # Groups
         self.player_group = pygame.sprite.GroupSingle(self.player)
@@ -58,23 +61,30 @@ class Game(Main):
                                       bg_color=(0, 0, 0),
                                       antialias=True)
 
-        self.score_text = Font(
-            f'Pontuação: {self.player.score}', (SCREEN_WIDTH - 10, 10), 'right')
-            
-        self.target_score_text = Font(f'Objetivo: {self.current_level.level_objectives["score"]}',
-                                      (SCREEN_WIDTH - 10, 40), 'right')
+        self.texts = (
+            Font(f'Pontuação: {self.player.score}',
+                 (SCREEN_WIDTH - 10, 10), 'right'),
 
-        self.fonts_group.add_fonts(self.score_text, self.target_score_text)
+            Font(f'Objetivo: {self.current_level.level_objectives["score"]}',
+                 (SCREEN_WIDTH - 10, 40), 'right')
+        )
 
-        c = self.controls_handler
+        self.fonts_group.add_fonts(*self.texts)
 
-        ev = (KEYDOWN, ('key', c.current_dev.nav_buttons['pause']))
-        ev_func = lambda: self.change_screen(PauseScreen, self)
-        self.events = (ev_func, ev)
+        c = Main.controls_handler
 
-        self.reg_events()
+        self.events = (
+            (
+                lambda: self.change_screen(PauseScreen, self),
+                (KEYDOWN, ('key', c.current_dev.nav_buttons['pause']))
+            ),
+            (
+                lambda: c.change_default_device(),
+                (KEYDOWN, ('key', K_TAB))
+            )
+        )
 
-        self.main_loop()
+        register_ev(*self.events)
 
     def loop(self):
         self.current_time += 1
@@ -105,7 +115,6 @@ class Game(Main):
         self.current_level.print_level_font()
 
     def reg_events_temp(self):
-        
         """
         if event.type == KEYDOWN:
             # ==================== TEMP ==================== 
@@ -117,6 +126,7 @@ class Game(Main):
                 self.asteroid_group.add(Asteroid(pygame.math.Vector2((200, 200)), self.screen, self.player.pos, self.level_rules['asteroids'],
                 self.set_score))
         """
+
     def game_over(self):
         pygame.time.wait(300)
         self.player.kill()

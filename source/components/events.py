@@ -1,36 +1,55 @@
 from types import FunctionType
-from typing import Dict, Tuple, Union
+from typing import Tuple, Union
 
 
 class EventGrouping:
 
-    def register(self, d_event: Dict):
+    def register(self, d_event: dict):  # TODO: Create another class for single events and this to multiples events
+        # {ev_keys: [[], {ev_keys[1]: [func]}]}
+        # {ev_keys: [[func], {}]}
+        
         ev_command = d_event
 
-        for ev, sub_ev in ev_command.items():
-            self_ev = self.__dict__.get(ev)
-            if isinstance(sub_ev, dict):
-                for sub, func_list in sub_ev.items():
-                    if self_ev:
-                        if self_ev.get(sub):
-                            self.__dict__[ev][sub].extend(func_list)
-                        else:
-                            self.__dict__[ev][sub] = func_list
-                    else:
-                        self.__dict__[ev] = {sub: func_list}
+        k_1 = list(d_event.keys())[0]
+        ev_list = d_event[k_1]
+        sub_ev = ev_list[0] if ev_list[0] else ev_list[1]
 
-            else:
-                if self_ev:
-                    self.__dict__[ev].extend(sub_ev)
-                else:
-                    self.__dict__[ev] = sub_ev
+        if self.__dict__.get(k_1):
+            if isinstance(sub_ev, list):
+                self.__dict__[k_1][0].extend(sub_ev)
+            elif isinstance(sub_ev, dict):
+                self.__dict__[k_1][1].update(sub_ev)
+        else:
+            if isinstance(sub_ev, list):
+                self.__dict__[k_1] = [sub_ev, {}]
+            elif isinstance(sub_ev, dict):
+                self.__dict__[k_1] = [[], sub_ev]
+            
+        # for ev, sub_ev in ev_command.items():
+        #     self_ev = self.__dict__.get(ev)
+        #     if isinstance(sub_ev, dict):
+        #         for sub, func_list in sub_ev.items():
+        #             if self_ev:
+        #                 if self_ev.get(sub):
+        #                     self.__dict__[ev][sub].extend(func_list)
+        #                 else:
+        #                     self.__dict__[ev][sub] = func_list
+        #             else:
+        #                 self.__dict__[ev] = {sub: func_list}
+
+        #     else:
+        #         if self_ev:
+        #             self.__dict__[ev].extend(sub_ev)
+        #         else:
+        #             self.__dict__[ev] = sub_ev
 
     def get(self, k1=None, k2=None):
         if k1:
-            ret = self.__dict__.get(k1)
+            d = self.__dict__.get(k1)
+            ret = d[0] if d is not None else None
             if k2:
                 d = self.__dict__.get(k1)
-                ret = d.get(k2) if d is not None else None
+                ret = d[1].get(k2) if d is not None else None
         else:
             ret = self.__dict__
 
@@ -65,22 +84,12 @@ class EventsHandler:
             ev_keys = c[1]
             d_out = {}
 
-            if isinstance(c[1], tuple):
-                reg_funcs = self.events.get(ev_keys[0], ev_keys[1])
-                if reg_funcs:
-                    if func in reg_funcs:
-                        continue
-
-                d_out = {ev_keys[0]: {ev_keys[1]: [func]}}
+            if isinstance(c[1], tuple):  # {KEYDOWN: {}} → {KEYDOWN: [[], {}]}
+                d_out = {ev_keys[0]: [[], {ev_keys[1]: [func]}]}
                 self.events.register(d_out)
 
             else:
-                reg_funcs = self.events.get(ev_keys)
-                if reg_funcs:
-                    if func in reg_funcs:
-                        continue
-
-                d_out = {ev_keys: [func]}
+                d_out = {ev_keys: [[func], {}]}
                 self.events.register(d_out)
 
     def remove_event(self, *command: Tuple[FunctionType, Union[int, Tuple[str, int]]]):
@@ -109,10 +118,10 @@ class EventsHandler:
 
     def trigger_event(self, k1, k2=None):
         if k2:
-            for func in self.events[k1][k2]:
+            for func in self.events[k1][1][k2]:
                 func()
         else:
-            for func in self.events[k1]:
+            for func in self.events[k1][0]:
                 func()
 
 

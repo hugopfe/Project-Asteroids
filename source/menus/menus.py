@@ -19,26 +19,26 @@ class MainMenu(Main):
 
         # Buttons
         self.ui_buttons = (
-            Button(screen=self.screen,
-                    x=120, y=SCREEN_HEIGHT - 220,
-                    width=90, height=40,
-                    text='Jogar',
-                    padding=5,
-                    callback=lambda: self.change_screen(game_cls)),
+            Button(screen=Main.screen,
+                   x=120, y=SCREEN_HEIGHT - 220,
+                   width=90, height=40,
+                   text='Jogar',
+                   padding=5,
+                   callback=lambda: self.change_screen(game_cls)),
 
-            Button(screen=self.screen,
-                    x=120, y=SCREEN_HEIGHT - 160,
-                    width=90, height=40,
-                    text='Controles',
-                    padding=5,
-                    callback=lambda: self.change_screen(ControlsMenu)),
+            Button(screen=Main.screen,
+                   x=120, y=SCREEN_HEIGHT - 160,
+                   width=90, height=40,
+                   text='Controles',
+                   padding=5,
+                   callback=lambda: self.change_screen(ControlsMenu)),
 
-            Button(screen=self.screen,
-                    x=120, y=SCREEN_HEIGHT - 100,
-                    width=90, height=40,
-                    text='Sair',
-                    padding=5,
-                    callback=self.exit)
+            Button(screen=Main.screen,
+                   x=120, y=SCREEN_HEIGHT - 100,
+                   width=90, height=40,
+                   text='Sair',
+                   padding=5,
+                   callback=quit_ev)
         )
 
         self.add_buttons(*self.ui_buttons)
@@ -47,17 +47,12 @@ class MainMenu(Main):
         self.version_txt = Font(
             f'versão: {VERSION}', (SCREEN_WIDTH - 10, SCREEN_HEIGHT - 30), 'right')
         self.version_txt.configure(font_name=body_font, size=15, color='white',
-                                   bg_color='black', screen=self.screen)
-
-        self.main_loop()
+                                   bg_color='black', screen=Main.screen)
 
     def loop(self):
-        self.screen.blit(self.logo, self.logo_rect)
+        Main.screen.blit(self.logo, self.logo_rect)
         self.render_buttons()
         self.version_txt.render()
-
-    def exit(self):
-        self.running = False
 
 
 class ControlsMenu(Main):
@@ -66,9 +61,9 @@ class ControlsMenu(Main):
 
         Main.__init__(self)
 
-        self.screen_x = self.screen.get_width()
-        self.screen_y = self.screen.get_height()
-        self.screen_rect = self.screen.get_rect()
+        self.screen_x = Main.screen.get_width()
+        self.screen_y = Main.screen.get_height()
+        self.screen_rect = Main.screen_rect
 
         self.keys_fonts_text = {
             'up_font': {'command_text': 'Mover para cima', 'command_key': 'Seta para cima'},
@@ -86,19 +81,17 @@ class ControlsMenu(Main):
 
         self.keys_frame()
 
-        self.back_button = Button(screen=self.screen,
+        self.back_button = Button(screen=Main.screen,
                                   x=SCREEN_WIDTH / 2,
                                   y=SCREEN_HEIGHT - 100,
                                   width=80, height=40,
                                   text='Voltar', padding=3,
                                   callback=lambda: self.back_screen())
-                                  
+
         self.add_buttons(self.back_button)
 
-        self.main_loop()
-
     def loop(self):
-        self.screen.blit(self.frame, self.frame_rect)
+        Main.screen.blit(self.frame, self.frame_rect)
 
         self.render_buttons()
         self.control_txt.render()
@@ -118,7 +111,7 @@ class ControlsMenu(Main):
         # Title command_list
 
         self.control_txt = Font('Controles', pos=(self.frame_rect.centerx, 90))
-        self.control_txt.configure(screen=self.screen,
+        self.control_txt.configure(screen=Main.screen,
                                    font_name=title_font,
                                    size=50,
                                    bold=True,
@@ -128,9 +121,10 @@ class ControlsMenu(Main):
                                    align='center')
 
         # Keys fonts
+
         font_space = 30
 
-        self.keys_fontgroup = FontsGroup(screen=self.screen,
+        self.keys_fontgroup = FontsGroup(screen=Main.screen,
                                          font_name=body_font,
                                          size=18,
                                          bold=True,
@@ -163,21 +157,21 @@ class PauseScreen(Main):
         Main.__init__(self)
 
         self.paused_font = Font(
-            'Pausado', (self.screen_rect.centerx, 100), 'center')
-        self.paused_font.configure(screen=self.screen, font_name=title_font, size=50, bold=True,
+            'Pausado', (Main.screen_rect.centerx, 100), 'center')
+        self.paused_font.configure(screen=Main.screen, font_name=title_font, size=50, bold=True,
                                    antialias=True, color='white', bg_color='black')
 
         # Buttons
         self.ui_buttons = (
-            Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
-                width=110, height=40, text='Continuar',
-                padding=10, callback=self.back_screen),
-            Button(screen=self.screen, x=self.screen_rect.centerx, y=460,
-                width=110, height=40, text='Controles',
-                padding=8, callback=lambda: self.change_screen(ControlsMenu)),
-            Button(screen=self.screen, x=self.screen_rect.centerx, y=520,
-                width=110, height=40, text='Menu',
-                padding=7, callback=lambda: self.back_mainmenu(game))
+            Button(screen=Main.screen, x=Main.screen_rect.centerx, y=400,
+                   width=110, height=40, text='Continuar',
+                   padding=10, callback=self.back_screen),
+            Button(screen=Main.screen, x=Main.screen_rect.centerx, y=460,
+                   width=110, height=40, text='Controles',
+                   padding=8, callback=lambda: self.change_screen(ControlsMenu)),
+            Button(screen=Main.screen, x=Main.screen_rect.centerx, y=520,
+                   width=110, height=40, text='Menu',
+                   padding=7, callback=lambda: self.back_mainmenu(game))
         )
 
         self.add_buttons(
@@ -186,15 +180,15 @@ class PauseScreen(Main):
 
         d = self.controls_handler.current_dev
         self.events = (self.back_screen,
-                      (KEYDOWN, ('key', d.nav_buttons['pause'])))
+                       (KEYDOWN, ('key', d.nav_buttons['pause'])))
 
-        self.reg_events()
+        register_ev(self.events)
 
-        self.main_loop()
+        # self.main_loop()
 
     def loop(self):
         self.paused_font.render()
         self.render_buttons()
 
 
-__all__ = ['Main', 'MainMenu', 'PauseScreen', 'ControlsMenu']
+__all__ = ['MainMenu', 'PauseScreen', 'ControlsMenu']

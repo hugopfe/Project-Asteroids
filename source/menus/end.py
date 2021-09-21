@@ -11,13 +11,13 @@ class EndScreen(Main):
         Main.__init__(self)
 
         # Fonts
-        self.fonts = FontsGroup(screen=self.screen, font_name=title_font,
+        self.fonts = FontsGroup(screen=Main.screen, font_name=title_font,
                                 size=45, color=(255, 255, 255), bg_color=(0, 0, 0))
         self.main_text = None
         self.score_text = Font(f'Pontuação: {game.player.score}', (SCREEN_WIDTH / 2, 180), 'center')
 
         # Buttons
-        self.menu_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=460,
+        self.menu_button = Button(screen=Main.screen, x=Main.screen_rect.centerx, y=460,
                                   width=110, height=40, text='Menu',
                                   padding=5, callback=lambda: self.back_mainmenu(game))
         self.add_buttons(self.menu_button)
@@ -47,7 +47,7 @@ class GOScreen(EndScreen):
 
         self.set_main_text('Game Over!')
 
-        self.try_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
+        self.try_button = Button(screen=Main.screen, x=Main.screen_rect.centerx, y=400,
                                     width=130, height=50, text='Tentar\nnovamente',
                                     padding=17, callback=lambda: self.try_again(game))
         self.add_buttons(self.try_button)
@@ -63,7 +63,7 @@ class WinScreen(EndScreen):
 
         self.set_main_text('Você Venceu!!')
 
-        self.try_button = Button(screen=self.screen, x=self.screen_rect.centerx, y=400,
+        self.try_button = Button(screen=Main.screen, x=Main.screen_rect.centerx, y=400,
                                  width=130, height=50, text='Jogar\nnovamente',
                                  padding=17, callback=lambda: self.try_again(game))
         self.add_buttons(self.try_button)

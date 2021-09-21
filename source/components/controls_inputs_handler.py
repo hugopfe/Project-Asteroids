@@ -5,7 +5,7 @@ from pygame.locals import *
 
 from components.constants import PLAYER_SPEED, FRICTION
 from components.util import *
-from components.events import * # TEMP
+from components.events import *  # TEMP
 from ui import Button
 
 
@@ -23,15 +23,31 @@ class AbsNavigationDevice:
         The DefaultNavigationDevice will be the instace for keyboard or controller
         """
 
+        def mouse_device():
+            dev = self.MouseNavigation()
+            register_ev(dev.get_events_commands())
+
+            return dev
+
+        def default_device():
+            dev = self.DefaultNavigationDevice(nav_buttons)
+            register_ev(*dev.get_events_commands())
+
+            return dev
+
         self.devices = {
-            'mouse': self.MouseNavigation(),
-            'default': self.DefaultNavigationDevice(nav_buttons)
+            'mouse': mouse_device,
+            'default': default_device
         }
 
-        self.active_device = self.devices['mouse']
-        self.mouse_motion = False
-        register_ev((self.set_mouse_motion, MOUSEMOTION))
+        dev = self.devices['mouse']
+        self.active_device = dev()
 
+        mouse_interact_func = self.check_device_interactions()['mouse']
+        default_interact_func = self.check_device_interactions()['default']
+        register_ev((mouse_interact_func, MOUSEMOTION))
+        register_ev((default_interact_func, KEYDOWN))
+        
     class MenuNavigation:
 
         def __init__(self):
@@ -41,6 +57,10 @@ class AbsNavigationDevice:
             pass
 
     class MouseNavigation(MenuNavigation):
+        def __init__(self):
+            super().__init__()
+
+            self.motion = False
 
         def handle_navigation(self, buttons_list: List[Button]):
             self.buttons_list = buttons_list
@@ -53,22 +73,23 @@ class AbsNavigationDevice:
                     bt_pressed = pygame.mouse.get_pressed(3)
                     button.press(bt_pressed[0])
 
+        def set_motion(self):
+            self.motion = True
+
+        def get_events_commands(self):
+            return (self.set_motion, MOUSEMOTION)
+
     class DefaultNavigationDevice(MenuNavigation):
 
         def __init__(self, nav_buttons: dict):
+            super().__init__()
+
             self.btn_i = 0
             self.selected_button: Button
 
             for button, bt_id in nav_buttons.items():
                 self.__dict__[button] = bt_id
-
-            events_commands = (
-                self.key_up, (KEYDOWN, ('key', K_UP)),
-                self.key_down, (KEYDOWN, ('key', K_DOWN))
-            )
-
-            register_ev(events_commands)
-
+            
         def handle_navigation(self, buttons_list: List[Button]):
             """
             Handle navigation by using the screen buttons and the giving keys/buttons.
@@ -79,7 +100,7 @@ class AbsNavigationDevice:
             """
 
             self.buttons_list = buttons_list
-
+            
             self.selected_button = self.buttons_list[self.btn_i]
             self.selected_button.select(True)
 
@@ -87,51 +108,45 @@ class AbsNavigationDevice:
 
             self.selected_button.press(enter_key)
 
-        def key_up(self):
+        def press_up(self):
             self.selected_button.select(False)
             self.btn_i = self.btn_i - \
                 1 if self.btn_i > 0 else len(self.buttons_list) - 1
 
-        def key_down(self):
+        def press_down(self):
             self.selected_button.select(False)
             self.btn_i = self.btn_i + \
                 1 if self.btn_i < len(self.buttons_list) - 1 else 0
 
         def get_events_commands(self):
             return (
-                (self.key_up, (KEYDOWN, ('key', K_UP))),
-                (self.key_down, (KEYDOWN, ('key', K_DOWN)))
+                (self.press_up, (KEYDOWN, ('key', K_UP))),
+                (self.press_down, (KEYDOWN, ('key', K_DOWN)))
             )
 
-    def check_for_switch_devices(self, nav_keys_state: Union[Tuple[int, int, int], List[int]], reg_ev):
+    def check_device_interactions(self, nav_keys_state: Union[Tuple[int, int, int], List[int]]=None):
         """
         Handle the switcher between devices on menus navigation.
 
         :param: nav_keys_state -> The state of navigation buttons/keys: True or False.
         """
 
-        m = pygame.mouse.get_pressed(3)
+        # m = pygame.mouse.get_pressed(3)
 
-        if any(nav_keys_state):
-            if isinstance(self.active_device, self.DefaultNavigationDevice):
-                pass
-            else:
-                self.active_device = self.devices.get('default')
-                reg_ev(*self.active_device.get_events_commands())
+        def check_default():
+            if not isinstance(self.active_device, self.DefaultNavigationDevice):
+                dev = self.devices.get('default')
+                self.active_device = dev()
 
-        if any((*m, self.mouse_motion)):
-            if isinstance(self.active_device, self.MouseNavigation):
-                pass
-            else:
-                self.active_device = self.devices.get('mouse')
+        def check_mouse():
+            if not isinstance(self.active_device, self.MouseNavigation):
+                dev = self.devices.get('mouse')
+                self.active_device = dev()
 
-        self.mouse_motion = False
-
+        return {'mouse': check_mouse, 'default': check_default}
+    
     def menu_control(self, buttons_list):
         pass
-
-    def set_mouse_motion(self):
-        self.mouse_motion = True
 
 
 class ControlsInputsHandler:
@@ -150,7 +165,7 @@ class ControlsInputsHandler:
             'enter': K_RETURN,
             'pause': K_p
         }
-
+        
         def __init__(self):
             """ Verify the pressed keys on keyboard """
 
@@ -226,9 +241,8 @@ class ControlsInputsHandler:
                      for i in ['up', 'down', 'enter']]
             k = tuple(pygame.key.get_pressed()[i] for i in nav_k)
 
-            self.check_for_switch_devices(k, register_ev)
-            self.active_device.handle_navigation(
-                buttons_list=buttons_list)
+            # self.check_device_interactions(k)
+            self.active_device.handle_navigation(buttons_list)
 
     class JoystickListener(AbsNavigationDevice):
 
@@ -329,7 +343,7 @@ class ControlsInputsHandler:
 
     def change_default_device(self):
         if isinstance(self.current_dev, self.KeyboardListener):
-            if pygame.joystick.get_count() < 1:
+            if not pygame.joystick.get_count():
                 print('Nenhum controle encontrado!')
             else:
                 self.current_dev = self.JoystickListener()
@@ -338,7 +352,7 @@ class ControlsInputsHandler:
 
         print(f'Switched to {self.current_dev.__class__.__name__}')
 
-    def check_press_events(self, event): # TODO: Fix it
+    def check_press_events(self, event):  # TODO: Fix it
         """
         Checks events from a dict.
 
