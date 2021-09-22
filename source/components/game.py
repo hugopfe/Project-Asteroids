@@ -108,9 +108,6 @@ class Game(Main):
     def reg_events(self):
         c = self.controls_handler
 
-        def press_tab():
-            c.change_default_device()
-
         def press_shift():
             self.power_up.change_state('dropped')
         
@@ -127,7 +124,6 @@ class Game(Main):
             return lambda: self.change_screen(PauseScreen, self)
 
         self.events = (  # TODO: Try to simplificate this:
-            (press_tab, (KEYDOWN, ('key', K_TAB))),
             (press_shift, (KEYDOWN, ('key', K_LSHIFT))),
             (press_a, (KEYDOWN, ('key', K_a))),
             (pause, (KEYDOWN, ('key', c.current_dev.nav_buttons['pause'])))

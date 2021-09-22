@@ -20,6 +20,9 @@ if __name__ == '__main__':
         MOUSEBUTTONUP,
         KEYDOWN, 
         KEYUP, 
+        JOYBUTTONDOWN,
+        JOYBUTTONUP,
+        JOYHATMOTION,
         QUIT
     ]
     

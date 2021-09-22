@@ -25,6 +25,10 @@ def start(main_menu, game_cls):
     Main.main_loop()
 
 
+def press_tab():
+    Main.controls_handler.change_default_device()
+
+
 def quit_ev():
     Main.running = False
 
@@ -35,7 +39,11 @@ class Main:
     call_tree = [] 
     BACKGROUND = pygame.image.load(bg)
 
-    ev = ((quit_ev, QUIT), (quit_ev, (KEYDOWN, ('key', K_ESCAPE))))
+    ev = (
+        (quit_ev, QUIT), 
+        (quit_ev, (KEYDOWN, ('key', K_ESCAPE))),
+        (press_tab, (KEYDOWN, ('key', K_TAB)))
+    )
     register_ev(*ev)
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))

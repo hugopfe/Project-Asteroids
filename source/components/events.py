@@ -95,6 +95,8 @@ class EventsHandler:
                 d_out = {'k1': ev_keys, 'funcs': [func]}
                 self.single_events.register(**d_out)
 
+            print(f'> Event registered: {func.__qualname__} {ev_keys}')
+
     def remove_event(self, *command: Tuple[FunctionType, Union[int, Tuple[str, int]]]):
         """
         Removes many function to event's list.
@@ -118,6 +120,8 @@ class EventsHandler:
                 self.multi_events[ev[0]][ev[1]].remove(func)
             else:
                 self.single_events[ev].remove(func)
+
+            print(f'> Event removed: {func.__qualname__} -> {ev}')
 
     def trigger_event(self, k1, k2=None):
         if k2:
