@@ -3,7 +3,7 @@ from pygame.locals import *
 
 from components.constants import *
 from media.paths import bg
-from components.controls_inputs_handler import *
+from components.inputs import *
 from components.util import *
 from components.events import *
 

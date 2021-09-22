@@ -3,7 +3,7 @@ from typing import List, Tuple, Union
 import pygame
 from pygame.locals import *
 
-from components.constants import PLAYER_SPEED, FRICTION
+from components.constants import PLAYER_SPEED, BREAK
 from components.events import *
 from ui import Button
 
@@ -13,7 +13,7 @@ class AbsNavigationDevice:
     nav_buttons: dict
     devices: dict
 
-    def __init__(self, nav_buttons):
+    def __init__(self, nav_buttons, buttons_state_func):
         """ 
         Abstract class to handle actual devices on menus navigation 
 
@@ -38,6 +38,8 @@ class AbsNavigationDevice:
             'default': default_device
         }
 
+        buttons_state = buttons_state_func
+        
         dev = self.devices['mouse']
         self.active_device = dev()
 
@@ -96,9 +98,9 @@ class AbsNavigationDevice:
             self.selected_button = self.buttons_list[self.btn_i]
             self.selected_button.select(True)
 
-            enter_key = pygame.key.get_pressed()[self.enter]  # TODO: Fix it!
+            enter_key = self.buttons_state()[self.enter] # TODO: Get joystick buttons state!
 
-            self.selected_button.press(enter_key)
+            self.selected_button.press(enter_key) 
 
         def press_up(self):
             self.selected_button.select(False) 
@@ -153,7 +155,8 @@ class ControlsInputsHandler:
 
     class KeyboardListener(AbsNavigationDevice):
 
-        keys = [K_UP, K_DOWN, K_SPACE, K_RETURN, K_p]
+        # keys = [K_UP, K_DOWN, K_SPACE, K_RETURN, K_p]
+
         nav_buttons = {
             'up': K_UP,
             'down': K_DOWN,
@@ -162,18 +165,9 @@ class ControlsInputsHandler:
         }
         
         def __init__(self):
-            """ Verify the pressed keys on keyboard """
+            """ Represents the keyboard """
 
-            AbsNavigationDevice.__init__(self, self.nav_buttons)
-
-            self.events = {
-                KEYDOWN: {
-                    ('key', k): [] for k in self.keys
-                },
-                KEYUP: {
-                    ('key', k): [] for k in self.keys
-                }
-            }
+            AbsNavigationDevice.__init__(self, self.nav_buttons, pygame.key.get_pressed)
 
             self.shoot_key_pressed = False  # TODO: Fix it
 
@@ -189,7 +183,7 @@ class ControlsInputsHandler:
                 player.vel.y += player.ACC
 
             elif not k[K_UP] and not k[K_DOWN]:
-                player.vel.y *= FRICTION
+                player.vel.y *= BREAK
 
             if k[K_LEFT] and player.vel.x > -PLAYER_SPEED:
                 player.vel.x -= player.ACC
@@ -198,7 +192,7 @@ class ControlsInputsHandler:
                 player.vel.x += player.ACC
 
             elif not k[K_LEFT] and not k[K_RIGHT]:
-                player.vel.x *= FRICTION
+                player.vel.x *= BREAK
 
             """ Player shooting """
 
@@ -208,6 +202,8 @@ class ControlsInputsHandler:
             elif not k[K_SPACE]:
                 self.shoot_key_pressed = False
 
+            """ Player rotating """
+
             if k[K_q]:
                 if player.time_pressed['K_q'] < 30:
                     player.time_pressed['K_q'] += 1
@@ -215,8 +211,6 @@ class ControlsInputsHandler:
                     player.time_pressed['K_q'] * 0.15
             else:
                 player.time_pressed['K_q'] = 0
-
-            """ Player rotating """
 
             if k[K_e]:
                 if player.time_pressed['K_e'] < 30:
@@ -232,41 +226,38 @@ class ControlsInputsHandler:
             if not buttons_list:
                 return
 
-            nav_k = [self.nav_buttons[i]
-                     for i in ['up', 'down', 'enter']]
-            k = tuple(pygame.key.get_pressed()[i] for i in nav_k)
-
-            # self.check_device_interactions(k)
             self.active_device.handle_navigation(buttons_list)
 
     class JoystickListener(AbsNavigationDevice):
 
+        a_button = 0
+        start_button = 7
+        rb_button = 4
+        lb_button = 5
+        
+        nav_buttons = {
+            'up': -1,
+            'down': 1,
+            'enter': a_button,
+            'pause': start_button
+        }
+
         def __init__(self):
             """ Verify the pressed keys on controller """
 
-            super().__init__()
+            super().__init__(self.nav_buttons)
 
             pygame.joystick.init()
+            
+            joystick = pygame.joystick.Joystick(0)
+            print(joystick)
 
-            self.joystick = pygame.joystick.Joystick(0)
             self.shoot_key_pressed = False
-
-            self.a_button = 0
-            self.start_button = 7
-            self.rb_button = 4
-            self.lb_button = 5
 
             self.axis = self.joystick.get_axis
             self.j_axes = self.joystick.get_numaxes()
             self.axis_lst = [round(self.axis(_), 3)
                              for _ in range(self.j_axes)]
-
-            self.nav_buttons = {
-                'up': [1, False],
-                'down': [-1, False],
-                'enter': [self.a_button, False],
-                'pause': [self.start_button, False]
-            }
 
         def in_game_control(self, player):
             """ Player movement """
@@ -282,12 +273,12 @@ class ControlsInputsHandler:
                 if abs(self.axis_lst[x]) > 0.1:
                     player.vel.x = self.axis_lst[x] * PLAYER_SPEED
                 else:
-                    player.vel.x *= FRICTION
+                    player.vel.x *= BREAK
 
                 if abs(self.axis_lst[y]) > 0.1:
                     player.vel.y = self.axis_lst[y] * PLAYER_SPEED
                 else:
-                    player.vel.y *= FRICTION
+                    player.vel.y *= BREAK
 
             """ Player shooting"""
 

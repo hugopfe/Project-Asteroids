@@ -20,6 +20,8 @@ class Game(Main):
     def __init__(self):
         """ Class for main game loop """
 
+        super().__init__()
+
         self.create_new_game = False
         self.current_time = 0
 
@@ -70,19 +72,9 @@ class Game(Main):
 
         self.fonts_group.add_fonts(*self.texts)
 
-        c = Main.controls_handler
+        self.controls_handler = Main.controls_handler
 
-        self.events = (
-            (
-                lambda: self.change_screen(PauseScreen, self),
-                (KEYDOWN, ('key', c.current_dev.nav_buttons['pause']))
-            ),
-            (
-                lambda: c.change_default_device(),
-                (KEYDOWN, ('key', K_TAB))
-            )
-        )
-
+        self.reg_events()
         register_ev(*self.events)
 
     def loop(self):
@@ -113,19 +105,34 @@ class Game(Main):
         self.fonts_group.render_fonts()
         self.current_level.print_level_font()
 
-    def reg_events_temp(self):
-        """
-        if event.type == KEYDOWN:
-            # ==================== TEMP ==================== 
-            if event.key == K_TAB:
-                c.change_default_device()
-            if event.key == K_LSHIFT:
-                self.power_up.change_state('dropped')
-            if event.key == K_a:
-                self.asteroid_group.add(Asteroid(pygame.math.Vector2((200, 200)), self.screen, self.player.pos, self.level_rules['asteroids'],
-                self.set_score))
-        """
+    def reg_events(self):
+        c = self.controls_handler
 
+        def press_tab():
+            c.change_default_device()
+
+        def press_shift():
+            self.power_up.change_state('dropped')
+        
+        def press_a():
+            ast_pos = pygame.math.Vector2((200, 200))
+            ast = Asteroid(
+                ast_pos, self.screen, self.player.pos, 
+                self.level_rules['asteroids'], self.set_score
+            )
+
+            self.asteroid_group.add(ast)
+
+        def pause():
+            return lambda: self.change_screen(PauseScreen, self)
+
+        self.events = (  # TODO: Try to simplificate this:
+            (press_tab, (KEYDOWN, ('key', K_TAB))),
+            (press_shift, (KEYDOWN, ('key', K_LSHIFT))),
+            (press_a, (KEYDOWN, ('key', K_a))),
+            (pause, (KEYDOWN, ('key', c.current_dev.nav_buttons['pause'])))
+        ) 
+        
     def game_over(self):
         pygame.time.wait(300)
         self.player.kill()
@@ -182,7 +189,7 @@ class Game(Main):
             self.change_screen(WinScreen, self)
         else:
             self.update_infos()
-            self.target_score_text.configure(
+            self.texts[1].configure(
                 text=f'Objetivo: {self.level_objectives["score"]}')
 
     def update_infos(self):
@@ -201,7 +208,7 @@ class Game(Main):
 
     def set_score(self, score: int):
         self.player.score += score
-        self.score_text.configure(text=f'Pontuação: {self.player.score}')
+        self.texts[0].configure(text=f'Pontuação: {self.player.score}')
 
 
 __all__ = ['Game']
