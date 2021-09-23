@@ -13,6 +13,8 @@ class AbsNavigationDevice:
     nav_buttons: dict
     devices: dict
 
+    events_registrated = []
+
     def __init__(self, events_commands):
         """ 
         Abstract class to handle actual devices on menus navigation 
@@ -22,6 +24,8 @@ class AbsNavigationDevice:
         The DefaultNavigationDevice will be the instace for keyboard or controller
         """
 
+        self.clear_events()
+
         def mouse_device():
             dev = self.MouseNavigation()
 
@@ -29,7 +33,9 @@ class AbsNavigationDevice:
 
         def default_device():
             dev = self.DefaultNavigationDevice(events_commands)
-            register_ev(*dev.get_events_commands())
+            events = (dev.get_events_commands())
+            self.event_registrated(*events)
+            register_ev(*events)
 
             return dev
 
@@ -43,10 +49,10 @@ class AbsNavigationDevice:
 
         mouse_interact_func = self.check_device_interactions()['mouse']
         default_interact_func = self.check_device_interactions()['default']
-        register_ev(
-            (mouse_interact_func, MOUSEMOTION),
-            (default_interact_func, events_commands['press']),
-        )
+        default_ev = (default_interact_func, events_commands['press'])
+        self.event_registrated(default_ev)
+
+        register_ev((mouse_interact_func, MOUSEMOTION), default_ev)
 
     class MenuNavigation:
 
@@ -144,9 +150,17 @@ class AbsNavigationDevice:
 
         return {'mouse': check_mouse, 'default': check_default}
 
-    def menu_control(self, buttons_list):
-        pass
+    @staticmethod
+    def event_registrated(*events):
+        for ev in events:
+            AbsNavigationDevice.events_registrated.append(ev)
 
+    @staticmethod
+    def clear_events():
+        events = AbsNavigationDevice.events_registrated
+        if events:
+            remove_ev(*tuple(events))  # TODO: Finish to remove all registrated events!
+            events.clear()
 
 class ControlsInputsHandler:
 
