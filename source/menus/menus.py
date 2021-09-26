@@ -20,21 +20,21 @@ class MainMenu(Main):
 
         # Buttons
         self.ui_buttons = (
-            Button(screen=Main.screen,
+            RectangleButton(screen=Main.screen,
                    x=120, y=SCREEN_HEIGHT - 220,
                    width=90, height=40,
                    text='Jogar',
                    padding=5,
                    callback=lambda: self.change_screen(game_cls)),
 
-            Button(screen=Main.screen,
+            RectangleButton(screen=Main.screen,
                    x=120, y=SCREEN_HEIGHT - 160,
                    width=90, height=40,
                    text='Controles',
                    padding=5,
                    callback=lambda: self.change_screen(ControlsMenu)),
 
-            Button(screen=Main.screen,
+            RectangleButton(screen=Main.screen,
                    x=120, y=SCREEN_HEIGHT - 100,
                    width=90, height=40,
                    text='Sair',
@@ -82,7 +82,7 @@ class ControlsMenu(Main):
 
         self.keys_frame()
 
-        self.back_button = Button(screen=Main.screen,
+        self.back_button = RectangleButton(screen=Main.screen,
                                   x=SCREEN_WIDTH / 2,
                                   y=SCREEN_HEIGHT - 100,
                                   width=80, height=40,
@@ -164,13 +164,13 @@ class PauseScreen(Main):
 
         # Buttons
         self.ui_buttons = (
-            Button(screen=Main.screen, x=Main.screen_rect.centerx, y=400,
+            RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=400,
                    width=110, height=40, text='Continuar',
                    padding=10, callback=self.back_screen),
-            Button(screen=Main.screen, x=Main.screen_rect.centerx, y=460,
+            RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=460,
                    width=110, height=40, text='Controles',
                    padding=8, callback=lambda: self.change_screen(ControlsMenu)),
-            Button(screen=Main.screen, x=Main.screen_rect.centerx, y=520,
+            RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=520,
                    width=110, height=40, text='Menu',
                    padding=7, callback=lambda: self.back_mainmenu(game))
         )

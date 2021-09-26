@@ -3,12 +3,28 @@ from media.paths import button_font
 
 
 class Button:
+    def __init__(self):
+        pass
+
+    def render(self):
+        pass
+
+    def select(self, is_above: bool):
+        pass
+
+    def press(self, pressed: bool):
+        pass
+
+
+class RectangleButton(Button):
     def __init__(self, **kwargs):
         """
-        Creates a new Button istance for UI.
+        Creates a new Button instance for UI.
 
         Accepted Parameters: screen, x, y, width, height, text, padding, callback.
         """
+
+        super().__init__()
 
         self.screen = kwargs.get('screen')
         self.x = kwargs.get('x')
@@ -124,4 +140,4 @@ class Button:
                 self.callback()
 
 
-__all__ = ['Button']
+__all__ = ['RectangleButton']

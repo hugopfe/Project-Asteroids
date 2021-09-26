@@ -49,7 +49,7 @@ class MultiEvents(EventsReg):
 
         self_dict = self.__dict__
         
-        if self_dict.get(k1):  # TODO: Verificar se __dict__ é necessário
+        if self_dict.get(k1):
             if self_dict[k1].get(k2):
                 self_dict[k1][k2].extend(funcs)
             else:
@@ -84,18 +84,19 @@ class EventsHandler:
 
         for c in command:
             func = c[0]
-            ev_keys = c[1]
+            ev = c[1]
             d_out = {}
 
-            if isinstance(ev_keys, tuple):  # {KEYDOWN: {}} → {KEYDOWN: [[], {}]}
-                d_out = {'k1': ev_keys[0], 'k2': ev_keys[1], 'funcs': [func]}
+            if isinstance(ev, tuple):  # {KEYDOWN: {}} → {KEYDOWN: [[], {}]}
+                d_out = {'k1': ev[0], 'k2': ev[1], 'funcs': [func]}
                 self.multi_events.register(**d_out)
 
             else:
-                d_out = {'k1': ev_keys, 'funcs': [func]}
+                d_out = {'k1': ev, 'funcs': [func]}
                 self.single_events.register(**d_out)
 
-            print(f'> Event registered: {func.__qualname__} {ev_keys}')
+            print(f'> Event registered: {func.__qualname__} -> {ev}')
+        print()
 
     def remove_event(self, *command: Tuple[FunctionType, Union[int, Tuple[str, int]]]):
         """
@@ -117,11 +118,16 @@ class EventsHandler:
             ev = c[1]
             
             if isinstance(ev, tuple):
-                self.multi_events[ev[0]][ev[1]].remove(func)
+                funcs_registrated = self.multi_events[ev[0]][ev[1]]
+                if func in funcs_registrated:
+                    funcs_registrated.remove(func)
             else:
-                self.single_events[ev].remove(func)
+                funcs_registrated = self.multi_events[ev]
+                if func in funcs_registrated:
+                    funcs_registrated.remove(func)
 
             print(f'> Event removed: {func.__qualname__} -> {ev}')
+        print()
 
     def trigger_event(self, k1, k2=None):
         if k2:
@@ -139,8 +145,8 @@ class EventsHandler:
 
         for event in get():
             if self.multi_events[event.type]:
-                self.check_sub_ev(event)
-            if self.single_events[event.type]:
+                self.check_sub_ev(event)  # TODO: Fix it!!!!!!!!!
+            elif self.single_events[event.type]:
                 self.trigger_event(event.type)
     
     def check_sub_ev(self, event):
