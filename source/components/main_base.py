@@ -35,7 +35,7 @@ def quit_ev():
 
 class Main:
     
-    controls_handler = ControlsInputsHandler()
+    inputs_handler = InputsHandler()
     call_tree = [] 
     BACKGROUND = pygame.image.load(bg)
 
@@ -56,8 +56,9 @@ class Main:
 
         self._buttons = []
 
-        Main.controls_handler.current_dev.active_device.buttons_list = self._buttons
-        Main.controls_handler.current_dev.active_device.btn_i = 0
+        Main.inputs_handler.current_dev.update_buttons()
+        # Main.inputs_handler.current_dev.active_device.buttons_list = self._buttons
+        # Main.inputs_handler.current_dev.active_device.btn_i = 0
 
         self.events = event_command
 
@@ -73,7 +74,8 @@ class Main:
             Main.screen.blit(Main.BACKGROUND, (0, 0))
 
             if current_call._buttons:
-                Main.controls_handler.current_dev.menu_control(current_call._buttons)
+                Main.inputs_handler.current_dev.menu_control(current_call._buttons)
+
             current_call.loop()
             pygame.display.flip()
 

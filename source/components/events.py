@@ -138,26 +138,28 @@ class EventsHandler:
                 func()
 
     def events_loop(self):
-        """
-        Checks events registered.
-
-        """
+        """ Checks events registrated. """
 
         for event in get():
             if self.multi_events[event.type]:
-                self.check_sub_ev(event)  # TODO: Fix it!!!!!!!!!
-            elif self.single_events[event.type]:
+                sub_ev = self.check_sub_ev(event)
+                if sub_ev and self.multi_events[event.type][sub_ev]:
+                    self.trigger_event(event.type, sub_ev)
+                    continue
+            if self.single_events[event.type]:
                 self.trigger_event(event.type)
     
-    def check_sub_ev(self, event):
+    def check_sub_ev(self, event) -> Tuple:
 
         events = self.multi_events
         sub_events = events.get(event.type) or dict()
-
+        
         for sub_event in sub_events.keys():
             ev_attr = getattr(event, sub_event[0])
             if ev_attr == sub_event[1]:
-                self.trigger_event(event.type, sub_event)
+                return sub_event
+        
+        return None
 
 
 def register_ev(*ev):

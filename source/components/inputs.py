@@ -142,6 +142,7 @@ class MenuNavigation:
             if not isinstance(self.active_device, self.MouseNavigation):
                 # Removing old events
                 remove_ev(*self.active_device.get_events_commands())
+
                 dev = self.devices.get('mouse')
                 self.active_device = dev()
                 pygame.mouse.set_visible(True)
@@ -149,6 +150,11 @@ class MenuNavigation:
         devs = {'mouse': check_mouse, 'default': check_default}
 
         return devs[device] or devs['mouse']
+
+    def update_buttons(self):
+        dev = self.devices.get('default')
+        self.active_device = dev()
+        # TODO: Desse jeito os eventos da instância anterior não são removidos!
 
     @staticmethod
     def event_registrated(*events):
@@ -159,12 +165,11 @@ class MenuNavigation:
     def clear_events():
         events = MenuNavigation.events_registrated
         if events:
-            # TODO: Finish to remove all registrated events!
             remove_ev(*tuple(events))
             events.clear()
 
 
-class ControlsInputsHandler:
+class InputsHandler:
 
     def __init__(self):
         """ Handles all controls inputs upcoming from keyboard or controller """
@@ -347,6 +352,7 @@ class ControlsInputsHandler:
         if isinstance(self.current_dev, self.KeyboardListener):
             if not pygame.joystick.get_count():
                 print('Nenhum controle encontrado!')
+                return
             else:
                 self.current_dev = self.JoystickListener()
         else:
@@ -355,4 +361,4 @@ class ControlsInputsHandler:
         print(f'Switched to {self.current_dev.__class__.__name__}')
 
 
-__all__ = ['ControlsInputsHandler']
+__all__ = ['InputsHandler']
