@@ -22,7 +22,7 @@ def remove_from_call_tree(cls_instance):
 
 def start(main_menu, game_cls):
     add_to_call_tree(main_menu(game_cls))
-    Main.main_loop()
+    Main._main_loop()
 
 
 def press_tab():
@@ -54,30 +54,28 @@ class Main:
     def __init__(self, event_command=None):
         """ It's the abstract class for all screens (with your own main loop) """
 
-        self._buttons = []
+        self.buttons = []
 
         Main.inputs_handler.current_dev.update_buttons()
-        # Main.inputs_handler.current_dev.active_device.buttons_list = self._buttons
-        # Main.inputs_handler.current_dev.active_device.btn_i = 0
 
         self.events = event_command
 
     @staticmethod
-    def main_loop():
+    def _main_loop():
         while Main.running:
-            current_call = Main.call_tree[-1]
-
             Main.clock.tick(FPS)
-
             test_events()
+
+            current_call = Main.call_tree[-1]
 
             Main.screen.blit(Main.BACKGROUND, (0, 0))
 
-            if current_call._buttons:
-                Main.inputs_handler.current_dev.menu_control(current_call._buttons)
+            if current_call.buttons:
+                Main.inputs_handler.current_dev.menu_control(current_call.buttons)
 
             current_call.loop()
             pygame.display.flip()
+
 
     def loop(self):
         pass
@@ -85,35 +83,36 @@ class Main:
     def render_buttons(self):
         """ Draw all buttons on screen """
 
-        for button in self._buttons:
+        for button in self.buttons:
             button.render()
 
     def add_buttons(self, *args):
         for arg in args:
-            self._buttons.append(arg)
+            self.buttons.append(arg)
 
     @staticmethod
     def change_screen(next_screen, previous_screen=None, kill_prev=False):
-        # TODO: Continue to fix screens calls!!
-                
         if kill_prev and previous_screen:
             remove_ev(previous_screen.events)
-            previous_screen.back_screen()
+            previous_screen.back()
 
         if previous_screen:
             remove_ev(previous_screen.events)
-            next_screen(previous_screen)
+            add_to_call_tree(next_screen(previous_screen))
         else:
             add_to_call_tree(next_screen())
 
-    def back_screen(self):
-        remove_from_call_tree(self)
+    def back(self):
+        if self in Main.call_tree:
+            remove_from_call_tree(self)
 
-    def back_mainmenu(self, screen):
+    def back_to_mainmenu(self):
         """ Returns directly to MainMenu """
 
-        self.back_screen()
-        screen.back_screen()
+        call_tree = Main.call_tree
+
+        for _ in range(len(call_tree)-1):
+            call_tree.pop()
 
 
 __all__ = ['Main', 'start', 'quit_ev']

@@ -22,7 +22,7 @@ class EndScreen(Main):
             x=Main.screen_rect.centerx, y=460,
             width=110, height=40, text='Menu',
             padding=5, 
-            callback=lambda: self.back_mainmenu(game)
+            callback=lambda: self.back_to_mainmenu(game)
         )
 
         self.add_buttons(self.menu_button)
@@ -39,9 +39,8 @@ class EndScreen(Main):
     def try_again(self, game):
         """ Break the game's loop and start a new game """
 
-        self.back_screen()
-        game.back_screen()
-        game.create_new_game = True
+        self.back_to_mainmenu()
+        self.change_screen(game())
 
 
 class GOScreen(EndScreen):
@@ -57,6 +56,7 @@ class GOScreen(EndScreen):
             width=130, height=50, text='Tentar\nnovamente',
             padding=17, callback=lambda: self.try_again(game)
         )
+
         self.add_buttons(self.try_button)
 
 
@@ -75,5 +75,6 @@ class WinScreen(EndScreen):
         )
 
         self.add_buttons(self.try_button)
+
 
 __all__ = ['GOScreen', 'WinScreen']

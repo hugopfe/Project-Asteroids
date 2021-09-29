@@ -87,7 +87,7 @@ class ControlsMenu(Main):
                                   y=SCREEN_HEIGHT - 100,
                                   width=80, height=40,
                                   text='Voltar', padding=3,
-                                  callback=lambda: self.back_screen())
+                                  callback=self.back)
 
         self.add_buttons(self.back_button)
 
@@ -152,7 +152,7 @@ class ControlsMenu(Main):
 
 
 class PauseScreen(Main):
-    def __init__(self, game):
+    def __init__(self):
         """ Class for Pause screen """
 
         Main.__init__(self)
@@ -166,24 +166,22 @@ class PauseScreen(Main):
         self.ui_buttons = (
             RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=400,
                    width=110, height=40, text='Continuar',
-                   padding=10, callback=self.back_screen),
+                   padding=10, callback=self.back),
             RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=460,
                    width=110, height=40, text='Controles',
                    padding=8, callback=lambda: self.change_screen(ControlsMenu)),
             RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=520,
                    width=110, height=40, text='Menu',
-                   padding=7, callback=lambda: self.back_mainmenu(game))
+                   padding=7, callback=self.back_to_mainmenu)
         )
 
-        self.add_buttons(
-            *self.ui_buttons
-        )
+        self.add_buttons(*self.ui_buttons)
 
-        d = self.controls_handler.current_dev
-        self.events = (self.back_screen,
+        d = self.inputs_handler.current_dev
+        self.events = (self.back,
                        (KEYDOWN, ('key', d.nav_buttons['pause'])))
 
-        register_ev(self.events)
+        register_ev(self.events)  # TODO: Evento sendo registrado e logo executado!
 
     def loop(self):
         self.paused_font.render()

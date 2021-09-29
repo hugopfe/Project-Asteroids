@@ -8,9 +8,8 @@ from components.events import *
 from ui.button import Button
 
 
-class MenuNavigation:
+class MenuNavigator:
 
-    nav_buttons: dict
     devices: dict
 
     events_registrated = []
@@ -54,7 +53,7 @@ class MenuNavigation:
 
         register_ev((mouse_interact_func, MOUSEMOTION), default_ev)
 
-    class MenuNavigation:
+    class Navigator:
 
         def __init__(self):
             self.buttons_list = list()
@@ -62,7 +61,10 @@ class MenuNavigation:
         def handle_navigation(self, buttons_list: List[Button]):
             pass
 
-    class MouseNavigation(MenuNavigation):
+        def update_buttons(self):
+            pass
+
+    class MouseNavigation(Navigator):
         def __init__(self):
             super().__init__()
 
@@ -77,13 +79,15 @@ class MenuNavigation:
                     bt_pressed = pygame.mouse.get_pressed(3)
                     button.press(bt_pressed[0])
 
-    class DefaultNavigationDevice(MenuNavigation):
+    class DefaultNavigationDevice(Navigator):
+
+        button_index = 0
+        selected_button = Button()
 
         def __init__(self, events_commands: dict):
             super().__init__()
 
-            self.btn_i = 0
-            self.selected_button = Button()
+            self.update_buttons()
 
             self.events_commands = events_commands
 
@@ -125,6 +129,11 @@ class MenuNavigation:
                 (self.release_button, ev['enter_release'])
             )
 
+        def update_buttons(self):
+            self.btn_i = MenuNavigator.DefaultNavigationDevice.button_index
+            self.selected_button = MenuNavigator.DefaultNavigationDevice.selected_button
+
+        
     def check_device_interactions(self, device):
         """
         Handle the switcher between devices on menus navigation.
@@ -152,18 +161,16 @@ class MenuNavigation:
         return devs[device] or devs['mouse']
 
     def update_buttons(self):
-        dev = self.devices.get('default')
-        self.active_device = dev()
-        # TODO: Desse jeito os eventos da instância anterior não são removidos!
+        self.active_device.update_buttons()
 
     @staticmethod
     def event_registrated(*events):
         for ev in events:
-            MenuNavigation.events_registrated.append(ev)
+            MenuNavigator.events_registrated.append(ev)
 
     @staticmethod
     def clear_events():
-        events = MenuNavigation.events_registrated
+        events = MenuNavigator.events_registrated
         if events:
             remove_ev(*tuple(events))
             events.clear()
@@ -176,7 +183,7 @@ class InputsHandler:
 
         self.current_dev = self.KeyboardListener()
 
-    class KeyboardListener(MenuNavigation):
+    class KeyboardListener(MenuNavigator):
 
         nav_buttons = {
             'up': K_UP,
@@ -254,7 +261,7 @@ class InputsHandler:
 
             self.active_device.handle_navigation(buttons_list)
 
-    class JoystickListener(MenuNavigation):
+    class JoystickListener(MenuNavigator):
 
         a_button = 0
         start_button = 7

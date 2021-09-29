@@ -72,7 +72,7 @@ class Game(Main):
 
         self.fonts_group.add_fonts(*self.texts)
 
-        self.controls_handler = Main.controls_handler
+        self.inputs_handler = Main.inputs_handler
 
         self.reg_events()
         register_ev(*self.events)
@@ -89,7 +89,7 @@ class Game(Main):
         self.player_group.draw(self.screen)
         self.player_group.update()
 
-        self.controls_handler.current_dev.in_game_control(self.player)
+        self.inputs_handler.current_dev.in_game_control(self.player)
 
         # power_up
         self.power_up.update()
@@ -106,7 +106,7 @@ class Game(Main):
         self.current_level.print_level_font()
 
     def reg_events(self):
-        c = self.controls_handler
+        inputs_handler = self.inputs_handler
 
         def press_shift():
             self.power_up.change_state('dropped')
@@ -121,12 +121,12 @@ class Game(Main):
             self.asteroid_group.add(ast)
 
         def pause():
-            return lambda: self.change_screen(PauseScreen, self)
+            return lambda: self.change_screen(PauseScreen)
 
-        self.events = (  # TODO: Try to simplificate this:
-            (press_shift, (KEYDOWN, ('key', K_LSHIFT))),
-            (press_a, (KEYDOWN, ('key', K_a))),
-            (pause, (KEYDOWN, ('key', c.current_dev.nav_buttons['pause'])))
+        self.events = (  
+            (press_shift, (KEYDOWN, ('key', K_LSHIFT))), # TODO: TEMP
+            (press_a, (KEYDOWN, ('key', K_a))), # TODO: TEMP
+            (pause(), (KEYDOWN, ('key', inputs_handler.current_dev.nav_buttons['pause'])))
         ) 
         
     def game_over(self):
@@ -134,12 +134,12 @@ class Game(Main):
         self.player.kill()
         self.projectile_group.empty()
         self.asteroid_group.empty()
-        self.change_screen(GOScreen, self)
+        self.change_screen(GOScreen, self) # TODO: Fix it
 
         if self.create_new_game:
             self.change_screen(Game)
 
-    def check_collisions(self):
+    def check_collisions(self): # TODO: Fix it!
         sprites_coll = []
 
         for group in [self.player_group, self.projectile_group]:
