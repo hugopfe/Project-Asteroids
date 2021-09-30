@@ -131,10 +131,12 @@ class EventsHandler:
 
     def trigger_event(self, k1, k2=None):
         if k2:
-            for func in self.multi_events[k1][k2]:
+            funcs = self.multi_events[k1][k2].copy()
+            for func in funcs:
                 func()
         else:
-            for func in self.single_events[k1]:
+            funcs = self.single_events[k1].copy()
+            for func in funcs:
                 func()
 
     def events_loop(self):
@@ -163,11 +165,19 @@ class EventsHandler:
 
 
 def register_ev(*ev):
-    events_handler.register_events(*ev)
+    if ev:
+        if None in ev:
+            ev = list(ev)
+            ev.remove(None)
+        events_handler.register_events(*ev)
 
 
 def remove_ev(*ev):
-    events_handler.remove_event(*ev)
+    if ev:
+        if None in ev:
+            ev = list(ev)
+            ev.remove(None)
+        events_handler.remove_event(*ev)
 
 
 def test_events():

@@ -165,23 +165,24 @@ class PauseScreen(Main):
         # Buttons
         self.ui_buttons = (
             RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=400,
-                   width=110, height=40, text='Continuar',
-                   padding=10, callback=self.back),
+                            width=110, height=40, text='Continuar',
+                            padding=10, callback=self.back),
             RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=460,
-                   width=110, height=40, text='Controles',
-                   padding=8, callback=lambda: self.change_screen(ControlsMenu)),
+                            width=110, height=40, text='Controles',
+                            padding=8, callback=lambda: self.change_screen(ControlsMenu)),
             RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=520,
-                   width=110, height=40, text='Menu',
-                   padding=7, callback=self.back_to_mainmenu)
+                            width=110, height=40, text='Menu',
+                            padding=7, callback=self.back_to_mainmenu)
         )
 
         self.add_buttons(*self.ui_buttons)
 
         d = self.inputs_handler.current_dev
-        self.events = (self.back,
-                       (KEYDOWN, ('key', d.nav_buttons['pause'])))
-
-        register_ev(self.events)  # TODO: Evento sendo registrado e logo executado!
+        self.events = (
+            (self.back, (KEYDOWN, ('key', d.nav_buttons['pause']))),
+        )
+        print(self.events)
+        register_ev(*self.events) 
 
     def loop(self):
         self.paused_font.render()

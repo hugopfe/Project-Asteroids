@@ -22,7 +22,7 @@ class EndScreen(Main):
             x=Main.screen_rect.centerx, y=460,
             width=110, height=40, text='Menu',
             padding=5, 
-            callback=lambda: self.back_to_mainmenu(game)
+            callback=lambda: self.back_to_mainmenu()
         )
 
         self.add_buttons(self.menu_button)

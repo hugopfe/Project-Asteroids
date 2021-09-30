@@ -2,21 +2,21 @@ import pygame
 from pygame.locals import *
 
 from components.constants import *
-from media.paths import bg
 from components.inputs import *
 from components.util import *
 from components.events import *
 
 
-def add_to_call_tree(cls_instance):
-    Main.call_tree.append(cls_instance)
-    print(f'[{get_class_name(cls_instance)}] running: True')
+def add_to_call_tree(object):
+    Main.call_tree.append(object)
+    print(f'[{get_class_name(object)}] running: True')
     print(Main.call_tree)
 
 
-def remove_from_call_tree(cls_instance):
-    Main.call_tree.remove(cls_instance)
-    print(f'[{get_class_name(cls_instance)}] running: False')
+def remove_from_call_tree(object):
+    Main.call_tree.remove(object)
+
+    print(f'[{get_class_name(object)}] running: False')
     print(Main.call_tree)
 
 
@@ -34,13 +34,12 @@ def quit_ev():
 
 
 class Main:
-    
+    # TODO: Separate the "Menu and the "Main"
     inputs_handler = InputsHandler()
-    call_tree = [] 
-    BACKGROUND = pygame.image.load(bg)
+    call_tree = []
 
     ev = (
-        (quit_ev, QUIT), 
+        (quit_ev, QUIT),
         (quit_ev, (KEYDOWN, ('key', K_ESCAPE))),
         (press_tab, (KEYDOWN, ('key', K_TAB)))
     )
@@ -52,13 +51,11 @@ class Main:
     running = True
 
     def __init__(self, event_command=None):
-        """ It's the abstract class for all screens (with your own main loop) """
+        """ Runs the main loop """
 
         self.buttons = []
-
-        Main.inputs_handler.current_dev.update_buttons()
-
         self.events = event_command
+        Main.inputs_handler.current_dev.update_buttons()
 
     @staticmethod
     def _main_loop():
@@ -68,14 +65,14 @@ class Main:
 
             current_call = Main.call_tree[-1]
 
-            Main.screen.blit(Main.BACKGROUND, (0, 0))
+            Main.screen.blit(BACKGROUND, (0, 0))
 
             if current_call.buttons:
-                Main.inputs_handler.current_dev.menu_control(current_call.buttons)
+                Main.inputs_handler.current_dev.menu_control(
+                    current_call.buttons)
 
             current_call.loop()
             pygame.display.flip()
-
 
     def loop(self):
         pass
@@ -91,19 +88,31 @@ class Main:
             self.buttons.append(arg)
 
     @staticmethod
-    def change_screen(next_screen, previous_screen=None, kill_prev=False):
-        if kill_prev and previous_screen:
-            remove_ev(previous_screen.events)
-            previous_screen.back()
+    def change_screen(next_screen, previous_screen=None):
+        # if kill_prev and previous_screen:
+        #     remove_ev(previous_screen.events)
+        #     previous_screen.back()
+
+        if len(Main.call_tree) > 1:
+            prev_events = Main.call_tree[-1].events
+            if prev_events:
+                remove_ev(*prev_events)
 
         if previous_screen:
-            remove_ev(previous_screen.events)
             add_to_call_tree(next_screen(previous_screen))
         else:
             add_to_call_tree(next_screen())
 
     def back(self):
         if self in Main.call_tree:
+            prev_events = Main.call_tree[-1].events
+            if prev_events:
+                remove_ev(*prev_events)
+
+            next_events = Main.call_tree[-2].events
+            if next_events:
+                register_ev(*next_events)
+
             remove_from_call_tree(self)
 
     def back_to_mainmenu(self):
@@ -111,8 +120,12 @@ class Main:
 
         call_tree = Main.call_tree
 
-        for _ in range(len(call_tree)-1):
-            call_tree.pop()
+        for i in range(len(call_tree)-1, 0, -1):
+            prev_events = call_tree[i].events
+            if prev_events:
+                remove_ev(*prev_events)
+
+            call_tree.pop(i)
 
 
 __all__ = ['Main', 'start', 'quit_ev']
