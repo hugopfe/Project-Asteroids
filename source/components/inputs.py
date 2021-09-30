@@ -262,7 +262,7 @@ class InputsHandler:
             self.active_device.handle_navigation(buttons_list)
 
     class JoystickListener(MenuNavigator):
-
+        # TODO: Test controller!
         a_button = 0
         start_button = 7
         rb_button = 4
