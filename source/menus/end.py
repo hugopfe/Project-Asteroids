@@ -40,7 +40,7 @@ class EndScreen(Main):
         """ Break the game's loop and start a new game """
 
         self.back_to_mainmenu()
-        self.change_screen(game())
+        self.change_screen(game.__class__) # TODO: temp
 
 
 class GOScreen(EndScreen):

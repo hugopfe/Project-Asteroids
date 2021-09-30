@@ -10,10 +10,10 @@ from pygame.math import Vector2
 
 
 class Player(pygame.sprite.Sprite):
+
     ACC = 0.5
 
-
-    def __init__(self, screen):
+    def __init__(self, screen):  # TODO: Separate "Player" and "Ship" Sprite
         pygame.sprite.Sprite.__init__(self)
 
         self.screen: pygame.surface.Surface = screen

@@ -110,6 +110,7 @@ class Game(Main):
 
         def press_shift():
             self.power_up.change_state('dropped')
+            self.player.score = 279
         
         def press_a():
             ast_pos = pygame.math.Vector2((200, 200))
