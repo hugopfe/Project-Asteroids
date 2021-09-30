@@ -149,7 +149,7 @@ class ControlsMenu(Main):
 
     def switch_dev(self):
         self.dev_index += 1
-        self.ui_buttons[0].text = self.devs[self.dev_index% 2]
+        self.ui_buttons[0].set_text(self.devs[self.dev_index% 2])
         Main.inputs_handler.change_default_device()
 
 
