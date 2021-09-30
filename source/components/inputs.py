@@ -181,7 +181,7 @@ class InputsHandler:
     def __init__(self):
         """ Handles all controls inputs upcoming from keyboard or controller """
 
-        self.current_dev = self.KeyboardListener()
+        self.current_dev = self.JoystickListener()
 
     class KeyboardListener(MenuNavigator):
 

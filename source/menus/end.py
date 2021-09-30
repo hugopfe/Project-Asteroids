@@ -25,7 +25,7 @@ class EndScreen(Main):
             callback=lambda: self.back_to_mainmenu()
         )
 
-        self.add_buttons(self.menu_button)
+        self.add_buttons(self.menu_button)  # TODO: add to the end of the buttons list
 
     def loop(self):
         self.fonts.render_fonts()

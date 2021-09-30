@@ -110,7 +110,7 @@ class Game(Main):
 
         def press_shift():
             self.power_up.change_state('dropped')
-            self.player.score = 279
+            self.set_score(279)
         
         def press_a():
             ast_pos = pygame.math.Vector2((200, 200))
@@ -127,7 +127,7 @@ class Game(Main):
         self.events = (  
             (press_shift, (KEYDOWN, ('key', K_LSHIFT))), # TODO: TEMP
             (press_a, (KEYDOWN, ('key', K_a))), # TODO: TEMP
-            (pause(), (KEYDOWN, ('key', inputs_handler.current_dev.nav_buttons['pause'])))
+            (pause(), (KEYDOWN, ('key', inputs_handler.current_dev.nav_buttons['pause']))) # TODO: Wrong controller command
         ) 
         
     def game_over(self):

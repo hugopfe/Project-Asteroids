@@ -143,6 +143,7 @@ class EventsHandler:
         """ Checks events registrated. """
 
         for event in get():
+            print(event)
             if self.multi_events[event.type]:
                 sub_ev = self.check_sub_ev(event)
                 if sub_ev and self.multi_events[event.type][sub_ev]:
