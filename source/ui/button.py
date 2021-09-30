@@ -15,6 +15,29 @@ class Button:
     def press(self, pressed: bool):
         pass
 
+    def set_text(self, text):
+        if '\n' in text:
+
+            splitted_text = text.split('\n')
+            text1 = splitted_text[0]
+            text2 = splitted_text[1]
+        
+            text_space = 10
+            self.screen_text1 = self.font.render(
+                self.text1, True, (255, 255, 255), (0, 0, 0))
+            self.screen_text2 = self.font.render(
+                self.text2, True, (255, 255, 255), (0, 0, 0))
+            self.txt_rect1 = self.screen_text1.get_rect(
+                center=(self.rect.centerx, self.rect.centery-10))
+            self.txt_rect2 = self.screen_text2.get_rect(
+                center=(self.rect.centerx, self.rect.centery+text_space))
+        else:
+            self.screen_text = self.font.render(
+                self.text, True, (255, 255, 255), (0, 0, 0))
+            self.txt_rect = self.screen_text.get_rect(
+                center=(self.rect.centerx, self.rect.centery))
+
+        
 
 class RectangleButton(Button):
     def __init__(self, **kwargs):
@@ -42,14 +65,6 @@ class RectangleButton(Button):
                 self.__dict__['text'] = 'Text'
                 self.__dict__['padding'] = 1
 
-        self.split_text = False
-        if '\n' in self.text:
-            self.split_text = True
-
-            splitted_text = self.text.split('\n')
-            self.text1 = splitted_text[0]
-            self.text2 = splitted_text[1]
-
         self.current_color = pygame.Color('#4948D9')
         self.clicked = False
 
@@ -67,21 +82,7 @@ class RectangleButton(Button):
         self.txt_size = int((self.width+self.height)*0.2)-self.padding
         self.font = pygame.font.Font(button_font, self.txt_size, bold=True)
 
-        if self.split_text:
-            text_space = 10
-            self.screen_text1 = self.font.render(
-                self.text1, True, (255, 255, 255), (0, 0, 0))
-            self.screen_text2 = self.font.render(
-                self.text2, True, (255, 255, 255), (0, 0, 0))
-            self.txt_rect1 = self.screen_text1.get_rect(
-                center=(self.rect.centerx, self.rect.centery-10))
-            self.txt_rect2 = self.screen_text2.get_rect(
-                center=(self.rect.centerx, self.rect.centery+text_space))
-        else:
-            self.screen_text = self.font.render(
-                self.text, True, (255, 255, 255), (0, 0, 0))
-            self.txt_rect = self.screen_text.get_rect(
-                center=(self.rect.centerx, self.rect.centery))
+        self.set_text(self.text)
 
     def render(self):
         if self.split_text:

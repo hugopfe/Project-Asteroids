@@ -122,12 +122,12 @@ class Game(Main):
             self.asteroid_group.add(ast)
 
         def pause():
-            return lambda: self.change_screen(PauseScreen)
+            return lambda: self.change_screen(PauseMenu)
 
         self.events = (  
             (press_shift, (KEYDOWN, ('key', K_LSHIFT))), # TODO: TEMP
             (press_a, (KEYDOWN, ('key', K_a))), # TODO: TEMP
-            (pause(), (KEYDOWN, ('key', inputs_handler.current_dev.nav_buttons['pause']))) # TODO: Wrong controller command
+            (pause(), inputs_handler.current_dev.ev['pause'])
         ) 
         
     def game_over(self):

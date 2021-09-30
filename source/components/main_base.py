@@ -22,6 +22,8 @@ def remove_from_call_tree(object):
 
 def start(main_menu, game_cls):
     add_to_call_tree(main_menu(game_cls))
+    Main.call_tree[0].buttons[1].press(True)
+    Main.call_tree[0].buttons[1].press(False)
     Main._main_loop()
 
 
@@ -89,10 +91,6 @@ class Main:
 
     @staticmethod
     def change_screen(next_screen, previous_screen=None):
-        # if kill_prev and previous_screen:
-        #     remove_ev(previous_screen.events)
-        #     previous_screen.back()
-
         if len(Main.call_tree) > 1:
             prev_events = Main.call_tree[-1].events
             if prev_events:

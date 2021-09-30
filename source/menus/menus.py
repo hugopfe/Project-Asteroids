@@ -80,16 +80,30 @@ class ControlsMenu(Main):
         self.control_font = None
         self.keys_fontgroup = None
 
+        # Title command_list
+
+        self.control_txt = Font('Controles', pos=(self.screen_rect.centerx, 40))
+        self.control_txt.configure(screen=Main.screen, font_name=title_font,
+                                   size=50, bold=True, antialias=True,
+                                   color=(255, 255, 255), bg_color=(0, 0, 0),
+                                   align='center')
+
         self.keys_frame()
 
-        self.back_button = RectangleButton(screen=Main.screen,
-                                  x=SCREEN_WIDTH / 2,
-                                  y=SCREEN_HEIGHT - 100,
-                                  width=80, height=40,
-                                  text='Voltar', padding=3,
-                                  callback=self.back)
 
-        self.add_buttons(self.back_button)
+        self.devs = ['Keyboard', 'Controller']
+        self.dev_index = 0
+        
+        self.ui_buttons = (
+            RectangleButton(screen=Main.screen, x=SCREEN_WIDTH/2, y=120,
+                            width=80, height=40, text=self.devs[self.dev_index], padding=5,
+                            callback=self.switch_dev),
+            RectangleButton(screen=Main.screen, x=SCREEN_WIDTH/2, y=SCREEN_HEIGHT-90,
+                            width=80, height=40, text='Voltar', padding=3,
+                            callback=self.back)
+        )
+
+        self.add_buttons(*self.ui_buttons)
 
     def loop(self):
         Main.screen.blit(self.frame, self.frame_rect)
@@ -104,33 +118,17 @@ class ControlsMenu(Main):
             (int(self.screen_x * 0.9), int(self.screen_y * 0.5)))
         self.frame.fill(frame_color)
 
-        self.frame_rect = self.frame.get_rect(center=self.screen_rect.center)
+        self.frame_rect = self.frame.get_rect(center=(self.screen_rect.centerx, self.screen_rect.centery + 10))
 
         self.frame_content(frame_color)
 
     def frame_content(self, frame_color):
-        # Title command_list
-
-        self.control_txt = Font('Controles', pos=(self.frame_rect.centerx, 90))
-        self.control_txt.configure(screen=Main.screen,
-                                   font_name=title_font,
-                                   size=50,
-                                   bold=True,
-                                   antialias=True,
-                                   color=(255, 255, 255),
-                                   bg_color=(0, 0, 0),
-                                   align='center')
-
         # Keys fonts
 
         font_space = 30
 
-        self.keys_fontgroup = FontsGroup(screen=Main.screen,
-                                         font_name=body_font,
-                                         size=18,
-                                         bold=True,
-                                         antialias=True,
-                                         color=(255, 255, 255),
+        self.keys_fontgroup = FontsGroup(screen=Main.screen, font_name=body_font, size=18,
+                                         bold=True, antialias=True, color=(255, 255, 255),
                                          bg_color=frame_color)
 
         keys_fonts_objects = []
@@ -140,8 +138,7 @@ class ControlsMenu(Main):
                                        Font(text=value['command_key'],
                                             pos=(self.frame_rect.right -
                                                  30, self.frame_rect.y),
-                                            align='right')
-                                       ])
+                                            align='right')])
         c = 1
         for command_font_list in keys_fonts_objects:  # Rendering on screen
             command_font_list[0].y += c * font_space
@@ -150,8 +147,13 @@ class ControlsMenu(Main):
                 self.keys_fontgroup.add_fonts(command_font_list[i])
             c += 1
 
+    def switch_dev(self):
+        self.dev_index += 1
+        self.ui_buttons[0].text = self.devs[self.dev_index% 2]
+        Main.inputs_handler.change_default_device()
 
-class PauseScreen(Main):
+
+class PauseMenu(Main):
     def __init__(self):
         """ Class for Pause screen """
 
@@ -164,6 +166,9 @@ class PauseScreen(Main):
 
         # Buttons
         self.ui_buttons = (
+            # RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=400,
+            #                 width=110, height=40, text='Continuar',
+            #                 padding=10, callback=self.back),
             RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=400,
                             width=110, height=40, text='Continuar',
                             padding=10, callback=self.back),
@@ -179,9 +184,8 @@ class PauseScreen(Main):
 
         d = self.inputs_handler.current_dev
         self.events = (
-            (self.back, (KEYDOWN, ('key', d.nav_buttons['pause']))),
+            (self.back, d.ev['pause']),
         )
-        print(self.events)
         register_ev(*self.events) 
 
     def loop(self):
@@ -189,4 +193,4 @@ class PauseScreen(Main):
         self.render_buttons()
 
 
-__all__ = ['MainMenu', 'PauseScreen', 'ControlsMenu']
+__all__ = ['MainMenu', 'PauseMenu', 'ControlsMenu']

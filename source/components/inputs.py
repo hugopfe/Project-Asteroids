@@ -12,7 +12,7 @@ class MenuNavigator:
 
     devices: dict
 
-    events_registrated = []
+    temp_events = []
 
     def __init__(self, events_commands):
         """ 
@@ -23,7 +23,7 @@ class MenuNavigator:
         The DefaultNavigationDevice will be the instace for keyboard or controller
         """
 
-        self.clear_events()
+        self.clear_temp_events()
 
         def mouse_device():
             dev = self.MouseNavigation()
@@ -33,7 +33,7 @@ class MenuNavigator:
         def default_device():
             dev = self.DefaultNavigationDevice(events_commands)
             events = (dev.get_events_commands())
-            self.event_registrated(*events)
+            self.add_temp_event(*events)
             register_ev(*events)
 
             return dev
@@ -43,13 +43,13 @@ class MenuNavigator:
             'default': default_device
         }
 
-        dev = self.devices['mouse']
-        self.active_device = dev()
-
         mouse_interact_func = self.check_device_interactions('mouse')
         default_interact_func = self.check_device_interactions('default')
         default_ev = (default_interact_func, events_commands['button_down'])
-        self.event_registrated(default_ev)
+        self.add_temp_event(default_ev)
+
+        dev = self.devices['mouse']
+        self.active_device = dev()
 
         register_ev((mouse_interact_func, MOUSEMOTION), default_ev)
 
@@ -125,8 +125,8 @@ class MenuNavigator:
             return (
                 (self.press_up, ev['up']),
                 (self.press_down, ev['down']),
-                (self.press_button, ev['enter_press']),
-                (self.release_button, ev['enter_release'])
+                (self.press_button, ev['enter_pressed']),
+                (self.release_button, ev['enter_released'])
             )
 
         def update_buttons(self):
@@ -164,13 +164,13 @@ class MenuNavigator:
         self.active_device.update_buttons()
 
     @staticmethod
-    def event_registrated(*events):
+    def add_temp_event(*events):
         for ev in events:
-            MenuNavigator.events_registrated.append(ev)
+            MenuNavigator.temp_events.append(ev)
 
     @staticmethod
-    def clear_events():
-        events = MenuNavigator.events_registrated
+    def clear_temp_events():
+        events = MenuNavigator.temp_events
         if events:
             remove_ev(*tuple(events))
             events.clear()
@@ -181,7 +181,7 @@ class InputsHandler:
     def __init__(self):
         """ Handles all controls inputs upcoming from keyboard or controller """
 
-        self.current_dev = self.JoystickListener()
+        self.current_dev = self.KeyboardListener()
 
     class KeyboardListener(MenuNavigator):
 
@@ -195,9 +195,10 @@ class InputsHandler:
         ev = {
             'up': (KEYDOWN, ('key', nav_buttons['up'])),
             'down': (KEYDOWN, ('key', nav_buttons['down'])),
-            'enter_press': (KEYDOWN, ('key', nav_buttons['enter'])),
-            'enter_release': (KEYUP, ('key', nav_buttons['enter'])),
-            'button_down': KEYDOWN
+            'enter_pressed': (KEYDOWN, ('key', nav_buttons['enter'])),
+            'enter_released': (KEYUP, ('key', nav_buttons['enter'])),
+            'button_down': KEYDOWN,
+            'pause': (KEYDOWN, ('key', nav_buttons['pause']))
         }
 
         def __init__(self):
@@ -262,7 +263,7 @@ class InputsHandler:
             self.active_device.handle_navigation(buttons_list)
 
     class JoystickListener(MenuNavigator):
-        # TODO: Test controller!
+        
         a_button = 0
         start_button = 7
         rb_button = 4
@@ -278,9 +279,10 @@ class InputsHandler:
         ev = {
             'up': (JOYHATMOTION, ('value', nav_buttons['up'])),
             'down': (JOYHATMOTION, ('value', nav_buttons['down'])),
-            'enter_press': (JOYBUTTONDOWN, ('button', nav_buttons['enter'])),
-            'enter_release': (JOYBUTTONUP, ('button', nav_buttons['enter'])),
-            'button_down': JOYHATMOTION
+            'enter_pressed': (JOYBUTTONDOWN, ('button', nav_buttons['enter'])),
+            'enter_released': (JOYBUTTONUP, ('button', nav_buttons['enter'])),
+            'button_down': JOYHATMOTION,
+            'pause': (JOYBUTTONDOWN, ('button', nav_buttons['pause']))
         }
 
         def __init__(self):
