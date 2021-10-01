@@ -180,7 +180,7 @@ class Game(Main):
 
     def level_up(self):
         self.level_index += 1
-        try:
+        try: # TODO: Use a iterartor function "next()"
             self.current_level = levels[self.level_index](self)
         except IndexError:  # Player wins
             self.change_screen(WinScreen, self)
