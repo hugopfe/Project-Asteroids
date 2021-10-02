@@ -87,15 +87,16 @@ class EventsHandler:
             ev = c[1]
             d_out = {}
 
-            if isinstance(ev, tuple):  # {KEYDOWN: {}} → {KEYDOWN: [[], {}]}
+            if isinstance(ev, tuple):
                 d_out = {'k1': ev[0], 'k2': ev[1], 'funcs': [func]}
                 self.multi_events.register(**d_out)
+                print(f'> Event registered: {func.__qualname__} -> {ev}')
 
             else:
                 d_out = {'k1': ev, 'funcs': [func]}
                 self.single_events.register(**d_out)
+                print(f'> Event registered: {func.__qualname__} -> {ev}')
 
-            print(f'> Event registered: {func.__qualname__} -> {ev}')
         print()
 
     def remove_event(self, *command: Tuple[FunctionType, Union[int, Tuple[str, int]]]):
@@ -121,12 +122,13 @@ class EventsHandler:
                 funcs_registrated = self.multi_events[ev[0]][ev[1]]
                 if func in funcs_registrated:
                     funcs_registrated.remove(func)
+                    print(f'> Event removed: {func.__qualname__} -> {ev}')
             else:
-                funcs_registrated = self.multi_events[ev]
+                funcs_registrated = self.single_events[ev]
                 if func in funcs_registrated:
                     funcs_registrated.remove(func)
+                    print(f'> Event removed: {func.__qualname__} -> {ev}')
 
-            print(f'> Event removed: {func.__qualname__} -> {ev}')
         print()
 
     def trigger_event(self, k1, k2=None):

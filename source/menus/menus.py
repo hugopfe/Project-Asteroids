@@ -91,8 +91,8 @@ class ControlsMenu(Main):
         self.keys_frame()
 
 
-        self.devs = ['Keyboard', 'Controller']
-        self.dev_index = 0
+        self.devs = ['Teclado', 'Controle']
+        self.dev_index = 0  # TODO: Investigate it
         
         self.ui_buttons = (
             RectangleButton(screen=Main.screen, x=SCREEN_WIDTH/2, y=120,

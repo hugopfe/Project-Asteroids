@@ -10,49 +10,6 @@ from ui.button import Button
 
 class MenuNavigator:
 
-    devices: dict
-
-    temp_events = []
-
-    def __init__(self, events_commands):
-        """ 
-        Abstract class to handle actual devices on menus navigation 
-
-        The menu navigation ever will be: MOUSE + (keyboard or controller/joystick)
-
-        The DefaultNavigationDevice will be the instace for keyboard or controller
-        """
-
-        self.clear_temp_events()
-
-        def mouse_device():
-            dev = self.MouseNavigation()
-
-            return dev
-
-        def default_device():
-            dev = self.DefaultNavigationDevice(events_commands)
-            events = (dev.get_events_commands())
-            self.add_temp_event(*events)
-            register_ev(*events)
-
-            return dev
-
-        self.devices = {
-            'mouse': mouse_device,
-            'default': default_device
-        }
-
-        mouse_interact_func = self.check_device_interactions('mouse')
-        default_interact_func = self.check_device_interactions('default')
-        default_ev = (default_interact_func, events_commands['button_down'])
-        self.add_temp_event(default_ev)
-
-        dev = self.devices['mouse']
-        self.active_device = dev()
-
-        register_ev((mouse_interact_func, MOUSEMOTION), default_ev)
-
     class Navigator:
 
         def __init__(self):
@@ -62,6 +19,9 @@ class MenuNavigator:
             pass
 
         def update_buttons(self):
+            pass
+
+        def register_events(self, events=None):
             pass
 
     class MouseNavigation(Navigator):
@@ -90,6 +50,7 @@ class MenuNavigator:
             self.update_buttons()
 
             self.events_commands = events_commands
+            self.register_events(self.events_commands)
 
         def handle_navigation(self, buttons_list: List[Button]):
             """
@@ -119,8 +80,8 @@ class MenuNavigator:
         def release_button(self):
             self.selected_button.press(False)
 
-        def get_events_commands(self):
-            ev = self.events_commands
+        def get_events_commands(self, events=None):
+            ev = events or self.events_commands
 
             return (
                 (self.press_up, ev['up']),
@@ -129,36 +90,82 @@ class MenuNavigator:
                 (self.release_button, ev['enter_released'])
             )
 
+        def register_events(self, events):
+            ev = self.get_events_commands(events)
+            MenuNavigator.add_temp_event(*ev)
+            register_ev(*ev)
+
         def update_buttons(self):
             self.btn_i = MenuNavigator.DefaultNavigationDevice.button_index
             self.selected_button = MenuNavigator.DefaultNavigationDevice.selected_button
 
+    def mouse_interactions():
+        if not isinstance(MenuNavigator.active_device, MenuNavigator.MouseNavigation):
+
+            # Removing old events
+            remove_ev(*MenuNavigator.active_device.get_events_commands())
+
+            MenuNavigator.active_device = MenuNavigator.mouse
+            MenuNavigator.instance.active_device = MenuNavigator.active_device
+            pygame.mouse.set_visible(True)
+
+    mouse = MouseNavigation()
+    active_device = mouse
+    register_ev((mouse_interactions, MOUSEMOTION)), 
+    
+    temp_events = []
+
+    instance = None
+
+    def __init__(self, events_commands):
+        """ 
+        Class to handle actual devices on menus navigation.
+
+        The menu navigation always will be: MOUSE + (keyboard or controller/joystick).
+
+        The DefaultNavigationDevice will be the instace to representate the keyboard or controller.
+        """
+
+        MenuNavigator.instance = self
+
+        self.clear_temp_events()
+
+        self.dev_events = events_commands
+
+        # default_interact_func = self.check_device_interactions('default')
         
-    def check_device_interactions(self, device):
-        """
-        Handle the switcher between devices on menus navigation.
+        default_ev = (self.default_interactions, self.dev_events['button_down'])
+        self.add_temp_event(default_ev)
+        register_ev(default_ev)
 
-        :param: nav_keys_state -> The state of navigation buttons/keys: True or False.
-        """
+        self.active_device = MenuNavigator.active_device
+        self.active_device.register_events(self.dev_events)
+        
+    # def check_device_interactions(self, device):
+    #     """ Handle the switcher between devices on menus navigation. """
 
-        def check_default():
-            if not isinstance(self.active_device, self.DefaultNavigationDevice):
-                dev = self.devices.get('default')
-                self.active_device = dev()
-                pygame.mouse.set_visible(False)
+    #     def check_default():
+    #         if not isinstance(self.active_device, MenuNavigator.DefaultNavigationDevice):
+    #             self.active_device = MenuNavigator.DefaultNavigationDevice(self.dev_events)
+    #             pygame.mouse.set_visible(False)
 
-        def check_mouse():
-            if not isinstance(self.active_device, self.MouseNavigation):
-                # Removing old events
-                remove_ev(*self.active_device.get_events_commands())
+    #     def check_mouse():
+    #         if not isinstance(self.active_device, MenuNavigator.MouseNavigation):
+    #             # Removing old events
+    #             remove_ev(*self.active_device.get_events_commands())
 
-                dev = self.devices.get('mouse')
-                self.active_device = dev()
-                pygame.mouse.set_visible(True)
+    #             self.active_device = MenuNavigator.mouse
+    #             pygame.mouse.set_visible(True)
 
-        devs = {'mouse': check_mouse, 'default': check_default}
+    #     devs = {'mouse': check_mouse, 'default': check_default}
 
-        return devs[device] or devs['mouse']
+    #     return devs.get(device) or devs['mouse']
+
+    def default_interactions(self):
+        if not isinstance(self.active_device, MenuNavigator.DefaultNavigationDevice):
+            MenuNavigator.active_device = MenuNavigator.DefaultNavigationDevice(self.dev_events)
+            MenuNavigator.instance.active_device = MenuNavigator.active_device
+            pygame.mouse.set_visible(False)
 
     def update_buttons(self):
         self.active_device.update_buttons()
