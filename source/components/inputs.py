@@ -66,13 +66,11 @@ class MenuNavigator:
 
         def press_up(self):
             self.selected_button.select(False)
-            self.btn_i = self.btn_i - \
-                1 if self.btn_i > 0 else len(self.buttons_list) - 1
+            self.btn_i = (self.btn_i - 1) % len(self.buttons_list) 
 
         def press_down(self):
             self.selected_button.select(False)
-            self.btn_i = self.btn_i + \
-                1 if self.btn_i < len(self.buttons_list) - 1 else 0
+            self.btn_i = (self.btn_i + 1) % len(self.buttons_list) 
 
         def press_button(self):
             self.selected_button.press(True)
@@ -132,8 +130,6 @@ class MenuNavigator:
 
         self.dev_events = events_commands
 
-        # default_interact_func = self.check_device_interactions('default')
-        
         default_ev = (self.default_interactions, self.dev_events['button_down'])
         self.add_temp_event(default_ev)
         register_ev(default_ev)
@@ -141,26 +137,6 @@ class MenuNavigator:
         self.active_device = MenuNavigator.active_device
         self.active_device.register_events(self.dev_events)
         
-    # def check_device_interactions(self, device):
-    #     """ Handle the switcher between devices on menus navigation. """
-
-    #     def check_default():
-    #         if not isinstance(self.active_device, MenuNavigator.DefaultNavigationDevice):
-    #             self.active_device = MenuNavigator.DefaultNavigationDevice(self.dev_events)
-    #             pygame.mouse.set_visible(False)
-
-    #     def check_mouse():
-    #         if not isinstance(self.active_device, MenuNavigator.MouseNavigation):
-    #             # Removing old events
-    #             remove_ev(*self.active_device.get_events_commands())
-
-    #             self.active_device = MenuNavigator.mouse
-    #             pygame.mouse.set_visible(True)
-
-    #     devs = {'mouse': check_mouse, 'default': check_default}
-
-    #     return devs.get(device) or devs['mouse']
-
     def default_interactions(self):
         if not isinstance(self.active_device, MenuNavigator.DefaultNavigationDevice):
             MenuNavigator.active_device = MenuNavigator.DefaultNavigationDevice(self.dev_events)

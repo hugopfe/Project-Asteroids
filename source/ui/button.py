@@ -113,6 +113,7 @@ class RectangleButton(Button):
                 self.callback()
 
     def set_text(self, text):
+        self.text = text
         if '\n' in text:
             self.surf_texts = self._render_text(text, 'white', 'black')
         else:
