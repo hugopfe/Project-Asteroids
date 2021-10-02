@@ -148,9 +148,11 @@ class ControlsMenu(Main):
             c += 1
 
     def switch_dev(self):
-        self.dev_index += 1
-        self.ui_buttons[0].set_text(self.devs[self.dev_index% 2])
-        Main.inputs_handler.change_default_device()
+        dev_status = Main.inputs_handler.switch_default_device()
+        
+        if dev_status:
+            self.dev_index += 1 # TODO: Test more
+            self.ui_buttons[0].set_text(self.devs[self.dev_index% 2])
 
 
 class PauseMenu(Main):

@@ -340,17 +340,19 @@ class InputsHandler:
         def get_key_state(self, key: int) -> bool:
             return self.joystick.get_button(key)
 
-    def change_default_device(self):
+    def switch_default_device(self) -> bool:
         if isinstance(self.current_dev, self.KeyboardListener):
             if not pygame.joystick.get_count():
                 print('Nenhum controle encontrado!')
-                return
+                return False
             else:
                 self.current_dev = self.JoystickListener()
         else:
             self.current_dev = self.KeyboardListener()
 
         print(f'Switched to {self.current_dev.__class__.__name__}')
+
+        return True
 
 
 __all__ = ['InputsHandler']

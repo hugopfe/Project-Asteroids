@@ -28,7 +28,7 @@ def start(main_menu, game_cls):
 
 
 def press_tab():
-    Main.inputs_handler.change_default_device()
+    Main.inputs_handler.switch_default_device()
 
 
 def quit_ev():
