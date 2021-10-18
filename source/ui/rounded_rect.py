@@ -40,5 +40,9 @@ class RoundedRect:
             self.rect
         )
 
+    def get_pos(self, pos):
+        positions = {-1: self.rect.midleft, 1: self.rect.midright}
+        return positions[pos]
+
 
 __all__ = ['RoundedRect']
