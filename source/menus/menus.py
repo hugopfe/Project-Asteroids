@@ -23,21 +23,21 @@ class MainMenu(Main):
             RectangleButton(screen=Main.screen,
                    x=120, y=SCREEN_HEIGHT - 220,
                    width=90, height=40,
-                   text='Jogar',
+                   label='Jogar',
                    padding=5,
                    callback=lambda: self.change_screen(game_cls)),
 
             RectangleButton(screen=Main.screen,
                    x=120, y=SCREEN_HEIGHT - 160,
                    width=90, height=40,
-                   text='Controles',
+                   label='Controles',
                    padding=5,
                    callback=lambda: self.change_screen(ControlsMenu)),
 
             RectangleButton(screen=Main.screen,
                    x=120, y=SCREEN_HEIGHT - 100,
                    width=90, height=40,
-                   text='Sair',
+                   label='Sair',
                    padding=5,
                    callback=quit_ev)
         )
@@ -91,15 +91,20 @@ class ControlsMenu(Main):
         self.keys_frame()
 
 
-        self.devs = ['Teclado', 'Controle']
-        self.dev_index = 0  # TODO: Investigate it
+        input_dev = str(Main.inputs_handler.current_dev)
         
+        def call1(): print('a')
+        def call2(): print('b')
+
         self.ui_buttons = (
-            RectangleButton(screen=Main.screen, x=SCREEN_WIDTH/2, y=120,
-                            width=80, height=40, text=self.devs[self.dev_index], padding=5,
-                            callback=self.switch_dev),
+            # RectangleButton(screen=Main.screen, x=SCREEN_WIDTH/2, y=120,
+            #                 width=80, height=40, label=input_dev, padding=5,
+            #                 callback=self.switch_dev),
+            SwitcherButton(screen=Main.screen, x=SCREEN_WIDTH/2, y=120,
+                           scale=2, labels=('Teclado', 'Controle'), 
+                           callbacks=(call1, call2)),
             RectangleButton(screen=Main.screen, x=SCREEN_WIDTH/2, y=SCREEN_HEIGHT-90,
-                            width=80, height=40, text='Voltar', padding=3,
+                            width=80, height=40, label='Voltar', padding=3,
                             callback=self.back)
         )
 
@@ -151,8 +156,7 @@ class ControlsMenu(Main):
         dev_status = Main.inputs_handler.switch_default_device()
         
         if dev_status:
-            self.dev_index += 1 # TODO: Test more
-            self.ui_buttons[0].set_text(self.devs[self.dev_index% 2])
+            self.ui_buttons[0].set_text(dev_status)
 
 
 class PauseMenu(Main):
@@ -168,17 +172,14 @@ class PauseMenu(Main):
 
         # Buttons
         self.ui_buttons = (
-            # RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=400,
-            #                 width=110, height=40, text='Continuar',
-            #                 padding=10, callback=self.back),
             RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=400,
-                            width=110, height=40, text='Continuar',
+                            width=110, height=40, label='Continuar',
                             padding=10, callback=self.back),
             RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=460,
-                            width=110, height=40, text='Controles',
+                            width=110, height=40, label='Controles',
                             padding=8, callback=lambda: self.change_screen(ControlsMenu)),
             RectangleButton(screen=Main.screen, x=Main.screen_rect.centerx, y=520,
-                            width=110, height=40, text='Menu',
+                            width=110, height=40, label='Menu',
                             padding=7, callback=self.back_to_mainmenu)
         )
 

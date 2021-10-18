@@ -1,41 +1,19 @@
 import pygame
 from media.paths import button_font
-
-
-class Button:
-    def __init__(self):
-        self.current_color = pygame.Color('#4948D9')
-
-    def render(self):
-        pass
-
-    def select(self, is_above: bool):
-        pass
-
-    def press(self, pressed: bool):
-        pass
+from .button import Button
 
 
 class RectangleButton(Button):
     def __init__(self, **kwargs):
         """
-        Creates a new Button instance for UI.
+        Class for a rectangular button for UI.
 
-        Accepted Parameters: screen, x, y, width, height, text, padding, callback.
+        Accepted Parameters: screen, x, y, width, height, label, padding, callback.
         """
 
-        super().__init__()
+        super().__init__(**kwargs)
 
-        self.screen = kwargs.get('screen')
-        self.x = kwargs.get('x')
-        self.y = kwargs.get('y')
-        self.width = kwargs.get('width')
-        self.height = kwargs.get('height')
-        self.text = kwargs.get('text') or 'Text'
         self.padding = kwargs.get('padding') or 1
-        self.callback = kwargs.get('callback')
-
-        self.clicked = False
 
         # Button Border
         self.border = pygame.Surface((self.width, self.height))
@@ -54,7 +32,7 @@ class RectangleButton(Button):
         self.surf_texts = None
         self.surf_text = None
 
-        self.set_text(self.text)
+        self.set_text(self.label)
 
         if self.surf_texts:
             self.split_text = True
@@ -68,19 +46,11 @@ class RectangleButton(Button):
             self.background.blit(text1[0], text1[1])
             self.background.blit(text2[0], text2[1])
         else:
-            text = self.surf_text
-            self.background.blit(text[0], text[1])
+            label = self.surf_text
+            self.background.blit(label[0], label[1])
 
         self.border.blit(self.background, self.bg_rect)
         self.screen.blit(self.border, self.bd_rect)
-
-    def select(self, is_above: bool):
-        if is_above:
-            self.current_color = self.current_color.lerp('#9848D9', 0.5)
-        else:
-            self.current_color = self.current_color.lerp('#4948D9', 0.5)
-
-        self.border.fill(self.current_color)
 
     def press(self, pressed: bool):
         if pressed:
@@ -90,9 +60,9 @@ class RectangleButton(Button):
             """ Changing colors"""
 
             if self.split_text:
-                self.surf_texts = self._render_text(self.text, 'black', 'white')
+                self.surf_texts = self._render_text(self.label, 'black', 'white')
             else:
-                self.surf_text = self._render_text(self.text, 'black', 'white')
+                self.surf_text = self._render_text(self.label, 'black', 'white')
 
         else:
             self.background.fill('black')
@@ -100,9 +70,9 @@ class RectangleButton(Button):
             """ Changing colors """
 
             if self.split_text:
-                self.surf_texts = self._render_text(self.text, 'white', 'black')
+                self.surf_texts = self._render_text(self.label, 'white', 'black')
             else:
-                self.surf_text = self._render_text(self.text, 'white', 'black')
+                self.surf_text = self._render_text(self.label, 'white', 'black')
 
             """ Executing button command """
 
@@ -113,7 +83,7 @@ class RectangleButton(Button):
                 self.callback()
 
     def set_text(self, text):
-        self.text = text
+        self.label = text
         if '\n' in text:
             self.surf_texts = self._render_text(text, 'white', 'black')
         else:
@@ -146,6 +116,12 @@ class RectangleButton(Button):
                 center=(self.bg_rect.centerx, self.bg_rect.centery))
             
             return (screen_text, txt_rect)
+
+    def mouse_selection(self, pos: tuple) -> bool:
+        return self.bd_rect.collidepoint(pos)
+
+    def highlight(self):
+        self.border.fill(self.current_color)
 
 
 __all__ = ['RectangleButton']

@@ -3,6 +3,7 @@ from ui import *
 from media.paths import title_font
 from components.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
+# TODO: Modularization
 
 class EndScreen(Main):
     """ Abstract class for End screens """
@@ -20,7 +21,7 @@ class EndScreen(Main):
         self.menu_button = RectangleButton(
             screen=Main.screen, 
             x=Main.screen_rect.centerx, y=460,
-            width=110, height=40, text='Menu',
+            width=110, height=40, label='Menu',
             padding=5, 
             callback=lambda: self.back_to_mainmenu()
         )
@@ -53,7 +54,7 @@ class GOScreen(EndScreen):
 
         self.try_button = RectangleButton(
             screen=Main.screen, x=Main.screen_rect.centerx, y=400,
-            width=130, height=50, text='Tentar\nnovamente',
+            width=130, height=50, label='Tentar\nnovamente',
             padding=17, callback=lambda: self.try_again(game)
         )
 
@@ -70,7 +71,7 @@ class WinScreen(EndScreen):
 
         self.try_button = RectangleButton(
             screen=Main.screen, x=Main.screen_rect.centerx, y=400,
-            width=130, height=50, text='Jogar\nnovamente',
+            width=130, height=50, label='Jogar\nnovamente',
             padding=17, callback=lambda: self.try_again(game)
         )
 

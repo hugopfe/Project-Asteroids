@@ -5,7 +5,7 @@ from pygame.locals import *
 
 from components.constants import PLAYER_SPEED, BREAK
 from components.events import *
-from ui.button import Button
+from ui.buttons import Button
 
 
 class MenuNavigator:
@@ -32,7 +32,7 @@ class MenuNavigator:
             self.buttons_list = buttons_list
 
             for button in self.buttons_list:
-                is_above = button.bd_rect.collidepoint(pygame.mouse.get_pos())
+                is_above = button.mouse_selection(pygame.mouse.get_pos())
                 button.select(is_above)
 
                 if is_above:
@@ -245,6 +245,10 @@ class InputsHandler:
 
             self.active_device.handle_navigation(buttons_list)
 
+        def __str__(self) -> str:
+            return 'Teclado'
+
+
     class JoystickListener(MenuNavigator):
         
         a_button = 0
@@ -340,19 +344,22 @@ class InputsHandler:
         def get_key_state(self, key: int) -> bool:
             return self.joystick.get_button(key)
 
-    def switch_default_device(self) -> bool:
+        def __str__(self) -> str:
+            return 'Controle'
+
+    def switch_default_device(self) -> str:
         if isinstance(self.current_dev, self.KeyboardListener):
             if not pygame.joystick.get_count():
                 print('Nenhum controle encontrado!')
-                return False
+                return None
             else:
                 self.current_dev = self.JoystickListener()
         else:
             self.current_dev = self.KeyboardListener()
 
-        print(f'Switched to {self.current_dev.__class__.__name__}')
+        print(f'Switched to {self.current_dev}')
 
-        return True
+        return str(self.current_dev)
 
 
 __all__ = ['InputsHandler']

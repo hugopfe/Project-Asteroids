@@ -1,2 +1,2 @@
-from ui.button import *
+from ui.buttons import *
 from ui.font import *
