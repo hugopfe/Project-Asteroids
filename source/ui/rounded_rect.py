@@ -1,4 +1,7 @@
 import pygame
+import pygame.gfxdraw
+
+from components.util import draw_circle
 
 
 class RoundedRect:
@@ -13,20 +16,24 @@ class RoundedRect:
         self.rect.center = (self.x, self.y)
         
     def render(self, screen, color):
-        pygame.draw.circle(
+        r = int(self.height/2-self.height/2*0.01)
+        
+        draw_circle(
             screen,
-            color,
-            self.rect.midright,
-            self.height/2
+            self.rect.right,
+            self.rect.centery,
+            r,
+            color
         )
 
-        pygame.draw.circle(
+        draw_circle(
             screen,
-            color,
-            self.rect.midleft,
-            self.height/2
+            self.rect.left,
+            self.rect.centery,
+            r,
+            color
         )
-        
+
         pygame.draw.rect(
             screen,
             color,

@@ -117,6 +117,10 @@ def draw_rect_zone(screen, rect):
     return pygame.draw.rect(screen, (255, 0, 0), rect, 2)
 
 
+def draw_circle(screen, x, y, r, color):
+    pygame.gfxdraw.aacircle(screen, x, y, r, color)
+    pygame.gfxdraw.filled_circle(screen, x, y, r, color)
+
 
 __all__ = [
     'get_random_pos',
@@ -128,5 +132,6 @@ __all__ = [
     'move_in_orbit_motion',
     'get_class_name',
     'draw_rect_zone',
-    'collide_mask'
+    'collide_mask',
+    'draw_circle'
 ]
