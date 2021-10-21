@@ -93,16 +93,13 @@ class ControlsMenu(Main):
 
         input_dev = str(Main.inputs_handler.current_dev)
         
-        def call1(): print('a')
-        def call2(): print('b')
+        def switch_to_keyboard(): self.switch_dev(Main.inputs_handler.KeyboardListener)
+        def switch_to_joystick(): self.switch_dev(Main.inputs_handler.JoystickListener)
 
         self.ui_buttons = (
-            # RectangleButton(screen=Main.screen, x=SCREEN_WIDTH/2, y=120,
-            #                 width=80, height=40, label=input_dev, padding=5,
-            #                 callback=self.switch_dev),
             SwitcherButton(screen=Main.screen, x=SCREEN_WIDTH/2, y=120,
                            scale=2, labels=('Teclado', 'Controle'), 
-                           callbacks=(call1, call2)),
+                           callbacks=(switch_to_keyboard, switch_to_joystick)),
             RectangleButton(screen=Main.screen, x=SCREEN_WIDTH/2, y=SCREEN_HEIGHT-90,
                             width=80, height=40, label='Voltar', padding=3,
                             callback=self.back)
@@ -152,11 +149,13 @@ class ControlsMenu(Main):
                 self.keys_fontgroup.add_fonts(command_font_list[i])
             c += 1
 
-    def switch_dev(self):
-        dev_status = Main.inputs_handler.switch_default_device()
+    def switch_dev(self, dev) -> bool:
+        dev_status = Main.inputs_handler.switch_default_device(dev)
         
         if dev_status:
-            self.ui_buttons[0].set_text(dev_status)
+            return True
+        else:
+            return False
 
 
 class PauseMenu(Main):

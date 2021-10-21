@@ -4,6 +4,16 @@ from typing import Tuple
 
 class FontsGroup:
     
+    screen: pygame.Surface
+    font_name: str
+    size: int
+    color: pygame.Color
+    bg_color: pygame.Color
+    font: str
+    font_surface: pygame.Surface
+    rect: pygame.Rect
+
+    
     def __init__(self, **kwargs):
         """
         Encompess all fonts

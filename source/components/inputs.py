@@ -162,9 +162,21 @@ class MenuNavigator:
 class InputsHandler:
 
     def __init__(self):
-        """ Handles all controls inputs upcoming from keyboard or controller """
+        """ Handles all inputs upcoming from mouse, keyboard or controller """
 
         self.current_dev = self.KeyboardListener()
+
+    def switch_default_device(self, dev) -> bool | str:
+        # TODO: Test more and come back to keyboard if controller is desconected.
+        if not isinstance(self.current_dev, dev):
+            if not pygame.joystick.get_count():
+                return False
+            else:
+                self.current_dev = dev()
+
+        print(f'Switched to {self.current_dev}')
+
+        return str(self.current_dev)
 
     class KeyboardListener(MenuNavigator):
 
@@ -247,7 +259,6 @@ class InputsHandler:
 
         def __str__(self) -> str:
             return 'Teclado'
-
 
     class JoystickListener(MenuNavigator):
         
@@ -346,20 +357,6 @@ class InputsHandler:
 
         def __str__(self) -> str:
             return 'Controle'
-
-    def switch_default_device(self) -> str:
-        if isinstance(self.current_dev, self.KeyboardListener):
-            if not pygame.joystick.get_count():
-                print('Nenhum controle encontrado!')
-                return None
-            else:
-                self.current_dev = self.JoystickListener()
-        else:
-            self.current_dev = self.KeyboardListener()
-
-        print(f'Switched to {self.current_dev}')
-
-        return str(self.current_dev)
 
 
 __all__ = ['InputsHandler']

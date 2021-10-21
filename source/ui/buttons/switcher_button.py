@@ -17,6 +17,8 @@ class SwitcherButton(Button):
         Accepted Parameters: screen, x, y, scale, labels, callbacks.
 
         Labels and callbacks must be a list or tuple with two elements at maximus.
+
+        The callbacks must return a bool, confirming the success or failure of execution.
         """
 
         super().__init__(**kwargs)
@@ -49,23 +51,35 @@ class SwitcherButton(Button):
         )
 
         self.fonts = (
-            Font(self.labels[0], (self.background.get_pos(-1, False)-30, self.y), 'right'),
-            Font(self.labels[1], (self.background.get_pos(1, False)+30, self.y), 'left')
+            Font(self.labels[0], (self.x, self.y), 'right'),
+            Font(self.labels[1], (self.x, self.y), 'left')
         )
         self.font_group.add_fonts(*self.fonts)
+
+        font_positions = (
+            self.background.get_pos(-1, False)-self.font_group.size,
+            self.background.get_pos(1, False)+self.font_group.size
+        )
+        self.states = {
+            -1: {'font': self.fonts[0], 'callback': self.callbacks[0], 'pos': font_positions[0]}, 
+            1: {'font': self.fonts[1], 'callback': self.callbacks[1], 'pos': font_positions[1]}
+        }
+
+        for state in self.states.values():
+            state['font'].configure(x=state['pos'])
 
     def render(self):
         self.border.render(
             self.screen, 
-            self.current_color, 
+            self.current_color
         ) 
 
         self.background.render(
             self.screen, 
-            self.background_color, 
+            self.background_color
         )
 
-        new_marker_pos = self.background.get_pos(self.marker.position)
+        new_marker_pos = self.background.get_pos(self.marker.state)
         self.marker.render(self.screen, new_marker_pos)
 
         self.font_group.render_fonts()
@@ -79,10 +93,14 @@ class SwitcherButton(Button):
 
             if self.clicked:
                 self.clicked = False
-                self.toggle_marker()
+                self.toggle_state()
 
-    def toggle_marker(self):
-        self.marker.position *= -1
+                callback = self.states[self.marker.state]['callback']
+                if callback():
+                    self.toggle_state()
+
+    def toggle_state(self):
+        self.marker.state *= -1
 
     def mouse_selection(self, pos: tuple) -> bool:
         return self.background.rect.collidepoint(pos)
@@ -99,7 +117,7 @@ class Marker:
         self.normal_radius = radius
         
         self.color = pygame.Color('white')
-        self.position = -1
+        self.state = -1
         self.vector = pygame.Vector2(self.x, self.y)
 
     def render(self, screen, new_pos: tuple):
