@@ -3,12 +3,13 @@ from typing import Tuple
 
 
 class FontsGroup:
+    
     def __init__(self, **kwargs):
         """
         Encompess all fonts
         :argument: screen, font_name, size, color, bg_color """
 
-        self.kwargs = kwargs
+        self.__dict__.update(kwargs)
         self.font_lst = []
 
     def render_fonts(self):
@@ -25,11 +26,12 @@ class FontsGroup:
     def set_font(self, font):
         """ Set the font settings for all fonts in list """
 
-        font.configure(**self.kwargs)
+        font.configure(**self.__dict__)
 
 
 class Font:
-    def __init__(self, text: str, pos: Tuple, align='left'):
+
+    def __init__(self, text: str, pos: Tuple | int, align='left'):
         """Instances a Font object """
 
         self.screen = None
@@ -59,7 +61,7 @@ class Font:
 
     def _get_font_surface(self, font: pygame.font.Font):
         self.font_surface = font.render(self.text, True, self.color, self.bg_color)
-        self.rect = self.font_surface.get_rect(x=self.x, y=self.y)
+        self.rect = self.font_surface.get_rect(center=(self.x, self.y))
 
         align = self.align
         if align == 'left':

@@ -3,6 +3,7 @@ import io
 from math import cos, sin
 
 import pygame
+import pygame.gfxdraw
 from pygame.math import Vector2
 from pygame.sprite import Group
 
@@ -10,6 +11,7 @@ from typing import Tuple, Dict, List, Union
 from random import randrange, choice, uniform, randint
 
 from components.events import *
+
 
 collide_mask = pygame.sprite.collide_mask
 
@@ -117,9 +119,9 @@ def draw_rect_zone(screen, rect):
     return pygame.draw.rect(screen, (255, 0, 0), rect, 2)
 
 
-def draw_circle(screen, x, y, r, color):
-    pygame.gfxdraw.aacircle(screen, x, y, r, color)
+def draw_aacircle(screen, x: int, y: int, r: int, color):
     pygame.gfxdraw.filled_circle(screen, x, y, r, color)
+    pygame.gfxdraw.aacircle(screen, x, y, r, color)
 
 
 __all__ = [
@@ -133,5 +135,5 @@ __all__ = [
     'get_class_name',
     'draw_rect_zone',
     'collide_mask',
-    'draw_circle'
+    'draw_aacircle'
 ]

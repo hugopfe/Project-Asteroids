@@ -1,7 +1,6 @@
 import pygame
-import pygame.gfxdraw
 
-from components.util import draw_circle
+from components.util import draw_aacircle
 
 
 class RoundedRect:
@@ -18,7 +17,7 @@ class RoundedRect:
     def render(self, screen, color):
         r = int(self.height/2-self.height/2*0.01)
         
-        draw_circle(
+        draw_aacircle(
             screen,
             self.rect.right,
             self.rect.centery,
@@ -26,7 +25,7 @@ class RoundedRect:
             color
         )
 
-        draw_circle(
+        draw_aacircle(
             screen,
             self.rect.left,
             self.rect.centery,
@@ -40,9 +39,11 @@ class RoundedRect:
             self.rect
         )
 
-    def get_pos(self, pos):
+    def get_pos(self, pos, full_coord=True):
+        """ Returns the full coordenates of the circles or only x position. """
+        
         positions = {-1: self.rect.midleft, 1: self.rect.midright}
-        return positions[pos]
+        return positions[pos] if full_coord else positions[pos][0]
 
 
 __all__ = ['RoundedRect']
