@@ -167,18 +167,19 @@ class InputsHandler:
         self.current_dev = self.KeyboardListener()
 
     def switch_default_device(self, dev) -> bool | str:
-        # TODO: Test more and come back to keyboard if controller is desconected.
         if not isinstance(self.current_dev, dev):
-            if not pygame.joystick.get_count():
+            self.current_dev = dev()
+            if not self.current_dev.status:
                 return False
-            else:
-                self.current_dev = dev()
 
         print(f'Switched to {self.current_dev}')
 
-        return str(self.current_dev)
+        return self.current_dev
 
     class KeyboardListener(MenuNavigator):
+
+        id = -1
+        status = True
 
         nav_buttons = {
             'up': K_UP,
@@ -261,6 +262,8 @@ class InputsHandler:
             return 'Teclado'
 
     class JoystickListener(MenuNavigator):
+
+        id = 1
         
         a_button = 0
         start_button = 7
@@ -287,6 +290,12 @@ class InputsHandler:
             """ Class to represent the controller """
 
             super().__init__(self.ev)
+
+            if not pygame.joystick.get_count():
+                self.status = False
+                return
+            else:
+                self.status = True
 
             pygame.joystick.init()
 

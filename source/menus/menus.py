@@ -57,6 +57,7 @@ class MainMenu(Main):
 
 
 class ControlsMenu(Main):
+
     def __init__(self):
         """ Class for Controls menu """
 
@@ -90,16 +91,13 @@ class ControlsMenu(Main):
 
         self.keys_frame()
 
-
-        input_dev = str(Main.inputs_handler.current_dev)
-        
-        def switch_to_keyboard(): self.switch_dev(Main.inputs_handler.KeyboardListener)
-        def switch_to_joystick(): self.switch_dev(Main.inputs_handler.JoystickListener)
-
         self.ui_buttons = (
-            SwitcherButton(screen=Main.screen, x=SCREEN_WIDTH/2, y=120,
-                           scale=2, labels=('Teclado', 'Controle'), 
-                           callbacks=(switch_to_keyboard, switch_to_joystick)),
+            SwitcherButton(
+                screen=Main.screen, x=SCREEN_WIDTH/2, y=120,
+                scale=2, labels=('Teclado', 'Controle'), 
+                callbacks=(switch_to_keyboard, switch_to_joystick),
+                marker_state=Main.inputs_handler.current_dev.id
+            ),
             RectangleButton(screen=Main.screen, x=SCREEN_WIDTH/2, y=SCREEN_HEIGHT-90,
                             width=80, height=40, label='Voltar', padding=3,
                             callback=self.back)
