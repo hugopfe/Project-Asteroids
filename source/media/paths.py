@@ -21,6 +21,7 @@ asteroid = img_path('asteroid_big.png')
 ast_frag1 = img_path('asteroid_part_1.png')
 ast_frag2 = img_path('asteroid_part_2.png')
 ast_frag3 = img_path('asteroid_part_3.png')
+icon = img_path('icon.ico')
 logo = img_path('logo.png')
 shield = img_path('shield_prototype.png')
 

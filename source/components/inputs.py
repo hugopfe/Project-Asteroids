@@ -178,7 +178,7 @@ class InputsHandler:
 
     class KeyboardListener(MenuNavigator):
 
-        id = -1
+        id = 0
         status = True
 
         nav_buttons = {

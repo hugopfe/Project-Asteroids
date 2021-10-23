@@ -2,6 +2,9 @@ import pygame
 from media.paths import button_font
 
 
+vector = pygame.math.Vector2
+
+
 class Button:
     def __init__(self, **kwargs):
         """
@@ -13,8 +16,9 @@ class Button:
         self.clicked = False
 
         self.screen = kwargs.get('screen')
-        self.x = kwargs.get('x') or 0
-        self.y = kwargs.get('y') or 0
+        x = kwargs.get('x') or 0
+        y = kwargs.get('y') or 0
+        self.pos = vector(x, y)
         self.width = kwargs.get('width')
         self.height = kwargs.get('height')
         self.callback = kwargs.get('callback')

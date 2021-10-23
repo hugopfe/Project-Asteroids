@@ -91,16 +91,29 @@ class ControlsMenu(Main):
 
         self.keys_frame()
 
+        switcher_states = ({
+            'label': 'Teclado', 
+            'callback': switch_to_keyboard
+        }, 
+        {
+            'label': 'Controle',
+            'callback': switch_to_joystick    
+        })
+
+
         self.ui_buttons = (
             SwitcherButton(
                 screen=Main.screen, x=SCREEN_WIDTH/2, y=120,
-                scale=2, labels=('Teclado', 'Controle'), 
-                callbacks=(switch_to_keyboard, switch_to_joystick),
+                scale=2, 
+                states=switcher_states,
                 marker_state=Main.inputs_handler.current_dev.id
             ),
-            RectangleButton(screen=Main.screen, x=SCREEN_WIDTH/2, y=SCREEN_HEIGHT-90,
-                            width=80, height=40, label='Voltar', padding=3,
-                            callback=self.back)
+            RectangleButton(
+                screen=Main.screen, x=SCREEN_WIDTH/2, 
+                y=SCREEN_HEIGHT-90,
+                width=80, height=40, label='Voltar', padding=3,
+                callback=self.back
+            )
         )
 
         self.add_buttons(*self.ui_buttons)

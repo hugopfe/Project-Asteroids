@@ -41,7 +41,7 @@ class FontsGroup:
 
 class Font:
 
-    def __init__(self, text: str, pos: Tuple | int, align='left'):
+    def __init__(self, text: str, pos: Tuple, align='left'):
         """Instances a Font object """
 
         self.screen = None

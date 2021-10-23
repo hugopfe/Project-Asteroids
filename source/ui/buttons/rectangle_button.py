@@ -18,7 +18,7 @@ class RectangleButton(Button):
         # Button Border
         self.border = pygame.Surface((self.width, self.height))
         self.border.fill(self.current_color)
-        self.bd_rect = self.border.get_rect(center=(self.x, self.y))
+        self.bd_rect = self.border.get_rect(center=self.pos.xy)
 
         # Button Background
         self.background = pygame.Surface((self.width*0.95, self.height*0.9))
