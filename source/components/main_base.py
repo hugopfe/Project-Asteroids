@@ -5,6 +5,7 @@ from components.constants import *
 from components.inputs import *
 from components.util import *
 from components.events import *
+from ui.alert import Alert
 
 
 def add_to_call_tree(object):
@@ -42,6 +43,11 @@ def switch_to_joystick():
     return dev_status
 
 
+def post_alert():
+    Main.alert.set_message(Alert.alert_event.message)
+    Main.alert.trigger()
+
+
 class Main:
     # TODO: Separate the "Menu and the "Main"
 
@@ -51,13 +57,16 @@ class Main:
     inputs_handler = InputsHandler()
     call_tree = []
 
+    alert = Alert(screen, '')
+
     clock = pygame.time.Clock()
     running = True
 
     ev = (
         (quit, QUIT),
         (quit, (KEYDOWN, ('key', K_ESCAPE))),
-        (switch_to_keyboard, (JOYDEVICEREMOVED))
+        (switch_to_keyboard, JOYDEVICEREMOVED),
+        (post_alert, ALERT)
     )
     register_ev(*ev)
     
@@ -83,6 +92,7 @@ class Main:
                     current_call.buttons)
 
             current_call.loop()
+            Main.alert.render()
             pygame.display.flip()
 
     def loop(self):

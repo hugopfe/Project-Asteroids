@@ -25,7 +25,7 @@ class Level:
 
         # Text
         self.level_text = ''
-        self.text_pos = (self.screen_rect.centerx, 10)
+        self.text_pos = (self.screen_rect.centerx, 40)
         self.text_size = 45
         self._get_level_text()
 
@@ -118,8 +118,7 @@ class Level1(Level):
     def level_loop(self):
         self.current_time += 1
 
-        # asteroids
-        # self.spawn_asteroids()
+        self.spawn_asteroids()
 
         self.asteroid_group.update()
         self.asteroid_group.draw(self.screen)

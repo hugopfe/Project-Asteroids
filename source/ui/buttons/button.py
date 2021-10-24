@@ -15,6 +15,7 @@ class Button:
         self.current_color = pygame.Color(PRIMARY_COLOR)
         
         self.clicked = False
+        self.selected = False
 
         self.screen = kwargs.get('screen')
         x = kwargs.get('x') or 0
@@ -35,7 +36,10 @@ class Button:
         pass
 
     def select(self, is_above: bool):
-        if is_above:
+        self.selected = is_above
+
+    def update_colors(self):
+        if self.selected:
             self.current_color = self.current_color.lerp(SECUNDARY_COLOR, 0.2)
         else:
             self.current_color = self.current_color.lerp(PRIMARY_COLOR, 0.2)

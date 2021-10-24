@@ -3,9 +3,10 @@ from typing import List, Tuple, Union
 import pygame
 from pygame.locals import *
 
-from components.constants import PLAYER_SPEED, BREAK
+from components.constants import PLAYER_SPEED, BREAK, ALERT
 from components.events import *
 from ui.buttons import Button
+from ui.alert import Alert
 
 
 class MenuNavigator:
@@ -101,6 +102,7 @@ class MenuNavigator:
         if not isinstance(MenuNavigator.active_device, MenuNavigator.MouseNavigation):
 
             # Removing old events
+            # TODO: Investigate events duplicated
             remove_ev(*MenuNavigator.active_device.get_events_commands())
 
             MenuNavigator.active_device = MenuNavigator.mouse
@@ -168,13 +170,20 @@ class InputsHandler:
 
     def switch_default_device(self, dev) -> bool | str:
         if not isinstance(self.current_dev, dev):
-            self.current_dev = dev()
-            if not self.current_dev.status:
+            next_dev = dev()
+            if not next_dev.status:
+                Alert.alert_event.message = 'Nenhum controle encontrado!'
+                pygame.event.post(Alert.alert_event)
                 return False
 
-        print(f'Switched to {self.current_dev}')
+            for button in self.current_dev.active_device.buttons_list:
+                button.select(False)
 
-        return self.current_dev
+            self.current_dev = next_dev
+
+        Alert.alert_event.message = f'{str(self.current_dev)} ativado.'
+        pygame.event.post(Alert.alert_event)
+        return True
 
     class KeyboardListener(MenuNavigator):
 

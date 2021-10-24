@@ -62,15 +62,15 @@ class Game(Main):
                                       bg_color=(0, 0, 0),
                                       antialias=True)
 
-        self.texts = (
+        self.fonts = (
             Font(f'Pontuação: {self.player.score}',
-                 (SCREEN_WIDTH - 10, 10), 'right'),
+                 (SCREEN_WIDTH - 10, 20), 'right'),
 
             Font(f'Objetivo: {self.current_level.level_objectives["score"]}',
-                 (SCREEN_WIDTH - 10, 40), 'right')
+                 (SCREEN_WIDTH - 10, 50), 'right')
         )
 
-        self.fonts_group.add_fonts(*self.texts)
+        self.fonts_group.add_fonts(*self.fonts)
 
         self.inputs_handler = Main.inputs_handler
 
@@ -186,7 +186,7 @@ class Game(Main):
             self.change_screen(WinScreen, self)
         else:
             self.update_infos()
-            self.texts[1].configure(
+            self.fonts[1].configure(
                 text=f'Objetivo: {self.level_objectives["score"]}')
 
     def update_infos(self):
@@ -205,7 +205,7 @@ class Game(Main):
 
     def set_score(self, score: int):
         self.player.score += score
-        self.texts[0].configure(text=f'Pontuação: {self.player.score}')
+        self.fonts[0].configure(text=f'Pontuação: {self.player.score}')
 
 
 __all__ = ['Game']

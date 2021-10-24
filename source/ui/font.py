@@ -41,6 +41,8 @@ class FontsGroup:
 
 class Font:
 
+    pygame.font.init()
+
     def __init__(self, text: str, pos: Tuple, align='left'):
         """Instances a Font object """
 
@@ -83,6 +85,9 @@ class Font:
 
     def render(self):
         self.screen.blit(self.font_surface, self.rect)
+
+    def get_size(self, text: str) -> Tuple[int, int]:
+        return self.font.size(text)
 
 
 __all__ = ['FontsGroup', 'Font']

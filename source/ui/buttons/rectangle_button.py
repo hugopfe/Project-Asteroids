@@ -40,6 +40,8 @@ class RectangleButton(Button):
             self.split_text = False
 
     def render(self):
+        self.update_colors()
+        
         if self.split_text:
             text1 = self.surf_texts['text1']
             text2 = self.surf_texts['text2']

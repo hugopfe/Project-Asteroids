@@ -3,6 +3,7 @@ from pygame.constants import *
 
 from components.main_base import * 
 from components.game import *
+from components.constants import ALERT
 from menus import MainMenu
 from media.paths import icon
 
@@ -22,6 +23,7 @@ if __name__ == '__main__':
         JOYBUTTONDOWN,
         JOYBUTTONUP,
         JOYHATMOTION,
+        ALERT,
         QUIT
     ]
     
