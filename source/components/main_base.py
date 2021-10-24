@@ -27,8 +27,7 @@ def start(main_menu, game_cls):
     Main._main_loop()
 
 
-def press_tab(): Main.inputs_handler.switch_default_device()
-def quit_ev(): Main.running = False
+def quit(): Main.running = False
 
 
 def switch_to_keyboard():
@@ -45,21 +44,22 @@ def switch_to_joystick():
 
 class Main:
     # TODO: Separate the "Menu and the "Main"
-    inputs_handler = InputsHandler()
-    call_tree = []
-
-    ev = (
-        (quit_ev, QUIT),
-        (quit_ev, (KEYDOWN, ('key', K_ESCAPE))),
-        (press_tab, (KEYDOWN, ('key', K_TAB))),
-        (switch_to_keyboard, (JOYDEVICEREMOVED))
-    )
-    register_ev(*ev)
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     screen_rect = screen.get_rect()
+
+    inputs_handler = InputsHandler()
+    call_tree = []
+
     clock = pygame.time.Clock()
     running = True
+
+    ev = (
+        (quit, QUIT),
+        (quit, (KEYDOWN, ('key', K_ESCAPE))),
+        (switch_to_keyboard, (JOYDEVICEREMOVED))
+    )
+    register_ev(*ev)
     
     def __init__(self, event_command=None):
         """ Runs the main loop """
@@ -138,7 +138,7 @@ class Main:
 __all__ = [
     'Main',
     'start',
-    'quit_ev',
+    'quit',
     'switch_to_keyboard',
     'switch_to_joystick'
 ]

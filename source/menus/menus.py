@@ -39,7 +39,7 @@ class MainMenu(Main):
                    width=90, height=40,
                    label='Sair',
                    padding=5,
-                   callback=quit_ev)
+                   callback=quit)
         )
 
         self.add_buttons(*self.ui_buttons)
@@ -118,12 +118,18 @@ class ControlsMenu(Main):
 
         self.add_buttons(*self.ui_buttons)
 
+        # TEMP
+        self.alert = Alert(Main.screen, 'Teste')
+        def press_tab(): self.alert.trigger()
+        register_ev((press_tab, (KEYDOWN, ('key', K_TAB))))
+
     def loop(self):
         Main.screen.blit(self.frame, self.frame_rect)
 
         self.render_buttons()
         self.control_txt.render()
         self.keys_fontgroup.render_fonts()
+        self.alert.render()
 
     def keys_frame(self):
         frame_color = '#353535'

@@ -1,5 +1,6 @@
 import pygame
 from media.paths import button_font
+from components.constants import PRIMARY_COLOR, SECUNDARY_COLOR
 
 
 vector = pygame.math.Vector2
@@ -11,7 +12,7 @@ class Button:
         Abstract class for ui buttons.
         """
         
-        self.current_color = pygame.Color('#4948D9')
+        self.current_color = pygame.Color(PRIMARY_COLOR)
         
         self.clicked = False
 
@@ -35,9 +36,9 @@ class Button:
 
     def select(self, is_above: bool):
         if is_above:
-            self.current_color = self.current_color.lerp('#9848D9', 0.5)
+            self.current_color = self.current_color.lerp(SECUNDARY_COLOR, 0.2)
         else:
-            self.current_color = self.current_color.lerp('#4948D9', 0.5)
+            self.current_color = self.current_color.lerp(PRIMARY_COLOR, 0.2)
 
         self.highlight()
 

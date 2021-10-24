@@ -60,7 +60,7 @@ class Font:
         self.align = align
 
     def configure(self, **kwargs):
-        """ Set the settings font """
+        """ Set the font settings """
 
         for k, v in kwargs.items():
             if k in self.__dict__:
