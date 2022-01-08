@@ -71,7 +71,7 @@ class MenuNavigator:
 
         def press_down(self):
             self.selected_button.select(False)
-            self.btn_i = (self.btn_i + 1) % len(self.buttons_list)
+            self.btn_i = (self.btn_i + 1) % len(self.buttons_list) # TODO: Investigate bug ingame
 
         def press_button(self):
             self.selected_button.press(True)

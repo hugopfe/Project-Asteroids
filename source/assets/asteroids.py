@@ -83,7 +83,7 @@ class Asteroid(pygame.sprite.Sprite):
         for i in range(0, 3):
             group.add(AsteroidFrag(self.pos, i, self.screen, self.target_pos,
                                    self.rules, id_list[i], self, *self.observers))
-        self.observers[0](self.score_value)
+        self.observers[0](self.score_value) # TODO: Fix it
         self.kill()
 
     def rotate(self):
