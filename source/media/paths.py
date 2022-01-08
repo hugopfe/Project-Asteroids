@@ -24,6 +24,7 @@ ast_frag3 = img_path('asteroid_part_3.png')
 icon = img_path('icon.ico')
 logo = img_path('logo.png')
 shield = img_path('shield_prototype.png')
+keyboard_keymap = img_path('keyboard_keymap.png')
 
 # Fonts
 title_font = font_path('SquadaOne-Regular.ttf')

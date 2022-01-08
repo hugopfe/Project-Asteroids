@@ -20,7 +20,10 @@ def remove_from_call_tree(object):
 
 
 def start(main_menu, game_cls):
+    from menus import ControlsMenu
+    
     add_to_call_tree(main_menu(game_cls))
+    Main.change_screen(ControlsMenu)
     Main._main_loop()
 
 
