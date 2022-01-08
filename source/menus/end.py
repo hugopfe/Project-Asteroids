@@ -26,8 +26,6 @@ class EndScreen(Main):
             callback=lambda: self.back_to_mainmenu()
         )
 
-        self.add_buttons(self.menu_button)  # TODO: add to the end of the buttons list
-
     def loop(self):
         self.fonts.render_fonts()
         self.render_buttons()
@@ -58,7 +56,7 @@ class GOScreen(EndScreen):
             padding=17, callback=lambda: self.try_again(game)
         )
 
-        self.add_buttons(self.try_button)
+        self.add_buttons(self.try_button, self.menu_button)
 
 
 class WinScreen(EndScreen):
@@ -75,7 +73,7 @@ class WinScreen(EndScreen):
             padding=17, callback=lambda: self.try_again(game)
         )
 
-        self.add_buttons(self.try_button)
+        self.add_buttons(self.try_button, self.menu_button)
 
 
 __all__ = ['GOScreen', 'WinScreen']

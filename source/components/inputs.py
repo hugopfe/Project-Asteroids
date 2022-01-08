@@ -67,11 +67,11 @@ class MenuNavigator:
 
         def press_up(self):
             self.selected_button.select(False)
-            self.btn_i = (self.btn_i - 1) % len(self.buttons_list) 
+            self.btn_i = (self.btn_i - 1) % len(self.buttons_list)
 
         def press_down(self):
             self.selected_button.select(False)
-            self.btn_i = (self.btn_i + 1) % len(self.buttons_list) 
+            self.btn_i = (self.btn_i + 1) % len(self.buttons_list)
 
         def press_button(self):
             self.selected_button.press(True)
@@ -111,8 +111,8 @@ class MenuNavigator:
 
     mouse = MouseNavigation()
     active_device = mouse
-    register_ev((mouse_interactions, MOUSEMOTION)), 
-    
+    register_ev((mouse_interactions, MOUSEMOTION)),
+
     temp_events = []
 
     instance = None
@@ -132,16 +132,18 @@ class MenuNavigator:
 
         self.dev_events = events_commands
 
-        default_ev = (self.default_interactions, self.dev_events['button_down'])
+        default_ev = (self.default_interactions,
+                      self.dev_events['button_down'])
         self.add_temp_event(default_ev)
         register_ev(default_ev)
 
         self.active_device = MenuNavigator.active_device
         self.active_device.register_events(self.dev_events)
-        
+
     def default_interactions(self):
         if not isinstance(self.active_device, MenuNavigator.DefaultNavigationDevice):
-            MenuNavigator.active_device = MenuNavigator.DefaultNavigationDevice(self.dev_events)
+            MenuNavigator.active_device = MenuNavigator.DefaultNavigationDevice(
+                self.dev_events)
             MenuNavigator.instance.active_device = MenuNavigator.active_device
             pygame.mouse.set_visible(False)
 
@@ -174,6 +176,7 @@ class InputsHandler:
             if not next_dev.status:
                 Alert.alert_event.message = 'Nenhum controle encontrado!'
                 pygame.event.post(Alert.alert_event)
+
                 return False
 
             for button in self.current_dev.active_device.buttons_list:
@@ -183,6 +186,7 @@ class InputsHandler:
 
         Alert.alert_event.message = f'{str(self.current_dev)} ativado.'
         pygame.event.post(Alert.alert_event)
+
         return True
 
     class KeyboardListener(MenuNavigator):
@@ -273,8 +277,10 @@ class InputsHandler:
     class JoystickListener(MenuNavigator):
 
         id = 1
-        
+        status = False
+
         a_button = 0
+        b_button = 1
         start_button = 7
         rb_button = 4
         lb_button = 5
@@ -295,16 +301,18 @@ class InputsHandler:
             'pause': (JOYBUTTONDOWN, ('button', nav_buttons['pause']))
         }
 
+        def __new__(cls, *args, **kwargs):
+            if not pygame.joystick.get_count():
+                cls.status = False
+                return None
+            else:
+                cls.status = True
+                return super().__new__(cls, *args, **kwargs)
+
         def __init__(self):
             """ Class to represent the controller """
 
             super().__init__(self.ev)
-
-            if not pygame.joystick.get_count():
-                self.status = False
-                return
-            else:
-                self.status = True
 
             pygame.joystick.init()
 
@@ -341,10 +349,10 @@ class InputsHandler:
 
             """ Player shooting"""
 
-            if k_state(self.a_button) and not self.shoot_key_pressed:
+            if k_state(self.b_button) and not self.shoot_key_pressed:
                 self.shoot_key_pressed = True
                 player.shoot()
-            elif not k_state(self.a_button):
+            elif not k_state(self.b_button):
                 self.shoot_key_pressed = False
 
             """ Player rotating """

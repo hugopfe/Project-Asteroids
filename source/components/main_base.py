@@ -11,24 +11,21 @@ from ui.alert import Alert
 def add_to_call_tree(object):
     Main.call_tree.append(object)
     print(f'[{get_class_name(object)}] running: True')
-    print(Main.call_tree)
 
 
 def remove_from_call_tree(object):
     Main.call_tree.remove(object)
 
     print(f'[{get_class_name(object)}] running: False')
-    print(Main.call_tree)
 
 
 def start(main_menu, game_cls):
     add_to_call_tree(main_menu(game_cls))
-    Main.call_tree[0].buttons[1].press(True)
-    Main.call_tree[0].buttons[1].press(False)
     Main._main_loop()
 
 
-def quit(): Main.running = False
+def quit():
+    Main.running = False
 
 
 def switch_to_keyboard():
@@ -37,7 +34,7 @@ def switch_to_keyboard():
     return dev_status
 
 
-def switch_to_joystick(): 
+def switch_to_joystick():
     joystick = Main.inputs_handler.JoystickListener
     dev_status = Main.inputs_handler.switch_default_device(joystick)
     return dev_status
@@ -45,6 +42,11 @@ def switch_to_joystick():
 
 def post_alert():
     Main.alert.set_message(Alert.alert_event.message)
+    Main.alert.trigger()
+
+
+def test_alert():
+    Main.alert.set_message('Teste')
     Main.alert.trigger()
 
 
@@ -66,10 +68,11 @@ class Main:
         (quit, QUIT),
         (quit, (KEYDOWN, ('key', K_ESCAPE))),
         (switch_to_keyboard, JOYDEVICEREMOVED),
-        (post_alert, ALERT)
+        (post_alert, ALERT),
+        (test_alert, (KEYDOWN, ('key', K_LSHIFT)))
     )
     register_ev(*ev)
-    
+
     def __init__(self, event_command=None):
         """ Runs the main loop """
 
