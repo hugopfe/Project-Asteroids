@@ -4,7 +4,7 @@ from pygame.locals import *
 from components.constants import *
 from components.inputs import *
 from components.util import *
-from components.events import *
+from events.events import *
 from ui.alert import Alert
 
 
@@ -34,12 +34,20 @@ def quit():
 def switch_to_keyboard():
     keyboard = Main.inputs_handler.KeyboardListener
     dev_status = Main.inputs_handler.switch_default_device(keyboard)
+
+    if dev_status:
+        pygame.event.post(pygame.event.Event(KEYBOARD_ACTIVATED))
+    
     return dev_status
 
 
 def switch_to_joystick():
     joystick = Main.inputs_handler.JoystickListener
     dev_status = Main.inputs_handler.switch_default_device(joystick)
+    
+    if dev_status:
+        pygame.event.post(pygame.event.Event(JOYSTICK_ACTIVATED))
+    
     return dev_status
 
 
@@ -49,8 +57,8 @@ def post_alert():
 
 
 def test_alert():
-    Main.alert.set_message('Teste')
-    Main.alert.trigger()
+    Alert.alert_event.message = 'Teste'
+    pygame.event.post(Alert.alert_event)
 
 
 class Main:

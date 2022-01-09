@@ -152,7 +152,7 @@ class EventsHandler:
                     continue
             if self.single_events[event.type]:
                 self.trigger_event(event.type)
-    
+
     def check_sub_ev(self, event) -> Tuple:
 
         events = self.multi_events
@@ -167,6 +167,12 @@ class EventsHandler:
 
 
 def register_ev(*ev):
+    """ ev = (
+        (func1, ev_type),\n
+        (func2, (ev_type, ('ev_attr_str', ev_attr))),
+        ...
+    )"""
+
     if ev:
         if None in ev:
             ev = list(ev)
@@ -175,6 +181,12 @@ def register_ev(*ev):
 
 
 def remove_ev(*ev):
+    """ ev = (
+        (func1, ev_type),\n
+        (func2, (ev_type, ('ev_attr_str', ev_attr))),
+        ...
+    )"""
+
     if ev:
         if None in ev:
             ev = list(ev)

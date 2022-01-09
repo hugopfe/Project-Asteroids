@@ -10,7 +10,7 @@ from pygame.sprite import Group
 from typing import Tuple, Dict, List, Union
 from random import randrange, choice, uniform, randint
 
-from components.events import *
+from events.events import *
 
 
 collide_mask = pygame.sprite.collide_mask

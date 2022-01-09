@@ -4,7 +4,7 @@ import pygame
 from pygame.locals import *
 
 from components.constants import PLAYER_SPEED, BREAK, ALERT
-from components.events import *
+from events.events import *
 from ui.buttons import Button
 from ui.alert import Alert
 
@@ -173,7 +173,7 @@ class InputsHandler:
     def switch_default_device(self, dev) -> bool | str:
         if not isinstance(self.current_dev, dev):
             next_dev = dev()
-            if not next_dev.status:
+            if not next_dev:
                 Alert.alert_event.message = 'Nenhum controle encontrado!'
                 pygame.event.post(Alert.alert_event)
 
@@ -277,7 +277,6 @@ class InputsHandler:
     class JoystickListener(MenuNavigator):
 
         id = 1
-        status = False
 
         a_button = 0
         b_button = 1
@@ -303,10 +302,8 @@ class InputsHandler:
 
         def __new__(cls, *args, **kwargs):
             if not pygame.joystick.get_count():
-                cls.status = False
                 return None
             else:
-                cls.status = True
                 return super().__new__(cls, *args, **kwargs)
 
         def __init__(self):

@@ -5,6 +5,7 @@ from components.constants import PRIMARY_COLOR, SECUNDARY_COLOR, BLACK, WHITE, A
 from components.constants import FPS
 from ui.font import *
 from media.paths import body_font
+from events.custom_events import alert
 
 
 vector = pygame.math.Vector2
@@ -12,7 +13,7 @@ vector = pygame.math.Vector2
 
 class Alert:
 
-    alert_event = pygame.event.Event(ALERT, message='')
+    alert_event = alert
 
     def __init__(self, screen, message):
         """ Class for displaying an alert. """

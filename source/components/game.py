@@ -8,8 +8,8 @@ from assets import *
 from media.paths import body_font
 from components.util import *
 from components.constants import *
-from components.events import *
 from components.main_base import *
+from events.events import *
 
 
 levels = [Level1, Level2, Level3]

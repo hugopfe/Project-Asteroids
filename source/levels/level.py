@@ -105,7 +105,7 @@ class Level1(Level):
 
         self.level_rules = {
             'asteroids': {
-                'max_spawned': 10,
+                'max_spawned': 5,
                 'min_speed': 0.05,
                 'max_speed': 0.2,
                 'life': 300
